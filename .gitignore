@@ -1,0 +1,47 @@
+# virtual env
+.venv/
+venv/
+env/
+
+# python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# logs
+*.log
+logs/
+
+# build
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ML models
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.safetensors
+checkpoints/
+
+# dataset
+data/raw/
+data/processed/
+
+# cache
+.cache/
+pip-wheel-metadata/
+
+# system
+.DS_Store
+Thumbs.db
