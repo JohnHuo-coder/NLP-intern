@@ -2,6 +2,8 @@ import re
 import nltk
 from collections import Counter
 from nltk.util import ngrams
+import html
+import unicodedata
 class TextCleaner:
     def __init__(self):
         self.abbrev_map = {
@@ -28,16 +30,36 @@ class TextCleaner:
             for m in lst:
                 counter[m.lower()] += 1
         return counter.most_common(top_abbr)
+    def _detect_html(self, col):
+        """
+        Detect HTML entities and HTML tags in the text column.
+        """
+
+        all_text = " ".join(col.dropna().astype(str))
+        # HTML entities
+        entity_pattern = r"&[a-zA-Z]+;"
+        entities = re.findall(entity_pattern, all_text)
+        # HTML tags
+        tag_pattern = r"</?[^>]+>"
+        tags = re.findall(tag_pattern, all_text)
+        results = entities + tags
+        cnt = len(results)
+        return cnt, results
     def clean_text(self, text):
         text = self.normalize_unicode(text)
         text = self.normalize_prices(text)
         text = self.normalize_measurements(text)
         text = self.expand_abbreviations(text)
         return text.strip()
+    def normalize_html(self, text):
+        text = html.unescape(text)
+        text = re.sub(r'</?[^>]*>', "", text)
+        return text
     def normalize_unicode(self, text):
+        text = unicodedata.normalize("NFKC", text)
         return text
     def normalize_measurements(self, text):
-        
+
         return text
     def expand_abbreviations(self, text):
         pattern = r'(?<!\w)(' + '|'.join(map(re.escape, self.abbrev_map.keys())) + r')(?!\w)'
@@ -55,11 +77,13 @@ class TextCleaner:
         return text
     def profile_column(self, df, column_name, n_gram = 2, most_common_gram = 200, most_common_abbr = 10):
         """Analyze what's actually in L_Remarks"""
+        html_cnt, html_results = self._detect_html(df[column_name])
         return {
             'null_rate': df[column_name].isnull().mean(),
             'avg_length': df[column_name].str.len().mean(),
             'common_terms': self._extract_top_ngrams(df[column_name], n_gram, most_common_gram),
             'price_mentions': df[column_name].str.contains(r'\$\d').sum(),
-            'has_html': df[column_name].str.contains('<').sum(),
+            'has_html': html_cnt,
+            'html_examples': html_results,
             'common_abbreviations': self._detect_abbreviations(df[column_name], most_common_abbr)
         }
