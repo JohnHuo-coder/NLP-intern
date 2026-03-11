@@ -4,6 +4,7 @@ from collections import Counter
 from nltk.util import ngrams
 import html
 import unicodedata
+from nltk.corpus import stopwords
 class TextCleaner:
     def __init__(self):
         self.abbrev_map = {
@@ -15,13 +16,14 @@ class TextCleaner:
             'sqft': 'square feet', "sq ft": "square feet", "sq. ft": "square feet",
             'w/': 'with', 'w/o': 'without', 
         }
-    def _extract_top_ngrams(self, col, n = 2, top_n = 200):
+        self.stop_words = set(stopwords.words("english"))
+    def _extract_top_ngrams(self, col, top_n = 200):
         all_text = ' '.join(col.dropna().str.lower())
-        tokens = nltk.word_tokenize(all_text)
-        grams = list(ngrams(tokens, n))
-        freq = Counter(grams)
-        top_ngrams = [{"term": " ".join(ngram), "count": count} for ngram, count in freq.most_common(top_n)]
-        return top_ngrams
+        tokens = [ t for t in nltk.word_tokenize(all_text) if re.fullmatch(r"[a-z]+", t.lower())]
+        bigrams = [(a, b) for (a, b) in ngrams(tokens, 2) if a not in self.stop_words and b not in self.stop_words]
+        freq = Counter(bigrams)
+        top_bigrams = [{"term": " ".join(bigram), "count": count} for bigram, count in freq.most_common(top_n)]
+        return top_bigrams
     def _detect_abbreviations(self, col, top_abbr = 10):
         pattern = r'(?<!\w)(' + '|'.join(map(re.escape, self.abbrev_map.keys())) + r')(?!\w)'
         counter = Counter()
@@ -34,19 +36,22 @@ class TextCleaner:
         """
         Detect HTML entities and HTML tags in the text column.
         """
-
         all_text = " ".join(col.dropna().astype(str))
         # HTML entities
-        entity_pattern = r"&[a-zA-Z]+;"
-        entities = re.findall(entity_pattern, all_text)
+        entities = re.findall(r"&[a-zA-Z0-9#]+;", all_text)
         # HTML tags
         tag_pattern = r"</?[^>]+>"
         tags = re.findall(tag_pattern, all_text)
         results = entities + tags
         cnt = len(results)
-        return cnt, results
+        return cnt, Counter(results)
+    def _detect_unicode(self, col):
+        counter = Counter(c for c in " ".join(col.dropna()) if ord(c) > 127)
+        cnt = len(counter)
+        return cnt, counter
     def clean_text(self, text):
         text = self.normalize_unicode(text)
+        text = self.normalize_html(text)
         text = self.normalize_prices(text)
         text = self.normalize_measurements(text)
         text = self.expand_abbreviations(text)
@@ -57,6 +62,19 @@ class TextCleaner:
         return text
     def normalize_unicode(self, text):
         text = unicodedata.normalize("NFKC", text)
+        replacements = {
+            "“": '"',
+            "”": '"',
+            "‘": "'",
+            "’": "'",
+            "–": "-",
+            "—": "-",
+            "\xa0": " ",
+        }
+
+        for k, v in replacements.items():
+            text = text.replace(k, v)
+
         return text
     def normalize_measurements(self, text):
 
@@ -75,15 +93,19 @@ class TextCleaner:
         # 1.2m → 1200000
         text = re.sub(r'(\d+\.?\d*)m', lambda m: str(int(float(m.group(1))*1000000)), text, flags=re.I)
         return text
-    def profile_column(self, df, column_name, n_gram = 2, most_common_gram = 200, most_common_abbr = 10):
+    def profile_column(self, df, column_name, most_common_gram = 200, most_common_abbr = 10):
         """Analyze what's actually in L_Remarks"""
         html_cnt, html_results = self._detect_html(df[column_name])
+        unicode_cnt, unicode_results = self._detect_unicode(df[column_name])
         return {
             'null_rate': df[column_name].isnull().mean(),
             'avg_length': df[column_name].str.len().mean(),
-            'common_terms': self._extract_top_ngrams(df[column_name], n_gram, most_common_gram),
+            'avg_num_words': df[column_name].str.split().str.len().mean(),
+            'common_terms': self._extract_top_ngrams(df[column_name], most_common_gram),
             'price_mentions': df[column_name].str.contains(r'\$\d').sum(),
             'has_html': html_cnt,
             'html_examples': html_results,
+            'has_unicode': unicode_cnt,
+            'unicode_examples': unicode_results,
             'common_abbreviations': self._detect_abbreviations(df[column_name], most_common_abbr)
         }
