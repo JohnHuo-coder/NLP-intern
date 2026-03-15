@@ -6,19 +6,19 @@ import re
 import json
 import pandas as pd
 def test_taxonomy_loaded():
-    with open('../data/processed/taxonomy.json') as f:
+    with open('data/processed/taxonomy.json') as f:
         tax = json.load(f)
     assert len(tax['terms']) >= 200
     assert all('id' in t and 'term' in t for t in tax['terms'])
 
 def test_sample_data_quality():
-    df = pd.read_csv('../data/processed/listing_sample.csv')
+    df = pd.read_csv('data/processed/listing_sample.csv')
     assert len(df) >= 500
     assert df['remarks'].str.len().min() > 50
 
 def text_taxonomy_coverage():
-    df = pd.read_csv("../data/processed/listing_sample.csv")
-    with open("../data/processed/taxonomy.json", 'r') as f:
+    df = pd.read_csv("data/processed/listing_sample.csv")
+    with open("data/processed/taxonomy.json", 'r') as f:
         data = json.load(f)
     terms = set([item["term"] for item in data])
     stop_words = set(stopwords.words("english"))

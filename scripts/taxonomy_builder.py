@@ -21,8 +21,12 @@ tokens = [ t for t in nltk.word_tokenize(all_text) if re.fullmatch(r"[a-z]+", t.
 bigrams = [(a, b) for (a, b) in ngrams(tokens, 2) if a not in stop_words and b not in stop_words]
 freq = Counter(bigrams)
 # Top 200 bigrams become taxonomy seed
-top_bigrams = [{"term": " ".join(bigram), "count": count} for bigram, count in freq.most_common(1000)]
+top_bigrams = [{'id': f'T{i+1:04d}', 
+                "term": " ".join(bigram), 
+                "count": count} 
+                for i, (bigram, count) in enumerate( freq.most_common(1000))]
+tax = {'terms': top_bigrams}
 with open("data/processed/taxonomy.json", 'w') as f:
-    json.dump(top_bigrams, f, indent = 2)
+    json.dump(tax, f, indent = 2)
 for bigram, count in freq.most_common(200):
     print(f"{' '.join(bigram)}: {count}")
