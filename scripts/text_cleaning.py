@@ -9,7 +9,7 @@ import pandas as pd
 class TextCleaner:
     def __init__(self):
         self.abbrev_map = {
-            'br': 'bedroom', 'bd': 'bedroom', 'bdr': 'bedroom', 'bdrm': 'bedroom', 'bdrm': 'bedroom', 
+            'br': 'bedroom', 'bd': 'bedroom', 'bdr': 'bedroom', 'bdrm': 'bedroom',
             'ba': 'bathroom', 'bth': 'bathroom', 
             'mbr': 'master bedroom', 'mba': 'master bathroom', 'kit': 'kitchen',
             'lr': 'living room', 'dr': 'dining room', 'fr': 'family room',
