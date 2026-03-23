@@ -1,6 +1,8 @@
-import re
-import pandas as pd
 import json
+import re
+from pathlib import Path
+
+import pandas as pd
 # Phrases commonly used as property amenities in listing text (longer phrases matched first).
 
 with open("data/processed/taxonomy_categorized.json", "r") as f:
@@ -49,24 +51,87 @@ def _amenity_feature_pattern(phrase):
         re.I,
     )
 
+_WORD_TO_NUM = {
+    "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
+    "six": 6, "seven": 7, "eight": 8, "nine": 9
+}
 
 class EntityExtractor:
     def extract_bedrooms(self, text):
-        patterns = [
-            r'(\d+(?:\.\d+)?)\s*(?:bed|br|bedroom)s?',
-            r'(\d+(?:\.\d+)?)bd'
-        ]
-        for pattern in patterns:
-            match = re.search(pattern, text, re.I)
-            if match:
-                return float(match.group(1))
+        if not text:
+            return None
+        # 3 / 2: 3 bedrooms 2 bathrooms
+        pattern1 = r'\b(\d+)\s*/\s*(\d+)\b'
+        match = re.search(pattern1, text, re.I)
+        if match:
+            return int(match.group(1))
+        # most common case: 2 bedrooms, 2.5 bedrooms, 2-bedroom
+        pattern_main = r'\b(\d+(?:\.\d+)?)\s*(?:-\s*|\s+)(bed|bedroom|br|bd)s?\b'
+        match = re.search(pattern_main, text, re.I)
+        if match:
+            return float(match.group(1))
+        # two bedrooms, two-bedroom
+        pattern2 = r'\b(one|two|three|four|five|six|seven|eight|nine|ten)(?:\s*-\s*|\s+)(bed|bedroom|br)s?\b'
+        match = re.search(pattern2, text, re.I)
+        if match:
+            return _WORD_TO_NUM[match.group(1)]
+        
+        # adjectives between number and word: 3 spacious bedrooms
+        pattern3 = r'\b(\d+(?:\.\d+)?)\s+(?:\w+\s+){0,2}(bed|bedroom|br)s?\b'
+        match = re.search(pattern3, text, re.I)
+        if match:
+            return float(match.group(1))
+        # two genrouly large bedrooms
+        pattern4 = r'\b(one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:\w+\s+){0,2}(bed|bedroom|br)s?\b'
+        match = re.search(pattern4, text, re.I)
+        if match:
+            return _WORD_TO_NUM[match.group(1)]
         return None
     
     def extract_bathrooms(self, text):
-        pattern = r'(\d+(?:\.\d+)?)\s*(?:bathroom|bath)s?'
-        match = re.search(pattern, text, re.I)
+        if not text:
+            return None
+        # 3 / 2: 3 bedrooms 2 bathrooms
+        pattern1 = r'\b\d+\s*/\s*(\d+)\b'
+        match = re.search(pattern1, text, re.I)
+        if match:
+            return int(match.group(1))
+        # 2 1/2 bathrooms, 2 1/2-bathroom
+        pattern2 = r'\b(\d+)\s+1/2(?:\s*-\s*|\s+)(bath|bathroom)s?\b'
+        match = re.search(pattern2, text, re.I)
+        if match:
+            return int(match.group(1)) + 0.5
+        # 2 bathrooms, 2.5 bathrooms, 2-bathroom
+        pattern3 = r'\b(\d+(?:\.\d+)?)\s*(?:-\s*|\s+)(bath|bathroom)s?\b'
+        match = re.search(pattern3, text, re.I)
         if match:
             return float(match.group(1))
+        # 1 full bathrooms, 2 full bathrooms
+        pattern4 = r'\b(\d+)\s*full\s+(bath|bathroom)s?\b'
+        match = re.search(pattern4, text, re.I)
+        if match:
+            return int(match.group(1))
+        # two bathrooms, two-bathroom
+        pattern5 = r'\b(one|two|three|four|five|six|seven|eight|nine|ten)(?:\s*-\s*|\s+)(bath|bathroom)s?\b'
+        match = re.search(pattern5, text, re.I)
+        if match:
+            return _WORD_TO_NUM[match.group(1)]
+        # two full bathrooms, one full bathrooms
+        pattern6 = r'\b(one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:full\s+)?(bath|bathroom)s?\b'
+        match = re.search(pattern6, text, re.I)
+        if match:
+            return _WORD_TO_NUM[match.group(1)]
+        
+        # adjectives between number and word: 3 clean bathrooms
+        pattern7 = r'\b(\d+(?:\.\d+)?)\s+(?:\w+\s+){0,2}(bath|bathroom)s?\b'
+        match = re.search(pattern7, text, re.I)
+        if match:
+            return float(match.group(1))
+        # two clean bathrooms
+        pattern8 = r'\b(one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:\w+\s+){0,2}(bath|bathroom)s?\b'
+        match = re.search(pattern8, text, re.I)
+        if match:
+            return _WORD_TO_NUM[match.group(1)]
         return None
 
 
@@ -104,7 +169,11 @@ class EntityExtractor:
             matches.extend(m)
         matches_unique = list(set(matches))
         if matches_unique:
-            return int(matches_unique[0])
+            raw = str(matches_unique[0]).replace(",", "")
+            try:
+                return int(float(raw))
+            except ValueError:
+                return None
         return None
 
     def extract_sqft(self, text):
@@ -177,3 +246,15 @@ class EntityExtractor:
         results = col.apply(self.extract_all)
         expanded = results.apply(pd.Series)
         return expanded
+
+if __name__ == "__main__":
+    root = Path(__file__).resolve().parents[1]
+    in_path = root / "data" / "processed" / "listing_sample_cleaned.csv"
+    out_path = root / "data" / "processed" / "listing_entities_extracted.csv"
+
+    df = pd.read_csv(in_path)
+    extractor = EntityExtractor()
+    result_df = extractor.extract_column(df["remarks"])
+    summary_df = pd.concat([df[["L_ListingID", "remarks"]], result_df], axis=1)
+    summary_df.to_csv(out_path, index=False)
+    print(f"Wrote {len(summary_df)} rows to {out_path}")
