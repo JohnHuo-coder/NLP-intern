@@ -42,6 +42,36 @@ single_word_features = (
 )
 feature_set = set(features) | set(single_word_features)
 
+
+def _listing_bed_bath_slash(text):
+    """
+    Parse ``a/b`` as beds/baths when it is not a calendar fragment.
+
+    Skips:
+    - ``M/D/YYYY`` (e.g. ``12/31/2024``, ``3/2/2024``) — the ``a/b`` before ``/year``.
+    - Pairs where the second number is implausible as a bath count (e.g. ``1/15`` as Jan 15).
+    """
+    if not text:
+        return None
+    for m in re.finditer(r"\b(\d{1,2})\s*/\s*(\d{1,2})\b", text):
+        end = m.end()
+        # Date: .../YYYY right after the pair
+        if end < len(text) and text[end] == "/":
+            ychunk = text[end + 1 : end + 5]
+            if ychunk.isdigit() and len(ychunk) == 4:
+                continue
+        a, b = int(m.group(1)), int(m.group(2))
+        if a < 1 or b < 1:
+            continue
+        if a > 20 or b > 20:
+            continue
+        # Bath count in slash form is rarely > 12; avoids many M/D pairs (e.g. 1/15).
+        if b > 12:
+            continue
+        return a, b
+    return None
+
+
 def _amenity_feature_pattern(phrase):
     words = phrase.split()
     if len(words) == 1:
@@ -53,18 +83,25 @@ def _amenity_feature_pattern(phrase):
 
 _WORD_TO_NUM = {
     "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
-    "six": 6, "seven": 7, "eight": 8, "nine": 9
+    "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10
 }
+
+
+def _spell_num_from_word(word):
+    """Map spelled-out digit to int; ``re.I`` can yield ``Two`` so normalize case."""
+    if not word:
+        return None
+    return _WORD_TO_NUM.get(str(word).lower())
+
 
 class EntityExtractor:
     def extract_bedrooms(self, text):
         if not text:
             return None
-        # 3 / 2: 3 bedrooms 2 bathrooms
-        pattern1 = r'\b(\d+)\s*/\s*(\d+)\b'
-        match = re.search(pattern1, text, re.I)
-        if match:
-            return int(match.group(1))
+        # 3/2 = 3 bed, 2 bath (not 12/31/2024 or 3/2/2024)
+        slash = _listing_bed_bath_slash(text)
+        if slash is not None:
+            return slash[0]
         # most common case: 2 bedrooms, 2.5 bedrooms, 2-bedroom
         pattern_main = r'\b(\d+(?:\.\d+)?)\s*(?:-\s*|\s+)(bed|bedroom|br|bd)s?\b'
         match = re.search(pattern_main, text, re.I)
@@ -74,7 +111,9 @@ class EntityExtractor:
         pattern2 = r'\b(one|two|three|four|five|six|seven|eight|nine|ten)(?:\s*-\s*|\s+)(bed|bedroom|br)s?\b'
         match = re.search(pattern2, text, re.I)
         if match:
-            return _WORD_TO_NUM[match.group(1)]
+            w = _spell_num_from_word(match.group(1))
+            if w is not None:
+                return w
         
         # adjectives between number and word: 3 spacious bedrooms
         pattern3 = r'\b(\d+(?:\.\d+)?)\s+(?:\w+\s+){0,2}(bed|bedroom|br)s?\b'
@@ -85,17 +124,17 @@ class EntityExtractor:
         pattern4 = r'\b(one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:\w+\s+){0,2}(bed|bedroom|br)s?\b'
         match = re.search(pattern4, text, re.I)
         if match:
-            return _WORD_TO_NUM[match.group(1)]
+            w = _spell_num_from_word(match.group(1))
+            if w is not None:
+                return w
         return None
     
     def extract_bathrooms(self, text):
         if not text:
             return None
-        # 3 / 2: 3 bedrooms 2 bathrooms
-        pattern1 = r'\b\d+\s*/\s*(\d+)\b'
-        match = re.search(pattern1, text, re.I)
-        if match:
-            return int(match.group(1))
+        slash = _listing_bed_bath_slash(text)
+        if slash is not None:
+            return slash[1]
         # 2 1/2 bathrooms, 2 1/2-bathroom
         pattern2 = r'\b(\d+)\s+1/2(?:\s*-\s*|\s+)(bath|bathroom)s?\b'
         match = re.search(pattern2, text, re.I)
@@ -115,12 +154,16 @@ class EntityExtractor:
         pattern5 = r'\b(one|two|three|four|five|six|seven|eight|nine|ten)(?:\s*-\s*|\s+)(bath|bathroom)s?\b'
         match = re.search(pattern5, text, re.I)
         if match:
-            return _WORD_TO_NUM[match.group(1)]
+            w = _spell_num_from_word(match.group(1))
+            if w is not None:
+                return w
         # two full bathrooms, one full bathrooms
         pattern6 = r'\b(one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:full\s+)?(bath|bathroom)s?\b'
         match = re.search(pattern6, text, re.I)
         if match:
-            return _WORD_TO_NUM[match.group(1)]
+            w = _spell_num_from_word(match.group(1))
+            if w is not None:
+                return w
         
         # adjectives between number and word: 3 clean bathrooms
         pattern7 = r'\b(\d+(?:\.\d+)?)\s+(?:\w+\s+){0,2}(bath|bathroom)s?\b'
@@ -131,7 +174,9 @@ class EntityExtractor:
         pattern8 = r'\b(one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:\w+\s+){0,2}(bath|bathroom)s?\b'
         match = re.search(pattern8, text, re.I)
         if match:
-            return _WORD_TO_NUM[match.group(1)]
+            w = _spell_num_from_word(match.group(1))
+            if w is not None:
+                return w
         return None
 
 
@@ -177,7 +222,7 @@ class EntityExtractor:
         return None
 
     def extract_sqft(self, text):
-        pattern = r'\b(\d+)\s*square\s*feet'
+        pattern = r'\b(\d+)(?:\s*\+)?\s*square\s*feet'
         match = re.search(pattern, text, re.I)
         if match:
             return int(match.group(1))
@@ -203,7 +248,7 @@ class EntityExtractor:
             used.append((start, end))
             kept.append((start, end, phrase))
         kept.sort(key=lambda x: x[0])
-        only_terms = [p for s,e, p in kept]
+        only_terms = list(set([p for s,e, p in kept]))
         return only_terms, kept
 
     def extract_interior_features(self, text):
@@ -226,7 +271,7 @@ class EntityExtractor:
             used.append((start, end))
             kept.append((start, end, phrase))
         kept.sort(key=lambda x: x[0])
-        only_terms = [p for s, e, p in kept]
+        only_terms = list(set([p for s,e, p in kept]))
         return only_terms, kept
 
     def extract_all(self, text):

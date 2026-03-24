@@ -10,7 +10,7 @@ class TextCleaner:
     def __init__(self):
         self.abbrev_map = {
             'br': 'bedroom', 'bd': 'bedroom', 'bdr': 'bedroom', 'bdrm': 'bedroom',
-            'ba': 'bathroom', 'bth': 'bathroom', 
+            'ba': 'bathroom', 'bth': 'bathroom', 'bath': 'bathroom',
             'mbr': 'master bedroom', 'mba': 'master bathroom', 'kit': 'kitchen',
             'lr': 'living room', 'dr': 'dining room', 'fr': 'family room',
             'rm': 'room', 'rms': 'rooms', 'flr': 'floor', 'lvl': 'level',
@@ -24,7 +24,15 @@ class TextCleaner:
             'approx': 'approximately', 'pvt': 'private', 'avail': 'available', 'incl': 'including',
             'appl': 'appliances', 'renov': 'renovated', 'upd': 'updated'
         }
+        self.abbrev_variants = set(self.abbrev_map.keys())
+        for k in self.abbrev_map:
+            # Support plural short-hands like bds/brs/bas/bths without adding every key manually.
+            if re.fullmatch(r"[a-z]+", k):
+                self.abbrev_variants.add(f"{k}s")
         self.stop_words = set(stopwords.words("english"))
+    def _abbrev_pattern(self):
+        keys = sorted(self.abbrev_variants, key=len, reverse=True)
+        return r'(?<!\w)(' + '|'.join(map(re.escape, keys)) + r')(?!\w)'
     def _extract_top_ngrams(self, col, top_n = 200):
         all_text = ' '.join(col.dropna().str.lower())
         tokens = [ t for t in nltk.word_tokenize(all_text) if re.fullmatch(r"[a-z]+", t.lower())]
@@ -33,7 +41,7 @@ class TextCleaner:
         top_bigrams = [{"term": " ".join(bigram), "count": count} for bigram, count in freq.most_common(top_n)]
         return top_bigrams
     def _detect_abbreviations(self, col, top_abbr = 10):
-        pattern = r'(?<!\w)(' + '|'.join(map(re.escape, self.abbrev_map.keys())) + r')(?!\w)'
+        pattern = self._abbrev_pattern()
         counter = Counter()
         matches = col.dropna().str.findall(pattern, flags = re.I)
         for lst in matches:
@@ -149,10 +157,26 @@ class TextCleaner:
         text = re.sub(r'\b(\d+(?:\.\d+)?)\s*sq\.?\s*m(?:eters?)?\b', r'\1 square meters', text, flags=re.I)
         return text
     def expand_abbreviations(self, text):
-        pattern = r'(?<!\w)(' + '|'.join(map(re.escape, self.abbrev_map.keys())) + r')(?!\w)'
+        pattern = self._abbrev_pattern()
+        def _pluralize(word):
+            if word.endswith("y") and len(word) > 1 and word[-2] not in "aeiou":
+                return word[:-1] + "ies"
+            if word.endswith("s"):
+                return word
+            return word + "s"
+
+        def _replace(m):
+            token = m.group(0).lower()
+            if token in self.abbrev_map:
+                return self.abbrev_map[token]
+            if token.endswith("s"):
+                base = token[:-1]
+                if base in self.abbrev_map:
+                    return _pluralize(self.abbrev_map[base])
+            return token
         return re.sub(
             pattern,
-            lambda m: self.abbrev_map[m.group(0).lower()],
+            _replace,
             text,
             flags=re.I
         )
