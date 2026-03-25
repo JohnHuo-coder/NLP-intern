@@ -3,7 +3,7 @@ import sys
 from text_cleaning import TextCleaner
 from entity_extractor import EntityExtractor
 
-# TODO: convert 2.5 bath into 2 full bath + 1 half bath, since the table only has full bath column and half bath column
+# convert 2.5 bath into 2 full bath + 1 half bath, since the table only has full bath column and half bath column
 
 _WORD_TO_NUM = {
     "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
@@ -21,6 +21,13 @@ def _split_number(x):
     whole = int(x)
     frac = x - whole
     return whole, frac
+
+def _is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
 class QueryParser:
     def __init__(self):
@@ -63,15 +70,13 @@ class QueryParser:
                 raw_min = match.group(1)
                 raw_max = match.group(2)
                 if cat == "bathrooms":
-                    min_b = float(raw_min) if raw_min.isdigit() else _spell_num_from_word(raw_min) 
-                    min_b, min_frac = _split_number(min_b)
-                    self.filters["bathroom_half_min"] = min_frac
-                    max_b = float(raw_max) if raw_max.isdigit() else _spell_num_from_word(raw_max)
-                    max_b, max_frac = _split_number(max_b)
-                    self.filters["bathroom_half_max"] = max_frac
+                    min_b = float(raw_min) if _is_number(raw_min) else _spell_num_from_word(raw_min) 
+                    min_b, _ = _split_number(min_b)
+                    max_b = float(raw_max) if _is_number(raw_max) else _spell_num_from_word(raw_max)
+                    max_b, _ = _split_number(max_b)
                 else:
-                    min_b = int(raw_min) if raw_min.isdigit() else _spell_num_from_word(raw_min) 
-                    max_b = int(raw_max) if raw_max.isdigit() else _spell_num_from_word(raw_max)
+                    min_b = int(raw_min) if _is_number(raw_min) else _spell_num_from_word(raw_min) 
+                    max_b = int(raw_max) if _is_number(raw_max) else _spell_num_from_word(raw_max)
                 self.filters[filter_key_min] = min_b
                 self.filters[filter_key_max] = max_b
                 return True
@@ -99,11 +104,10 @@ class QueryParser:
             if match :
                 raw_max = match.group(1)
                 if cat == "bathrooms":
-                    max_b = float(raw_max) if raw_max.isdigit() else _spell_num_from_word(raw_max)
-                    max_b, max_frac = _split_number(max_b)
-                    self.filters["bathroom_half_max"] = max_frac
+                    max_b = float(raw_max) if _is_number(raw_max) else _spell_num_from_word(raw_max)
+                    max_b, _ = _split_number(max_b)
                 else:
-                    max_b = int(raw_max) if raw_max.isdigit() else _spell_num_from_word(raw_max)
+                    max_b = int(raw_max) if _is_number(raw_max) else _spell_num_from_word(raw_max)
                 self.filters[filter_key_max] = max_b
                 return True
         return False
@@ -135,11 +139,10 @@ class QueryParser:
             if match :
                 raw_min = match.group(1)
                 if cat == "bathrooms":
-                    min_b = float(raw_min) if raw_min.isdigit() else _spell_num_from_word(raw_min)
-                    min_b, min_frac = _split_number(min_b)
-                    self.filters["bathroom_half_min"] = min_frac
+                    min_b = float(raw_min) if _is_number(raw_min) else _spell_num_from_word(raw_min)
+                    min_b, _ = _split_number(min_b)
                 else:
-                    min_b = int(raw_min) if raw_min.isdigit() else _spell_num_from_word(raw_min)
+                    min_b = int(raw_min) if _is_number(raw_min) else _spell_num_from_word(raw_min)
                 self.filters[filter_key_min] = min_b
                 return True
         return False
@@ -190,7 +193,7 @@ class QueryParser:
         # under 20000 sqft, < 2000 sqft
         max_matched = self._parse_max(query, 'sqft')
         
-        # Price patterns min
+        # sqft patterns min
         # above 2000 sqft, 20000+ sqft, >2000 sqft
         min_matched = self._parse_min(query, "sqft")
     
@@ -247,6 +250,8 @@ class QueryParser:
         # 2 full bathroom and 1 half bathroom, one full bathroom and one half bathroom
         # two and a half bathroom
 
+        # also, only supports exact match for half bathrooms, since 4.5 to 6 bathrooms is hard to express with sql
+
         # Bathroom patterns range
         # 3 to 4, 3.5 to 4.5, two to three, 3 ~ 4, 3 - 4, 3.5 ~ 4.5, 3.5 - 4.5, between 3 and 4, between 3.5 and 4.5, between one and two
         has_range = self._parse_range(query, 'bathrooms')
@@ -270,8 +275,11 @@ class QueryParser:
         match = re.search(p1, query, re.I)
         if match :
             raw = match.group(1)
-            num = float(raw) if raw.isdigit() else _spell_num_from_word(raw)
-            self.filters["bathrooms"] = num
+            num = float(raw) if _is_number(raw) else _spell_num_from_word(raw)
+            full, half = _split_number(num)
+            if half:
+                self.filter["bathroom_half"] = 1
+            self.filters["bathrooms"] = full
         
         # more to add: half bathroom cases, mix of full and half
     
@@ -288,6 +296,7 @@ class QueryParser:
 
     def parse(self, query):
         self.filters = {}
+        query = self._clean_query(query)
         self.parse_bedroom(query)
         self.parse_bathroom(query)
         self.parse_sqft(query)
@@ -341,14 +350,6 @@ class QueryParser:
         if "bathroom_half" in filters:
             conditions.append("BathroomsHalf = %s")
             params.append(filters["bathroom_half"])
-
-        if "bathroom_half_min" in filters:
-            conditions.append("BathroomsHalf >= %s")
-            params.append(filters["bathroom_half_min"])
-        
-        if "bathroom_half_max" in filters:
-            conditions.append("BathroomsHalf <= %s")
-            params.append(filters["bathroom_half_max"])
 
         if "sqft_min" in filters:
             conditions.append("LM_Int2_3 >= %s")
