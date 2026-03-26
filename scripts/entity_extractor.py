@@ -1,47 +1,10 @@
 import json
 import re
 from pathlib import Path
-
+import sys
 import pandas as pd
+
 # Phrases commonly used as property amenities in listing text (longer phrases matched first).
-
-with open("data/processed/taxonomy_categorized.json", "r") as f:
-    taxonomy = json.load(f)
-amenities = [item["term"] for item in taxonomy["terms"] if item["category"] == "amenity"]
-single_word_amenities = (
-    "clubhouse",
-    "concierge",
-    "doorman",
-    "elevator",
-    "balcony",
-    "patio",
-    "deck",
-    "garage",
-    "attic",
-    "sauna",
-    "jacuzzi",
-    "spa",
-    "pool",
-    "gym",
-    "yard",
-    "garden",
-    "parking",
-    "driveway"
-)
-amenity_set = set(amenities) | set(single_word_amenities)
-features = [item["term"]+item["id"] for item in taxonomy["terms"] if item["category"] == "interior feature"]
-single_word_features = (
-    "granite", "marble", "quartz",
-    "hardwood", "tile", "vinyl", "laminate",
-    "island", "pantry", "range", "oven",
-    "microwave", "dishwasher",
-    "refrigerator", "hood",
-    "tub", "shower", "vanity", "sink",
-    "hvac", "ac", "heating",
-    "fireplace", "lighting"
-)
-feature_set = set(features) | set(single_word_features)
-
 
 def _listing_bed_bath_slash(text):
     """
@@ -95,6 +58,20 @@ def _spell_num_from_word(word):
 
 
 class EntityExtractor:
+    def __init__(self):
+        self.amenities = self._load_amenities()
+        self.features = self._load_features()
+    
+    def _load_amenities(self, amenities_path = "data/processed/amenities.json"):
+        with open(amenities_path, 'r') as f:
+            data = json.load(f)
+        amenities = data["amenities"]
+        return amenities
+    def _load_features(self, features_path = "data/processed/features.json"):
+        with open(features_path, 'r') as f:
+            data = json.load(f)
+        features = data["features"]
+        return features
     def extract_bedrooms(self, text):
         if not text:
             return None
@@ -233,7 +210,7 @@ class EntityExtractor:
             return [],[]
         lowered = text.lower()
         matches = []
-        for phrase in sorted(amenity_set, key=len, reverse=True):
+        for phrase in sorted(self.amenities, key=len, reverse=True):
             pat = _amenity_feature_pattern(phrase)
             for m in pat.finditer(lowered):
                 matches.append((m.start(), m.end(), phrase))
@@ -256,7 +233,7 @@ class EntityExtractor:
             return [],[]
         lowered = text.lower()
         matches = []
-        for phrase in sorted(feature_set, key = len, reverse = True):
+        for phrase in sorted(self.features, key = len, reverse = True):
             pat = _amenity_feature_pattern(phrase)
             for m in pat.finditer(lowered):
                 matches.append((m.start(), m.end(), phrase))
