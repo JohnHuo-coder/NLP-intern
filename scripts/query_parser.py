@@ -1,9 +1,15 @@
 import re
 import sys
-from text_cleaning import TextCleaner
-from entity_extractor import EntityExtractor
+from pathlib import Path
 
 # convert 2.5 bath into 2 full bath + 1 half bath, since the table only has full bath column and half bath column
+
+_SCRIPTS_DIR = Path(__file__).resolve().parent
+if str(_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS_DIR))
+
+from text_cleaning import TextCleaner
+from entity_extractor import EntityExtractor
 
 _WORD_TO_NUM = {
     "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
@@ -35,7 +41,7 @@ class QueryParser:
         self.filters = {}
         self.extractor = EntityExtractor()
         self.word_num_pattern = "|".join(_WORD_TO_NUM.keys())
-        self.price_format = "\$?(\d+)"
+        self.price_format = "\$?(\d{4,})(?!\s*(?:square feet))"
 
     def _clean_query(self, query):
         query = self.normalizer.clean_text(query)
@@ -169,7 +175,7 @@ class QueryParser:
         
         # Price pattern approx
         # ~ $20000, around 20000
-        p1 = r'\b(?:around|about|approximately|roughly|~)\s*\$?(\d+)\b'
+        p1 = r'\b(?:around|about|approximately|roughly|~)\s*\$?(\d{4,})\s*(dollar|usd|dollars)?\b'
         match = re.search(p1, query, re.I)
         if match :
             self.filters['price_min'] = int(match.group(1)) * 0.8
@@ -177,7 +183,7 @@ class QueryParser:
             return 
 
         # Price pattern exact
-        if match := re.search(r'\b(?:at|exactly)\s+\$?(\d+)\b', query, re.I):
+        if match := re.search(r'\b(?:at|exactly)?\s+\$?(\d{4,})\s*(dollar|usd|dollars)?\b', query, re.I):
             self.filters['price'] = int(match.group(1))
 
     def parse_sqft(self, query):
@@ -232,6 +238,17 @@ class QueryParser:
         if min_matched or max_matched:
             return 
 
+        # bedrooms pattern approx
+        # ~ 5 bedrooms, around 5 bedrooms
+        p1 = r'\b(?:around|about|approximately|roughly|~)\s*(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*(?:bed|bedroom|br|bd)s?\b'
+        match = re.search(p1, query, re.I)
+        if match :
+            raw = match.group(1)
+            num = int(raw) if raw.isdigit() else _spell_num_from_word(raw)
+            self.filters['bedrooms_min'] = num * 0.8
+            self.filters['bedrooms_max'] = num * 1.2
+            return 
+            
         # Bedrooms pattern exact
         # 2 bedrooms, 2-bedroom, two bedrooms, two-bedroom
         p1= r'\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten)(?:\s*-\s*|\s+)(bed|bedroom|br|bd)s?\b'
@@ -269,6 +286,18 @@ class QueryParser:
         if min_matched or max_matched:
             return 
 
+        # bathrooms pattern approx
+        # ~ 5 bathrooms, around 5 bathrooms
+        p1 = r'\b(?:around|about|approximately|roughly|~)\s*(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*(?:bath|bathroom)s?\b'
+        match = re.search(p1, query, re.I)
+        if match :
+            raw = match.group(1)
+            num = float(raw) if _is_number(raw) else _spell_num_from_word(raw)
+            full, half = _split_number(num)
+            self.filters['bathrooms_min'] = full * 0.8
+            self.filters['bathrooms_max'] = full * 1.2
+            return 
+
         # Bathrooms pattern exact
         # 2.5 bathrooms, 2-bathroom, two bathrooms, two-bathroom, 2 full bathrooms, two full bathrooms
         p1= r'\b(\d+(?:\.\d+)?|one|two|three|four|five|six|seven|eight|nine|ten)(?:\s*-\s*|\s+|\s*full\s+)(?:bath|bathroom)s?\b'
@@ -278,7 +307,7 @@ class QueryParser:
             num = float(raw) if _is_number(raw) else _spell_num_from_word(raw)
             full, half = _split_number(num)
             if half:
-                self.filter["bathroom_half"] = 1
+                self.filters["bathroom_half"] = 1
             self.filters["bathrooms"] = full
         
         # more to add: half bathroom cases, mix of full and half
@@ -292,7 +321,10 @@ class QueryParser:
         amenities, _ = self.extractor.extract_amenities(query)
         if amenities:
             self.filters["amenities"] = amenities
-
+    def parse_features(self, query):
+        features, _ = self.extractor.extract_amenities(query)
+        if features:
+            self.filters["amenities"] = features
 
     def parse(self, query):
         self.filters = {}
@@ -302,7 +334,9 @@ class QueryParser:
         self.parse_sqft(query)
         self.parse_price(query)
 
+        self.parse_city(query)
         self.parse_amenity(query)
+        self.parse_features(query)
         
 
         return self.filters
