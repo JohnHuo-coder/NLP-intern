@@ -4,6 +4,9 @@ from pathlib import Path
 import sys
 import pandas as pd
 
+# Repo root (parent of ``scripts/``) so JSON paths work when cwd is e.g. ``notebooks/``.
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
 # Phrases commonly used as property amenities in listing text (longer phrases matched first).
 
 def _listing_bed_bath_slash(text):
@@ -62,13 +65,28 @@ class EntityExtractor:
         self.amenities = self._load_amenities()
         self.features = self._load_features()
     
-    def _load_amenities(self, amenities_path = "data/processed/amenities.json"):
-        with open(amenities_path, 'r') as f:
+    def _load_amenities(self, amenities_path=None):
+        path = (
+            Path(amenities_path)
+            if amenities_path
+            else _PROJECT_ROOT / "data" / "processed" / "amenities.json"
+        )
+        if not path.is_absolute():
+            path = _PROJECT_ROOT / path
+        with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
         amenities = data["amenities"]
         return amenities
-    def _load_features(self, features_path = "data/processed/features.json"):
-        with open(features_path, 'r') as f:
+
+    def _load_features(self, features_path=None):
+        path = (
+            Path(features_path)
+            if features_path
+            else _PROJECT_ROOT / "data" / "processed" / "features.json"
+        )
+        if not path.is_absolute():
+            path = _PROJECT_ROOT / path
+        with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
         features = data["features"]
         return features
