@@ -6,6 +6,13 @@ import html
 import unicodedata
 from nltk.corpus import stopwords
 import pandas as pd
+from pathlib import Path
+import sys
+
+_SCRIPTS_DIR = Path(__file__).resolve().parent
+if str(_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS_DIR))
+
 class TextCleaner:
     def __init__(self):
         # usually stick together with number: 2bd, 2ba, 2rms, 2-bd, 2-ba
@@ -41,8 +48,8 @@ class TextCleaner:
         self.stop_words = set(stopwords.words("english"))
     def _abbrev_pattern(self):
         room_units = sorted(self.room_abbrev_map.keys(), key=len, reverse=True)
-        room_pattern = r'\b(?:\d+(?:\.\d+)?)\s*-?\s*(' + '|'.join(map(re.escape, room_units)) + r')s?\b'
-        area_pattern = r'\b(?:\d+(?:\.\d+)?)\s*-?\s*(sq\s*\.?\s*ft\.?|sqft)\b'
+        room_pattern = r'\b(\d+(?:\.\d+)?\+?)?\s*-?\s*(' + '|'.join(map(re.escape, room_units)) + r')s?\b'
+        area_pattern = r'\b(\d+(?:\.\d+)?\+?)?\s*-?\s*(sq\s*\.?\s*ft\.?|sqft)\b'
         no_s_keys = sorted(self.no_s_abbrev.keys(), key=len, reverse=True)
         no_s_pattern = r'(?<!\w)(' + '|'.join(map(re.escape, no_s_keys)) + r')(?!\w)'
         normal_keys = sorted(self.normal_abbrev_map.keys(), key=len, reverse=True)
@@ -64,6 +71,8 @@ class TextCleaner:
             matches = col.dropna().str.findall(pattern, flags = re.I)
             for lst in matches:
                 for m in lst:
+                    if isinstance(m, tuple):
+                        m = m[-1]
                     counter[m.lower()] += 1
         return counter.most_common(top_abbr)
     def _detect_html(self, col):
@@ -176,8 +185,12 @@ class TextCleaner:
         return text
     def expand_abbreviations(self, text):
         room_pattern, area_pattern, no_s_pattern, normal_pattern = self._abbrev_pattern()
-        text = re.sub(room_pattern, lambda m: self.room_abbrev_map[m.group(1).lower()], text, flags=re.I)
-        text = re.sub(area_pattern, lambda m: self.measurement_abbrev_map[m.group(1).lower()], text, flags=re.I)
+        text = re.sub(room_pattern, lambda m: (f"{m.group(1)} {self.room_abbrev_map[m.group(2).lower()]}" 
+                                                if m.group(1)
+                                                else self.room_abbrev_map[m.group(2).lower()]), text, flags=re.I)
+        text = re.sub(area_pattern, lambda m: (f"{m.group(1)} {self.measurement_abbrev_map[m.group(2).lower()]}"
+                                                if m.group(1)
+                                                else self.measurement_abbrev_map[m.group(2).lower()]), text, flags=re.I)
         text = re.sub(no_s_pattern, lambda m: self.no_s_abbrev[m.group(1).lower()], text, flags=re.I)
         text = re.sub(normal_pattern, lambda m: self.normal_abbrev_map[m.group(1).lower()], text, flags=re.I)
         return text
