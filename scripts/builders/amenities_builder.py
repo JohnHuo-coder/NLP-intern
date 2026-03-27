@@ -32,7 +32,22 @@ single_word_amenities = (
     "parking",
     "driveway"
 )
-amenity_set = set(amenities) | set(single_word_amenities)
+views = (
+    "ocean view",
+    "lake view",
+    "river view",
+    "waterfront",
+    "city skyline view",
+    "park view",
+    "garden view",
+    "mountain view",
+    "forest view",
+    "greenbelt view",
+    "city view",
+    "street view",
+    "neighborhood view"
+)
+amenity_set = set(amenities) | set(single_word_amenities)|set(views)
 amenity_list = [normalize(a) for a in amenity_set]
 amenity_dict = {"amenities": amenity_list}
 with open("data/processed/amenities.json", "w") as f:
