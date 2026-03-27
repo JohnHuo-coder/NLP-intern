@@ -21,7 +21,7 @@ single_word_features = (
     "refrigerator", "hood",
     "tub", "shower", "vanity", "sink",
     "heating and cooling", "air conditioning", "heating",
-    "fireplace", "lighting"
+    "fireplace", "lighting", "basement"
 )
 feature_set = set(features) | set(single_word_features)
 feature_list = [normalize(a) for a in feature_set]
