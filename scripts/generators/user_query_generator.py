@@ -10,80 +10,60 @@ def build_journey_templates():
     """Journey stage -> list of (intent, template with placeholders).
 
     browsing: casual exploration, no commitment
-    researching: comparing options, gathering information
+    researching: listing search with clearer filters than browsing, still exploratory (not compare/advice)
     ready-to-buy: concrete criteria, next-step actions
     """
     return {
         "browsing": [
             (
-                "search_buy",
+                "browse",
                 "I'm just looking around {city} — anything under ${price}?",
             ),
             (
-                "search_buy",
+                "browse",
                 "Show me what's out there in {city} with around {bed} bedrooms.",
             ),
             (
-                "search_buy",
+                "browse",
                 "Curious what homes near {city} might have a {amenity}.",
             ),
             (
-                "search_rent",
+                "browse",
                 "Just browsing rentals in {city} with {bed} bedrooms.",
             ),
             (
-                "search_rent",
+                "browse",
                 "Any pet-friendly rental ideas in {city}? Not in a rush.",
             ),
         ],
         "researching": [
             (
-                "compare_options",
-                "Compare the top 3 listings in {city} by price and square feet.",
+                "search_research",
+                "I'm narrowing down in {city} — show homes around ${price}, still flexible.",
             ),
             (
-                "compare_options",
-                "Which is better value: a home with {amenity} or more square footage in {city}?",
+                "search_research",
+                "What listings in {city} have about {bed} bedrooms? Just researching, not in a hurry.",
             ),
             (
-                "compare_options",
-                "Can you compare nearby listings by commute and amenities?",
+                "search_research",
+                "Search {city} for places with {amenity}; I'm shortlisting before I get serious.",
             ),
             (
-                "neighborhood_info",
-                "How is neighborhood safety in {city}?",
+                "search_research",
+                "Show me what's on the market in {city} with at least {bath} bathrooms.",
             ),
             (
-                "neighborhood_info",
-                "Tell me about schools near listings in {city}.",
+                "search_research",
+                "I'd like to see rentals in {city} near {sqft} sq ft — exploring, not applying yet.",
             ),
             (
-                "neighborhood_info",
-                "What are nearby restaurants and parks around this property?",
+                "search_research",
+                "Pull up homes in {city} under roughly ${price} with {amenity}; still exploring the market.",
             ),
             (
-                "mortgage_finance",
-                "Estimate monthly mortgage for a ${price} home with 20% down.",
-            ),
-            (
-                "mortgage_finance",
-                "How much house can I afford if my budget is ${price}?",
-            ),
-            (
-                "property_details",
-                "Does this listing include {amenity}? I need the details.",
-            ),
-            (
-                "property_details",
-                "What is the lot size and interior square footage?",
-            ),
-            (
-                "investment_analysis",
-                "Analyze rental yield for this property in {city}.",
-            ),
-            (
-                "investment_analysis",
-                "Estimate 5-year appreciation potential in {city}.",
+                "search_research",
+                "Look for options in {city}: around {bed} beds and {amenity}, no rush.",
             ),
         ],
         "ready-to-buy": [
@@ -108,36 +88,20 @@ def build_journey_templates():
                 "Please find properties in {city} around {sqft} square feet.",
             ),
             (
-                "search_rent",
-                "Find rentals in {city} with {bed} bedrooms under ${price} per month.",
+                "search_buy",
+                "Need a {bed} bed {bath} bath in {city} under ${price} with {amenity}.",
             ),
             (
-                "search_rent",
-                "I need a rental near {city} with {amenity} — ready to apply.",
+                "search_buy",
+                "Looking to buy in {city}: at least {bed} bedrooms, max ${price}.",
             ),
             (
-                "schedule_visit",
-                "Schedule a viewing for the {city} listing with {amenity}.",
+                "search_buy",
+                "Show single-family homes in {city} around {sqft} sq ft below ${price}.",
             ),
             (
-                "schedule_visit",
-                "Book a house tour this weekend for a {bed} bedroom in {city}.",
-            ),
-            (
-                "schedule_visit",
-                "Set up an in-person showing for the listing with {bath} bathrooms.",
-            ),
-            (
-                "negotiation_offer",
-                "Draft an offer at ${price} for the home in {city}.",
-            ),
-            (
-                "negotiation_offer",
-                "What is a reasonable bid for a {bed} bed home in {city}?",
-            ),
-            (
-                "negotiation_offer",
-                "Help me write a negotiation message for a listing with {amenity}.",
+                "search_buy",
+                "I want listings in {city} with {amenity}, {bed} BR or more, budget ${price}.",
             ),
         ],
     }
