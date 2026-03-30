@@ -14,7 +14,7 @@ WHERE L_Remarks IS NOT NULL AND LENGTH(L_Remarks) > 50
 ORDER BY RAND() LIMIT 1000
 """
 df = pd.read_sql(query, conn)
-df.to_csv('data/processed/listing_sample.csv', index = False)
+df.to_csv('data/unprocessed/listing_sample.csv', index = False)
 
 extract_distinct_query = """
 SELECT DISTINCT L_City 
@@ -59,6 +59,19 @@ FROM rets_property
 
 df_text = pd.read_sql(load_text_columns_query, conn)
 df_text.to_csv('data/unprocessed/text_columns.csv', index = False)
+
+
+# load 10k listings for semantic searcher latency test
+load_10k_listing_query = """
+SELECT L_ListingID, L_Address, L_City, L_Keyword2 as beds,
+        LM_Dec_3 as bath, L_SystemPrice as price, L_Remarks as remarks
+FROM rets_property
+WHERE L_Remarks IS NOT NULL AND LENGTH(L_Remarks) > 50
+ORDER BY RAND() LIMIT 10000
+"""
+
+df_text = pd.read_sql(load_10k_listing_query, conn)
+df_text.to_csv('data/unprocessed/listing_sample_10k.csv', index = False)
 
 conn.close
 
