@@ -2,7 +2,7 @@ import re
 import sys
 from pathlib import Path
 
-# convert 2.5 bath into 2 full bath + 1 half bath, since the table only has full bath column and half bath column
+# support in the future: house district (high school district), hoa fee range, fencing type
 
 _SCRIPTS_DIR = Path(__file__).resolve().parent
 if str(_SCRIPTS_DIR) not in sys.path:
@@ -100,12 +100,13 @@ class QueryParser:
         elif cat == "sqft":
             num = num_symbol = "(\d+(?:\.\d+)?)\s*(?:square feet)"
 
-        word_pattern = rf'\b(?:under|below|at most|less than|up to|maximum|no more than|capped at)\s+{num}\b'
-        symbol_pattern = rf'\b<\s*{num_symbol}\b'
+        word_pattern = rf'\b(?:under|below|at most|less than|up to|maximum|max|no more than|capped at)\s+{num}\b'
+        word_pattern_2 = rf'\b{num}\s+(?:or less)\b'
+        symbol_pattern = rf'<\s*{num_symbol}\b'
 
         filter_key_max = f'{cat}_max'
 
-        for p in [word_pattern, symbol_pattern]:
+        for p in [word_pattern, word_pattern_2, symbol_pattern]:
             match = re.search(p, query, re.I)
             if match :
                 raw_max = match.group(1)
@@ -135,12 +136,13 @@ class QueryParser:
             num = symbol_gt = "(\d+(?:\.\d+)?)\s*(?:square feet)"
             symbol_plus_pattern = r'\b(\d+(?:\.\d+)?)\s*\+\s*(?:square feet)\b'
 
-        word_pattern = rf'\b(?:at least|above|over|more than|starting from|no less than|minimum)\s+{num}\b'
-        symbol_gt_pattern = rf'\b>\s*{symbol_gt}\b'
+        word_pattern = rf'\b(?:at least|above|over|more than|starting from|no less than|minimum|min)\s+{num}\b'
+        word_pattern_2 = rf'\b{num}\s+(?:or more)\b'
+        symbol_gt_pattern = rf'>\s*{symbol_gt}\b'
 
         filter_key_min = f'{cat}_min'
 
-        for p in [word_pattern, symbol_gt_pattern, symbol_plus_pattern]:
+        for p in [word_pattern, word_pattern_2, symbol_gt_pattern, symbol_plus_pattern]:
             match = re.search(p, query, re.I)
             if match :
                 raw_min = match.group(1)
@@ -175,7 +177,7 @@ class QueryParser:
         
         # Price pattern approx
         # ~ $20000, around 20000
-        p1 = r'\b(?:around|about|approximately|roughly|~)\s*\$?(\d{4,})\s*(dollar|usd|dollars)?\b'
+        p1 = r'(?:\b(?:around|about|approximately|roughly|near)\b|~)\s*\$?(\d{4,})(?!\s*(?:square feet))'
         match = re.search(p1, query, re.I)
         if match :
             self.filters['price_min'] = int(match.group(1)) * 0.8
@@ -183,7 +185,7 @@ class QueryParser:
             return 
 
         # Price pattern exact
-        if match := re.search(r'\b(?:at|exactly)?\s+\$?(\d{4,})\s*(dollar|usd|dollars)?\b', query, re.I):
+        if match := re.search(r'\b(?:at|exactly)?\s+\$?(\d{4,})(?!\s*(?:square feet))\b', query, re.I):
             self.filters['price'] = int(match.group(1))
 
     def parse_sqft(self, query):
@@ -209,7 +211,7 @@ class QueryParser:
         
         # Sqft pattern approx
         # ~ 2000 sqft, around 2000 sqft
-        p1 = r'\b(?:around|about|approximately|roughly|~)\s*(\d+(?:\.\d+)?)\s*(?:square feet)\b'
+        p1 = r'(?:\b(?:around|about|approximately|roughly|near)\b|~)\s*(\d+(?:\.\d+)?)\s*(?:square feet)\b'
         match = re.search(p1, query, re.I)
         if match :
             self.filters['sqft_min'] = int(match.group(1)) * 0.8
@@ -217,7 +219,7 @@ class QueryParser:
             return 
 
         # sqft pattern exact
-        if match := re.search(r'\b(?:at|exactly)\s+(\d+(?:\.\d+)?)\s*(?:square feet)\b', query, re.I):
+        if match := re.search(r'\b(?:at|exactly)?\s+(\d+(?:\.\d+)?)\s*(?:square feet)\b', query, re.I):
             self.filters['sqft'] = int(match.group(1))
 
     def parse_bedroom(self, query):
@@ -240,13 +242,13 @@ class QueryParser:
 
         # bedrooms pattern approx
         # ~ 5 bedrooms, around 5 bedrooms
-        p1 = r'\b(?:around|about|approximately|roughly|~)\s*(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*(?:bed|bedroom|br|bd)s?\b'
+        p1 = r'(?:\b(?:around|about|approximately|roughly)\b|~)\s*(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*(?:bed|bedroom|br|bd)s?\b'
         match = re.search(p1, query, re.I)
         if match :
             raw = match.group(1)
             num = int(raw) if raw.isdigit() else _spell_num_from_word(raw)
-            self.filters['bedrooms_min'] = num * 0.8
-            self.filters['bedrooms_max'] = num * 1.2
+            self.filters['bedrooms_min'] = num - 1 if num - 1 > 0 else num
+            self.filters['bedrooms_max'] = num +1
             return 
             
         # Bedrooms pattern exact
@@ -259,6 +261,7 @@ class QueryParser:
             self.filters["bedrooms"] = num
 
     def parse_bathroom(self, query):
+        # convert 2.5 bath into 2 full bath + 1 half bath, since the table only has full bath column and half bath column
         # to limit the scope, only supports the following format
         # 2.5bathrooms, 2.5 bathrooms, 2 bathrooms, 2-bathroom, 2 - bathroom, 2 full bathroom, 2full bathroom, 
         # one bathroom, one-bathroom, two full bathrooms
@@ -288,14 +291,14 @@ class QueryParser:
 
         # bathrooms pattern approx
         # ~ 5 bathrooms, around 5 bathrooms
-        p1 = r'\b(?:around|about|approximately|roughly|~)\s*(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*(?:bath|bathroom)s?\b'
+        p1 = r'(?:\b(?:around|about|approximately|roughly)\b|~)\s*(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*(?:bath|bathroom)s?\b'
         match = re.search(p1, query, re.I)
         if match :
             raw = match.group(1)
             num = float(raw) if _is_number(raw) else _spell_num_from_word(raw)
             full, half = _split_number(num)
-            self.filters['bathrooms_min'] = full * 0.8
-            self.filters['bathrooms_max'] = full * 1.2
+            self.filters['bathrooms_min'] = full -1 if full - 1 > 0 else full
+            self.filters['bathrooms_max'] = full +1
             return 
 
         # Bathrooms pattern exact
@@ -318,13 +321,18 @@ class QueryParser:
             self.filters["city"] = match.group(1)
             
     def parse_amenity(self, query):
-        amenities, _ = self.extractor.extract_amenities(query)
-        if amenities:
-            self.filters["amenities"] = amenities
+        neg_amenity_terms, neg_amenity_kept = self.extractor.extract_negated_amenities(query)
+        amenity_terms, _ = self.extractor.extract_amenities(
+            query, neg_kept=neg_amenity_kept
+        )
+        if amenity_terms:
+            self.filters["negated_amenities"] = neg_amenity_terms
+        if amenity_terms:
+            self.filters["amenities"] = amenity_terms
     def parse_features(self, query):
-        features, _ = self.extractor.extract_amenities(query)
+        features, _ = self.extractor.extract_interior_features(query)
         if features:
-            self.filters["amenities"] = features
+            self.filters["features"] = features
 
     def parse(self, query):
         self.filters = {}
@@ -341,9 +349,81 @@ class QueryParser:
 
         return self.filters
 
-    def to_sql(self, filters, table = 'rets_property'):
+
+
+    def parse_amenity_to_sql(self, conditions, params):
+
+        amenity_full_dict = self.extractor.amenity_full
+        set_from_db = amenity_full_dict["set_from_db"]
+        pool_set = set_from_db["pool"]
+        pool2raw = amenity_full_dict["pool2raw"]
+        spa_set = set_from_db["spa"]
+        spa2raw = amenity_full_dict["spa2raw"]
+        view_set = set_from_db["view"]
+        view2raw = amenity_full_dict["view2raw"]
+        security_set = set_from_db["security"]
+        security2raw = amenity_full_dict["security2raw"]
+        association_set = set_from_db["association"]
+        association2raw = amenity_full_dict["association2raw"]
+        community_set = set_from_db["community"]
+        community2raw = amenity_full_dict["community2raw"]
+
+
+        # Amenities: search L_Remarks for each keyword
+        for amenity in self.filters.get("amenities", []):
+            if amenity == "private pool":
+                conditions.append("PoolPrivateYN = 1")
+            if amenity == "attached garage":
+                conditions.append("AttachedGarageYN = 1")
+            if "garage" in amenity:
+                conditions.append("GarageYN = 1 OR AttachedGarageYN = 1")
+            if "parking" in amenity:
+                conditions.append("OpenParkingSpaces >= 1 OR GarageYN = 1 OR AttachedGarageYN = 1")
+            if amenity in pool_set:
+                raw = pool2raw[amenity]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("LOWER(PoolFeatures) LIKE %s")
+                params.append(f"%{raw_no_space}%")
+
+            elif amenity in spa_set:
+                conditions.append("SpaYN = 1")
+                raw = spa2raw[amenity]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("LOWER(SpaFeatures) LIKE %s")
+                params.append(f"%{raw_no_space}%")
+
+            elif amenity in view_set:
+                conditions.append("ViewYN = 1")
+                raw = view2raw[amenity]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("LOWER(View) LIKE %s")
+                params.append(f"%{raw_no_space}%")
+            
+            elif amenity in security_set:
+                raw = security2raw[amenity]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("LOWER(SecurityFeatures) LIKE %s")
+                params.append(f"%{raw_no_space}%")
+            
+            elif amenity in association_set:
+                raw = association2raw[amenity]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("LOWER(AssociationAmenities) LIKE %s")
+                params.append(f"%{raw_no_space}%")
+
+            elif amenity in community_set:
+                raw = community2raw[amenity]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("LOWER(CommunityFeatures) LIKE %s")
+                params.append(f"%{raw_no_space}%")
+            else:
+                conditions.append("LOWER(L_Remarks) LIKE %s")
+                params.append(f"%{amenity.lower()}%")
+
+    def to_sql(self, table = 'rets_property'):
         conditions = []
         params = []
+        filters = self.filters
         
         if "price_max" in filters:
             conditions.append("L_SystemPrice <= %s")
@@ -401,10 +481,19 @@ class QueryParser:
             conditions.append("L_City = %s")
             params.append(filters["city"])
 
-        # Amenities: search L_Remarks for each keyword
-        for amenity in filters.get("amenities", []):
-            conditions.append("LOWER(L_Remarks) LIKE %s")
-            params.append(f"%{amenity.lower()}%")
+        self.parse_amenity_to_sql(conditions, params)
+
+        # for feature in filters.get("features", []):
+        #     if "fireplace" in feature:
+        #         conditions.append("FireplaceYN = 1")
+        #     if "heating" in feature or "hvac" in feature:
+        #         conditions.append("HeatingYN = 1")
+        #     if "cooling" in feature or "hvac" in feature:
+        #         conditions.append("CoolingYN = 1")
+            
+        #     conditions.append("LOWER(L_Remarks) LIKE %s")
+        #     params.append(f"%{feature.lower()}%")
+        
 
         where_clause = " AND ".join(conditions) if conditions else "1=1"
         sql = f"SELECT * FROM {table} WHERE {where_clause} LIMIT 50"
