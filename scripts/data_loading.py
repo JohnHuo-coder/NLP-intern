@@ -33,9 +33,32 @@ SELECT
 FROM rets_property;   
 """
 # keyword 1 is lot size area in sqft, use LM_Int2_3 for living area
-
 df_numeric = pd.read_sql(load_numeric_value_query, conn)
-df_numeric.to_csv('data/processed/numeric_values.csv', index = False)
+df_numeric.to_csv('data/unprocessed/numeric_values.csv', index = False)
+
+
+
+# Only load text column that might appear in user query
+load_text_columns_query = """
+SELECT 
+    SpaFeatures as spa_feature,
+    SecurityFeatures as security_feature,
+    CommunityFeatures as community_feature,
+    PoolFeatures as pool_feature,
+    InteriorFeatures as interior_feature,
+    View as view,
+    Roof as roof,
+    AssociationAmenities as association_amenity,
+    ArchitecturalStyle as style,
+    Cooling as cooling,
+    Heating as heating,
+    Appliances as appl,
+    Flooring as flr_type
+FROM rets_property
+"""
+
+df_text = pd.read_sql(load_text_columns_query, conn)
+df_text.to_csv('data/unprocessed/text_columns.csv', index = False)
 
 conn.close
 
