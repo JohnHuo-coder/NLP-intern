@@ -89,7 +89,9 @@ def _spell_num_from_word(word):
 
 class EntityExtractor:
     def __init__(self):
-        self.amenities = self._load_amenities()
+        amenity_full_dict = self._load_amenities()
+        self.amenity_full = amenity_full_dict
+        self.amenities = amenity_full_dict["amenities"]
         self.features = self._load_features()
     
     def _load_amenities(self, amenities_path=None):
@@ -102,8 +104,7 @@ class EntityExtractor:
             path = _PROJECT_ROOT / path
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
-        amenities = data["amenities"]
-        return amenities
+        return data
 
     def _load_features(self, features_path=None):
         path = (
