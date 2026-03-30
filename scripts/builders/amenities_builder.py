@@ -5,6 +5,7 @@ import nltk
 from nltk.stem import WordNetLemmatizer
 lemmatizer = WordNetLemmatizer()
 
+# conver plural to singular
 def normalize(text):
     return " ".join(lemmatizer.lemmatize(w) for w in text.split())
 
@@ -50,8 +51,24 @@ views = (
 with open("data/processed/text_features_from_db.json", "r") as f:
     text_features = json.load(f)
 
-association_amenity = set(text_features["association_amenity"])
-terms_to_exclude = set([
+# contains plural like trails, horse trails, needs to be normalize. 
+# dict is used for converting normalized term back to its form in db
+def build_set(amenity_type, terms_to_exclude):
+    amenity_set = set()
+    processed_to_raw_dict = {}
+    amenity_list = text_features[amenity_type]
+    for i in amenity_list:
+        if i in terms_to_exclude:
+            continue
+        key = normalize(i)
+        if amenity_type == "spa_feature":
+            key = key + " spa"
+        amenity_set.add(key)
+        processed_to_raw_dict[key] = i
+    return amenity_set, processed_to_raw_dict
+
+
+excluded_term_assoc = set([
     "pets not allowed",
     "maintenance grounds",
     "maintenance front yard",
@@ -69,19 +86,17 @@ terms_to_exclude = set([
     "storage",
     "call for rules",
 ])
-association_amenity_cleaned = association_amenity - terms_to_exclude
+association_amenity_set, association_to_raw_dict = build_set("association_amenity", excluded_term_assoc)
 
-spa_types = set(text_features["spa_feature"])
-terms_to_exclude = set([
+excluded_term_spa = set([
     "no permits",
     "permits",
     "bath"
 ])
-spa_types_cleaned = spa_types - terms_to_exclude
-spa_feature = [t + " spa" for t in spa_types_cleaned]
+spa_amenity_set, spa_to_raw_dict = build_set("spa_feature", excluded_term_spa)
+   
 
-security_amenities = set(text_features["security_feature"])
-terms_to_exclude = set([
+excluded_term_security = set([
     "resident manager",
     "fire sprinkler system",
     "firewalls",
@@ -92,11 +107,9 @@ terms_to_exclude = set([
     "fire rated drywall"
 ])
 
-security_amenity_cleaned = security_amenities - terms_to_exclude
+security_set, security_to_raw_dict = build_set("security_feature", excluded_term_security)
 
-
-community_amenities = set(text_features["community_feature"])
-terms_to_exclude = set([
+excluded_term_community = set([
     "storm drains",
     "horse trails",
     "ravine",
@@ -116,8 +129,10 @@ terms_to_exclude = set([
     "military land",
     "rural"
 ])
-community_amenity_cleaned = community_amenities - terms_to_exclude
+community_set, community_to_raw_dict = build_set("community_feature", excluded_term_community)
 
+
+# pool and view has more cases to consider, handle seperately
 pool_to_raw_dict = {}
 pool = text_features["pool_feature"]
 pool_set = set()
@@ -167,17 +182,17 @@ for v in view_feature:
 
 amenity_set = ( set(amenities) 
                 | set(single_word_amenities)
-                | association_amenity_cleaned
-                | set(spa_feature)
-                | security_amenity_cleaned
-                | community_amenity_cleaned
+                | association_amenity_set
+                | spa_amenity_set
+                | security_set
+                | community_set
                 | pool_set
                 | view_set)
 
-set_from_db = {"association": list(association_amenity_cleaned),
-                "spa": spa_feature,
-                "security": list(security_amenity_cleaned),
-                "community": list(community_amenity_cleaned),
+set_from_db = {"association": list(association_amenity_set),
+                "spa": list(spa_amenity_set),
+                "security": list(security_set),
+                "community": list(community_set),
                 "pool": list(pool_set),
                 "view": list(view_set)}
 
@@ -185,7 +200,12 @@ amenity_list = list(set([normalize(a) for a in amenity_set]))
 amenity_list = sorted(amenity_list)
 amenity_dict = {"amenities": amenity_list,
                 "set_from_db": set_from_db,
+                "association2raw": association_to_raw_dict,
+                "spa2raw": spa_to_raw_dict,
+                "security2raw": security_to_raw_dict,
+                "community2raw": community_to_raw_dict,
                 "pool2raw": pool_to_raw_dict,
                 "view2raw": view_to_raw_dict}
+                
 with open("data/processed/amenities.json", "w") as f:
     json.dump(amenity_dict, f, indent = 2)
