@@ -23,7 +23,14 @@ class TextCleaner:
             'rm': 'room', 'rms': 'rooms', 'flr': 'floor', 'lvl': 'level',
         }
 
-        self.measurement_abbrev_map = {'sqft': 'square feet', "sq ft": "square feet", "sq. ft": "square feet", "sq. ft.": "square feet"}
+        self.measurement_abbrev_map = {
+            'sqft': 'square feet', 
+            "sq ft": "square feet", 
+            "sq. ft": "square feet", 
+            "sq. ft.": "square feet",
+            "sq.ft": "square feet",
+            "sq.ft.": "square feet"
+        }
 
         self.normal_abbrev_map = {
             'kit': 'kitchen',
@@ -246,3 +253,18 @@ class TextCleaner:
             'unicode_examples': unicode_results,
             'common_abbreviations': self._detect_abbreviations(df[column_name], most_common_abbr)
         }
+
+if __name__ == "__main__":
+    root = Path(__file__).resolve().parents[1]
+    in_path = root / "data" / "unprocessed" / "listing_sample.csv"
+    in_path_10k = root / "data" / "unprocessed" / "listing_sample_10k.csv"
+    out_path = root / "data" / "processed" / "listing_sample_cleaned.csv"
+    out_path_10k = root / "data" / "processed" / "listing_sample_cleaned_10k.csv"
+
+    df = pd.read_csv(in_path)
+    df_10k = pd.read_csv(in_path_10k)
+    cleaner = TextCleaner()
+    df["remarks"] = cleaner.clean_column(df["remarks"])
+    df.to_csv(out_path, index=False)
+    df_10k["remarks"] = cleaner.clean_column(df_10k["remarks"])
+    df_10k.to_csv(out_path_10k, index=False)
