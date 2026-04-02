@@ -321,18 +321,24 @@ class QueryParser:
             self.filters["city"] = match.group(1)
             
     def parse_amenity(self, query):
-        neg_amenity_terms, neg_amenity_kept = self.extractor.extract_negated_amenities(query)
-        amenity_terms, _ = self.extractor.extract_amenities(
-            query, neg_kept=neg_amenity_kept
+        neg_amenity_terms, neg_amenity_kept = self.extractor.extract_negated_amenities_features(query, type = "amenity")
+        amenity_terms, _ = self.extractor.extract_amenities_features(
+            query, type = "amenity", neg_kept=neg_amenity_kept
         )
-        if amenity_terms:
+        if neg_amenity_terms:
             self.filters["negated_amenities"] = neg_amenity_terms
         if amenity_terms:
             self.filters["amenities"] = amenity_terms
+
     def parse_features(self, query):
-        features, _ = self.extractor.extract_interior_features(query)
-        if features:
-            self.filters["features"] = features
+        neg_feature_terms, neg_feature_kept = self.extractor.extract_negated_amenities_features(query, type = "feature")
+        feature_terms, _ = self.extractor.extract_amenities_features(
+            query, type = "feature", neg_kept=neg_feature_kept
+        )
+        if neg_feature_terms:
+            self.filters["negated_features"] = neg_feature_terms
+        if feature_terms:
+            self.filters["features"] = feature_terms
 
     def parse(self, query):
         self.filters = {}
@@ -420,6 +426,61 @@ class QueryParser:
                 conditions.append("LOWER(L_Remarks) LIKE %s")
                 params.append(f"%{amenity.lower()}%")
 
+    def parse_house_feature_to_sql(self, conditions, params):
+
+        house_feature_full_dict = self.extractor.feature_full
+        set_from_db = house_feature_full_dict["set_from_db"]
+
+        interior_set = set_from_db["interior"]
+        interior2raw = house_feature_full_dict["interior2raw"]
+        floor_set = set_from_db["floor"]
+        floor2raw = house_feature_full_dict["floor2raw"]
+        appl_set = set_from_db["appl"]
+        appl2raw = house_feature_full_dict["appl2raw"]
+        cooling_set = set_from_db["cooling"]
+        cool2raw = house_feature_full_dict["cool2raw"]
+        heating_set = set_from_db["heating"]
+        heat2raw = house_feature_full_dict["heat2raw"]
+
+        for feature in self.filters.get("features", []):
+            if "fireplace" in feature:
+                conditions.append("FireplaceYN = 1")
+            if feature in interior_set:
+                raw = interior2raw[feature]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("LOWER(InteriorFeatures) LIKE %s")
+                params.append(f"%{raw_no_space}%")
+
+            elif feature in appl_set:
+                raw = appl2raw[feature]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("LOWER(Appliances) LIKE %s")
+                params.append(f"%{raw_no_space}%")
+
+            elif feature in cooling_set:
+                conditions.append("CoolingYN = 1")
+                raw = cool2raw[feature]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("LOWER(Cooling) LIKE %s")
+                params.append(f"%{raw_no_space}%")
+            
+            elif feature in floor_set:
+                raw = floor2raw[feature]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("LOWER(Flooring) LIKE %s")
+                params.append(f"%{raw_no_space}%")
+            
+            elif feature in heating_set:
+                conditions.append("HeatingYN = 1")
+                raw = heat2raw[feature]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("LOWER(Heating) LIKE %s")
+                params.append(f"%{raw_no_space}%")
+
+            else:
+                conditions.append("LOWER(L_Remarks) LIKE %s")
+                params.append(f"%{feature.lower()}%")
+
     def to_sql(self, table = 'rets_property'):
         conditions = []
         params = []
@@ -482,17 +543,7 @@ class QueryParser:
             params.append(filters["city"])
 
         self.parse_amenity_to_sql(conditions, params)
-
-        # for feature in filters.get("features", []):
-        #     if "fireplace" in feature:
-        #         conditions.append("FireplaceYN = 1")
-        #     if "heating" in feature or "hvac" in feature:
-        #         conditions.append("HeatingYN = 1")
-        #     if "cooling" in feature or "hvac" in feature:
-        #         conditions.append("CoolingYN = 1")
-            
-        #     conditions.append("LOWER(L_Remarks) LIKE %s")
-        #     params.append(f"%{feature.lower()}%")
+        self.parse_house_feature_to_sql(conditions, params)
         
 
         where_clause = " AND ".join(conditions) if conditions else "1=1"
