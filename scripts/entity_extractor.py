@@ -90,9 +90,11 @@ def _spell_num_from_word(word):
 class EntityExtractor:
     def __init__(self):
         amenity_full_dict = self._load_amenities()
+        feature_full_dict = self._load_features()
         self.amenity_full = amenity_full_dict
+        self.feature_full = feature_full_dict
         self.amenities = amenity_full_dict["amenities"]
-        self.features = self._load_features()
+        self.features = feature_full_dict["features"]
     
     def _load_amenities(self, amenities_path=None):
         path = (
@@ -116,8 +118,7 @@ class EntityExtractor:
             path = _PROJECT_ROOT / path
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
-        features = data["features"]
-        return features
+        return data
     def extract_bedrooms(self, text):
         if not text:
             return None
@@ -251,13 +252,14 @@ class EntityExtractor:
             return int(match.group(1))
         return None
 
-    def extract_negated_amenities(self, text):
-        """Amenities explicitly rejected (e.g. ``no pool``, ``without a garage``)."""
+    def extract_negated_amenities_features(self, text, type):
+        """Amenities/features explicitly rejected (e.g. ``no pool``, ``without a garage``)."""
         if not text:
             return [], []
+        tax = self.amenities if type == "amenity" else self.features
         lowered = text.lower()
         matches = []
-        for phrase in sorted(self.amenities, key=len, reverse=True):
+        for phrase in sorted(tax, key=len, reverse=True):
             pat = _amenity_feature_negation_pattern(phrase)
             for m in pat.finditer(lowered):
                 matches.append((m.start(), m.end(), phrase))
@@ -275,19 +277,20 @@ class EntityExtractor:
         only_terms = list({p for _, _, p in kept})
         return only_terms, kept
 
-    def extract_amenities(self, text, neg_kept=None):
+    def extract_amenities_features(self, text, type, neg_kept=None):
         """
-        Positive amenity mentions. Spans overlapping ``extract_negated_amenities`` hits are dropped
+        Positive amenity/features mentions. Spans overlapping ``extract_negated_amenities`` hits are dropped
         so e.g. ``no pool`` does not count as wanting ``pool``.
         """
         if not text:
             return [], []
         lowered = text.lower()
         if neg_kept is None:
-            _, neg_kept = self.extract_negated_amenities(text)
+            _, neg_kept = self.extract_negated_amenities_features(text, type)
         neg_spans = [(s, e) for s, e, _ in neg_kept]
         matches = []
-        for phrase in sorted(self.amenities, key=len, reverse=True):
+        tax = self.amenities if type == "amenity" else self.features
+        for phrase in sorted(tax, key=len, reverse=True):
             pat = _amenity_feature_pattern(phrase)
             for m in pat.finditer(lowered):
                 if any(
@@ -309,35 +312,15 @@ class EntityExtractor:
         only_terms = list({p for _, _, p in kept})
         return only_terms, kept
 
-    def extract_interior_features(self, text):
-        if not text:
-            return [],[]
-        lowered = text.lower()
-        matches = []
-        for phrase in sorted(self.features, key = len, reverse = True):
-            pat = _amenity_feature_pattern(phrase)
-            for m in pat.finditer(lowered):
-                matches.append((m.start(), m.end(), phrase))
-        if not matches:
-            return [],[]
-        matches.sort(key = lambda x: (x[0], -(x[1]-x[0])))
-        kept = []
-        used = []
-        for start, end, phrase in matches:
-            if any(start < ue and end > us for us, ue in used):
-                continue
-            used.append((start, end))
-            kept.append((start, end, phrase))
-        kept.sort(key=lambda x: x[0])
-        only_terms = list(set([p for s,e, p in kept]))
-        return only_terms, kept
-
     def extract_all(self, text):
-        neg_amenity_terms, neg_amenity_kept = self.extract_negated_amenities(text)
-        amenity_terms, amenity_tuple = self.extract_amenities(
-            text, neg_kept=neg_amenity_kept
+        neg_amenity_terms, neg_amenity_kept = self.extract_negated_amenities_features(text, type = "amenity")
+        amenity_terms, amenity_tuple = self.extract_amenities_features(
+            text, type = "amenity", neg_kept=neg_amenity_kept
         )
-        feature_terms, feature_tuple = self.extract_interior_features(text)
+        neg_feature_terms, neg_feature_kept = self.extract_negated_amenities_features(text, type = "feature")
+        feature_terms, feature_tuple = self.extract_amenities_features(
+            text, type = "feature", neg_kept=neg_feature_kept
+        )
         return {
             "bedrooms": self.extract_bedrooms(text),
             "bathrooms": self.extract_bathrooms(text),
@@ -348,7 +331,9 @@ class EntityExtractor:
             "negated amenities": neg_amenity_terms,
             "negated amenities tuple": neg_amenity_kept,
             "interior features": feature_terms,
-            "interior features tuple": feature_tuple
+            "interior features tuple": feature_tuple,
+            "negated features": neg_feature_terms,
+            "negated features tuple": neg_feature_kept
         }
     def extract_column(self, col):
         results = col.apply(self.extract_all)
