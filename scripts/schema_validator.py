@@ -2,9 +2,7 @@ import json
 import pandas as pd
 
 class SchemaValidator:
-    def __init__(self, filters, schema_path='data/schema.json', cities_path = 'data/processed/distinct_cities.csv', stats_path = "data/processed/stats.json"):
-        with open(schema_path) as f:
-            self.schema = json.load(f)
+    def __init__(self, filters, cities_path = 'data/processed/distinct_cities.csv', stats_path = "data/processed/stats.json"):
         self.valid_cities = self._load_valid_cities(cities_path)
         self.stats = self._load_db_stats(stats_path) # loads the valide values from db
         self.errors = []
@@ -37,6 +35,15 @@ class SchemaValidator:
             if max_key in self.filters and min_key in self.filters:
                 if self.filters[max_key] < self.filters[min_key]:
                     self.errors.append(f"Max {cat} {self.filters[max_key]} can't be lower than Min {cat} {self.filters[min_key]}")
+    
+    def validate_negated(self):
+        # an amenity or feature can't be in both negated and wanted
+        for key in ["amenities", "features"]:
+            negated_key = f"negated_{key}"
+            negated_set = set(self.filters[negated_key])
+            for i in self.filters[key]:
+                if i in negated_set:
+                    self.errors.append(f"{i} can't be both wanted and negated")
 
     def validate_query(self):
 
