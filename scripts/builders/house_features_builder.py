@@ -15,12 +15,12 @@ with open("data/processed/taxonomy_categorized.json", "r") as f:
 features = [normalize(item["term"]) for item in taxonomy["terms"] if item["category"] == "interior feature"]
 
 single_word_features = (
-    "island", "pantry", "range", "oven",
+    "island", "pantry", "oven",
     "microwave", "dishwasher",
     "refrigerator", "hood",
     "tub", "shower", "vanity", "sink",
     "heating and cooling", "air conditioning", "heating",
-    "fireplace", "basement"
+    "fireplace", "basement", "laundry", "carpet"
 )
 
 with open("data/processed/text_features_from_db.json", "r") as f:
@@ -43,15 +43,25 @@ normalize_feature = {
     "wood product walls": ["wood product wall", "wood paneling"],
     "entrance foyer": ["entrance foyer", "entryway", "entry hall"],
     "chair climber": ["chair climber", "chair lift"],
-    "bedroom on main level": ["bedroom on main level", "bedroom on main floor", "first floor bedroom"],
+    "bedroom on main level": ["bedroom on main level", 
+                              "bedrooms on main level",
+                              "bedroom on main floor",
+                              "bedrooms on main floor",
+                              "first floor bedroom"],
     "french doors atrium doors": ["french door", "atrium door"],
-    "main level primary": ["primary bedroom on main floor", "master bedroom on first floor", "first floor bedroom", "main floor bedroom"],
+    "main level primary": ["primary bedroom on main floor", 
+                           "master bedroom on first floor", 
+                           "primary bedrooms on main floor", 
+                           "master bedrooms on first floor", 
+                           "first floor bedroom", 
+                           "main floor bedroom"],
     "all bedrooms up": ["all bedrooms on the same floor", "bedrooms upstairs", "all bedrooms together"],
     "all bedrooms down": ["all bedrooms on the same floor", "bedrooms downstairs", "all bedrooms together"],
-    "atrium": ["house with lots of natural light", "bright open space", "indoor garden space"],
-    "in law floorplan": ["house for my parents", "home for elderly parents", 
-                        "separate living space", "separate area", "adu", "extra unit",
-                        "guest suite", "extra space for guests"],
+    "atrium": ["atrium", "house with lots of natural light", "bright open space", "indoor garden space"],
+    "in law floorplan": [ "house for my parents", "home for elderly parents", 
+                          "separate living space", "separate area", 
+                          "adu", "extra unit",
+                          "guest suite", "extra space for guests", "room for guest", "rooms for guests"],
     "living room deck attached": ["living room with deck", "living room with attached deck"]
 }
 interior_to_raw_dict = defaultdict(list) # 2 different raw term can be match to same normalized term. 
@@ -61,7 +71,10 @@ for i in interior_feature:
         continue
     normalized_terms = normalize_feature.get(i, [i])
     for term in normalized_terms:
-        norm_term = normalize(term)
+        if i not in ["bedroom on main level", "main level primary", "all bedrooms up", "all bedrooms down", "in law floorplan"]:
+            norm_term = normalize(term)
+        else:
+            norm_term = term
         interior_feature_set.add(norm_term)
         interior_to_raw_dict[norm_term].append(i)
    
