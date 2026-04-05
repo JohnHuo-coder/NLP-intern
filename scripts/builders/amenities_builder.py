@@ -13,12 +13,12 @@ def normalize(text):
 with open("data/processed/taxonomy_categorized.json", "r") as f:
     taxonomy = json.load(f)
 amenities = [item["term"] for item in taxonomy["terms"] if item["category"] == "amenity"]
-single_word_amenities = (
+single_word_amenities = set([
+    "backyard",
     "clubhouse",
     "concierge",
     "doorman",
     "elevator",
-    "balcony",
     "patio",
     "deck",
     "garage",
@@ -32,8 +32,8 @@ single_word_amenities = (
     "garden",
     "parking",
     "driveway"
-)
-views = (
+])
+views = set([
     "ocean view",
     "lake view",
     "river view",
@@ -46,7 +46,20 @@ views = (
     "greenbelt view",
     "city view",
     "street view",
-)
+])
+
+# amenities that could appear in different type of amenity group
+cross_amenity = set([
+    "pool", "swimming pool", # too general, could appear in association amenity, community amenity, pool features
+    "guard", # in association and secruity
+    "spa", # in spa feature and association, spaYN is 1 is fine
+    "security", # in association and security
+    "hourse trail", # community and association
+    "golf", "golf course", # community and association
+    "dog park", "dog", # association and community
+    "gated", # in community, but also a security feature
+    "park" # community and assoication
+])
 
 with open("data/processed/text_features_from_db.json", "r") as f:
     text_features = json.load(f)
@@ -85,6 +98,15 @@ excluded_term_assoc = set([
     "cable tv",
     "storage",
     "call for rules",
+
+    "pool", # common amenity across several sets
+    "guard",
+    "secruity",
+    "horse trails",
+    "park",
+    "golf course",
+    "dog park"
+
 ])
 association_amenity_set, association_to_raw_dict = build_set("association_amenity", excluded_term_assoc)
 
@@ -111,11 +133,9 @@ security_set, security_to_raw_dict = build_set("security_feature", excluded_term
 
 excluded_term_community = set([
     "storm drains",
-    "horse trails",
     "ravine",
     "sidewalks",
     "street lights",
-    "gated",
     "foothills",
     "mountainous",
     "lake",
@@ -127,7 +147,14 @@ excluded_term_community = set([
     "near national forest",
     "urban",
     "military land",
-    "rural"
+    "rural",
+
+    "pool", # cross set
+    "dog park",
+    "gated",
+    "golf",
+    "park",
+    "horse trails",
 ])
 community_set, community_to_raw_dict = build_set("community_feature", excluded_term_community)
 
@@ -180,8 +207,10 @@ for v in view_feature:
 
 
 
-amenity_set = ( set(amenities) 
-                | set(single_word_amenities)
+amenity_set = ( set(amenities)
+                | views
+                | single_word_amenities
+                | cross_amenity
                 | association_amenity_set
                 | spa_amenity_set
                 | security_set
