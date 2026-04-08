@@ -1,8 +1,14 @@
 import json
 import pandas as pd
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+CITY_PATH = str(ROOT / "data" / "processed" / "distinct_cities.csv")
+STATS_PATH = str(ROOT / "data" / "processed" / "stats.json")
 
 class SchemaValidator:
-    def __init__(self, filters, cities_path = 'data/processed/distinct_cities.csv', stats_path = "data/processed/stats.json"):
+    def __init__(self, filters, cities_path = CITY_PATH, stats_path = STATS_PATH):
         self.valid_cities = self._load_valid_cities(cities_path)
         self.stats = self._load_db_stats(stats_path) # loads the valide values from db
         self.errors = []
