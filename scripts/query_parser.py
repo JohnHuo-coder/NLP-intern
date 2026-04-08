@@ -375,55 +375,180 @@ class QueryParser:
         community2raw = amenity_full_dict["community2raw"]
 
 
-        # Amenities: search L_Remarks for each keyword
+        # Amenities
         for amenity in self.filters.get("amenities", []):
+            flag = False
             if amenity == "private pool":
                 conditions.append("PoolPrivateYN = 1")
+                continue
             if amenity == "attached garage":
                 conditions.append("AttachedGarageYN = 1")
+                continue
+            if amenity == "spa":
+                conditions.append("SpaYN = 1")
+                continue
+            if amenity == "pool" or amenity == "swimming pool":
+                conditions.append(
+                    "(LOWER(AssociationAmenities) LIKE %s OR LOWER(CommunityFeatures) LIKE %s OR (LOWER(PoolFeatures) != 'none' AND LOWER(PoolFeatures) IS NOT NULL) OR LOWER(L_Remarks) LIKE %s)"
+                )
+                no_space = amenity.replace(" ", "")
+                params.extend([
+                    f"%{no_space}%",
+                    f"%{no_space}%",
+                    f"%{no_space}%"
+                ])
+                continue
+            if amenity == "guard":
+                conditions.append(
+                    "(LOWER(AssociationAmenities) LIKE %s OR LOWER(Security) LIKE %s OR LOWER(L_Remarks) LIKE %s)"
+                )
+                params.extend([
+                    f"%{amenity}%",
+                    f"%{amenity}%",
+                    f"%{amenity}%"
+                ])
+                continue
+            if amenity == "gated":
+                conditions.append(
+                    "(LOWER(CommunityFeatures) LIKE %s OR LOWER(Security) LIKE %s OR LOWER(L_Remarks) LIKE %s)"
+                )
+                params.extend([
+                    f"%{amenity}%",
+                    f"%{amenity}%",
+                    f"%{amenity}%"
+                ])
+            if (amenity == "horse trail" or amenity == "golf" or amenity  == "golf course" 
+                        or amenity == "dog" or amenity  == "dog park" or amenity == "park"):
+                conditions.append(
+                    "(LOWER(AssociationAmenities) LIKE %s OR LOWER(CommunityFeatures) LIKE %s OR LOWER(L_Remarks) LIKE %s)"
+                )
+                no_space = amenity.replace(" ", "")
+                params.extend([
+                    f"%{no_space}%",
+                    f"%{no_space}%",
+                    f"%{no_space}%"
+                ])
+                continue
             if "garage" in amenity:
-                conditions.append("GarageYN = 1 OR AttachedGarageYN = 1")
+                conditions.append("(GarageYN = 1 OR AttachedGarageYN = 1)")
             if "parking" in amenity:
-                conditions.append("OpenParkingSpaces >= 1 OR GarageYN = 1 OR AttachedGarageYN = 1")
+                conditions.append("(OpenParkingSpaces >= 1 OR GarageYN = 1 OR AttachedGarageYN = 1)")
             if amenity in pool_set:
                 raw = pool2raw[amenity]
                 raw_no_space = raw.replace(" ", "")
-                conditions.append("LOWER(PoolFeatures) LIKE %s")
-                params.append(f"%{raw_no_space}%")
+                conditions.append("(LOWER(PoolFeatures) LIKE %s OR LOWER(L_Remarks) LIKE %s)")
+                params.extend([
+                    f"%{raw_no_space}%",
+                    f"%{amenity}%"
+                ])
 
             elif amenity in spa_set:
                 conditions.append("SpaYN = 1")
                 raw = spa2raw[amenity]
                 raw_no_space = raw.replace(" ", "")
-                conditions.append("LOWER(SpaFeatures) LIKE %s")
-                params.append(f"%{raw_no_space}%")
+                conditions.append("(LOWER(SpaFeatures) LIKE %s OR LOWER(L_Remarks) LIKE %s)")
+                params.extend([
+                    f"%{raw_no_space}%",
+                    f"%{amenity}%"
+                ])
 
             elif amenity in view_set:
                 conditions.append("ViewYN = 1")
                 raw = view2raw[amenity]
                 raw_no_space = raw.replace(" ", "")
-                conditions.append("LOWER(View) LIKE %s")
+                conditions.append("(LOWER(View) LIKE %s OR LOWER(L_Remarks) LIKE %s)")
+                params.extend([
+                    f"%{raw_no_space}%",
+                    f"%{amenity}%"
+                ])
+            
+            elif amenity in security_set:
+                raw = security2raw[amenity]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("(LOWER(SecurityFeatures) LIKE %s OR LOWER(L_Remarks) LIKE %s)")
+                params.extend([
+                    f"%{raw_no_space}%",
+                    f"%{amenity}%"
+                ])
+            
+            elif amenity in association_set:
+                raw = association2raw[amenity]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("(LOWER(AssociationAmenities) LIKE %s OR LOWER(L_Remarks) LIKE %s)")
+                params.extend([
+                    f"%{raw_no_space}%",
+                    f"%{amenity}%"
+                ])
+
+            elif amenity in community_set:
+                raw = community2raw[amenity]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("(LOWER(CommunityFeatures) LIKE %s OR LOWER(L_Remarks) LIKE %s)")
+                params.extend([
+                    f"%{raw_no_space}%",
+                    f"%{amenity}%"
+                ])
+            else:
+                conditions.append("LOWER(L_Remarks) LIKE %s")
+                params.append(
+                    f"%{amenity}%"
+                )
+        
+        # Negated Amenities
+        for amenity in self.filters.get("negated_amenities", []):
+            if amenity == "private pool":
+                conditions.append("PoolPrivateYN = 0")
+                continue
+            if amenity == "attached garage":
+                conditions.append("AttachedGarageYN = 0")
+                continue
+            if amenity == "garage":
+                conditions.append("(GarageYN = 0 AND AttachedGarageYN = 0)")
+                continue
+            if amenity == "spa":
+                conditions.append("SpaYN = 0")
+                continue
+            if "parking" in amenity:
+                conditions.append("(OpenParkingSpaces = 0 AND GarageYN = 0 AND AttachedGarageYN = 0)")
+            if amenity in pool_set:
+                raw = pool2raw[amenity]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("(LOWER(PoolFeatures) NOT LIKE %s OR PoolFeatures IS NULL)")
+                params.append(f"%{raw_no_space}%")
+
+            elif amenity in spa_set:
+                conditions.append("SpaYN = 0")
+                raw = spa2raw[amenity]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("(LOWER(SpaFeatures) NOT LIKE %s OR SpaFeatures IS NULL)")
+                params.append(f"%{raw_no_space}%")
+
+            elif amenity in view_set:
+                conditions.append("ViewYN = 0")
+                raw = view2raw[amenity]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("(LOWER(View) NOT LIKE %s OR View IS NULL)")
                 params.append(f"%{raw_no_space}%")
             
             elif amenity in security_set:
                 raw = security2raw[amenity]
                 raw_no_space = raw.replace(" ", "")
-                conditions.append("LOWER(SecurityFeatures) LIKE %s")
+                conditions.append("(LOWER(SecurityFeatures) NOT LIKE %s OR SecurityFeatures IS NULL)")
                 params.append(f"%{raw_no_space}%")
             
             elif amenity in association_set:
                 raw = association2raw[amenity]
                 raw_no_space = raw.replace(" ", "")
-                conditions.append("LOWER(AssociationAmenities) LIKE %s")
+                conditions.append("(LOWER(AssociationAmenities) NOT LIKE %s OR AssociationAmenities IS NULL)")
                 params.append(f"%{raw_no_space}%")
 
             elif amenity in community_set:
                 raw = community2raw[amenity]
                 raw_no_space = raw.replace(" ", "")
-                conditions.append("LOWER(CommunityFeatures) LIKE %s")
+                conditions.append("(LOWER(CommunityFeatures) NOT LIKE %s OR CommunityFeatures IS NULL)")
                 params.append(f"%{raw_no_space}%")
             else:
-                conditions.append("LOWER(L_Remarks) LIKE %s")
+                conditions.append("(LOWER(L_Remarks) NOT LIKE %s OR L_Remarks IS NULL)")
                 params.append(f"%{amenity.lower()}%")
 
     def parse_house_feature_to_sql(self, conditions, params):
@@ -443,48 +568,114 @@ class QueryParser:
         heat2raw = house_feature_full_dict["heat2raw"]
 
         for feature in self.filters.get("features", []):
-            if "fireplace" in feature:
-                conditions.append("FireplaceYN = 1")
+            if "fireplace" in feature: # fireplace is in heating feature, but it doesn't has to be
+                conditions.append("FireplaceYN = 1") 
+                continue
             if feature in interior_set:
-                raw = interior2raw[feature]
-                raw_no_space = raw.replace(" ", "")
-                conditions.append("LOWER(InteriorFeatures) LIKE %s")
-                params.append(f"%{raw_no_space}%")
+                raw_list = interior2raw[feature]
+                cond = []
+                for raw in raw_list:
+                    raw_no_space = raw.replace(" ", "")
+                    cond.append("LOWER(InteriorFeatures) LIKE %s")
+                    params.append(f"%{raw_no_space}%")
+
+                or_clause = "(" + " OR ".join(cond) + " OR LOWER(L_Remarks) LIKE %s" + ")"
+                params.append(f"%{feature}%")
+                conditions.append(or_clause)
 
             elif feature in appl_set:
                 raw = appl2raw[feature]
                 raw_no_space = raw.replace(" ", "")
-                conditions.append("LOWER(Appliances) LIKE %s")
-                params.append(f"%{raw_no_space}%")
+                conditions.append("(LOWER(Appliances) LIKE %s OR LOWER(L_Remarks) LIKE %s)")
+                params.extend([
+                    f"%{raw_no_space}%",
+                    f"%{feature}%"
+                ])
 
             elif feature in cooling_set:
                 conditions.append("CoolingYN = 1")
                 raw = cool2raw[feature]
                 raw_no_space = raw.replace(" ", "")
-                conditions.append("LOWER(Cooling) LIKE %s")
-                params.append(f"%{raw_no_space}%")
+                conditions.append("(LOWER(Cooling) LIKE %s OR LOWER(L_Remarks) LIKE %s)")
+                params.extend([
+                    f"%{raw_no_space}%",
+                    f"%{feature}%"
+                ])
             
             elif feature in floor_set:
                 raw = floor2raw[feature]
                 raw_no_space = raw.replace(" ", "")
-                conditions.append("LOWER(Flooring) LIKE %s")
-                params.append(f"%{raw_no_space}%")
+                conditions.append("(LOWER(Flooring) LIKE %s OR LOWER(L_Remarks) LIKE %s)")
+                params.extend([
+                    f"%{raw_no_space}%",
+                    f"%{feature}%"
+                ])
             
             elif feature in heating_set:
                 conditions.append("HeatingYN = 1")
                 raw = heat2raw[feature]
                 raw_no_space = raw.replace(" ", "")
-                conditions.append("LOWER(Heating) LIKE %s")
-                params.append(f"%{raw_no_space}%")
+                conditions.append("(LOWER(Heating) LIKE %s OR LOWER(L_Remarks) LIKE %s)")
+                params.extend([
+                    f"%{raw_no_space}%",
+                    f"%{feature}%"
+                ])
 
             else:
                 conditions.append("LOWER(L_Remarks) LIKE %s")
+                params.append(f"%{feature}%")
+
+        # negated features
+        for feature in self.filters.get("negated_features", []):
+            if "fireplace" in feature:
+                conditions.append("FireplaceYN = 0")
+                continue
+            if feature in interior_set:
+                raw_list = interior2raw[feature]
+                cond = []
+                for raw in raw_list:
+                    raw_no_space = raw.replace(" ", "")
+                    cond.append("(LOWER(InteriorFeatures) NOT LIKE %s OR InteriorFeatures IS NULL)")
+                    params.append(f"%{raw_no_space.lower()}%")
+
+                or_clause = "(" + " AND ".join(cond) + ")"
+                conditions.append(or_clause)
+
+            elif feature in appl_set:
+                raw = appl2raw[feature]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("(LOWER(Appliances) NOT LIKE %s OR Appliances IS NULL)")
+                params.append(f"%{raw_no_space}%")
+
+            elif feature in cooling_set:
+                conditions.append("CoolingYN = 0")
+                raw = cool2raw[feature]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("(LOWER(Cooling) NOT LIKE %s OR Cooling IS NULL)")
+                params.append(f"%{raw_no_space}%")
+            
+            elif feature in floor_set:
+                raw = floor2raw[feature]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("(LOWER(Flooring) NOT LIKE %s OR Flooring IS NULL)")
+                params.append(f"%{raw_no_space}%")
+            
+            elif feature in heating_set:
+                conditions.append("HeatingYN = 0")
+                raw = heat2raw[feature]
+                raw_no_space = raw.replace(" ", "")
+                conditions.append("(LOWER(Heating) NOT LIKE %s OR Heating IS NULL)")
+                params.append(f"%{raw_no_space}%")
+
+            else:
+                conditions.append("(LOWER(L_Remarks) NOT LIKE %s OR L_Remarks IS NULL)")
                 params.append(f"%{feature.lower()}%")
 
-    def to_sql(self, table = 'rets_property'):
+    def to_sql(self, table = 'rets_property', filters = None):
         conditions = []
         params = []
-        filters = self.filters
+        if filters is None:
+            filters = self.filters
         
         if "price_max" in filters:
             conditions.append("L_SystemPrice <= %s")
@@ -547,5 +738,40 @@ class QueryParser:
         
 
         where_clause = " AND ".join(conditions) if conditions else "1=1"
-        sql = f"SELECT * FROM {table} WHERE {where_clause} LIMIT 50"
+        sql = (
+            f"""
+            SELECT id,
+                L_Address as address,
+                L_Zip as zipcode,
+                L_City as city,
+                L_State as state,
+                L_Keyword2 as bedrooms,
+                LM_Dec_3 as bathrooms,
+                L_SystemPrice as price,
+                L_Remarks as remark,
+                L_Photos as photos,
+                Flooring as flooring,
+                ViewYN,
+                PoolPrivateYN,
+                AttachedGarageYN,
+                FireplaceYN,
+                HeatingYN,
+                Appliances,
+                CoolingYN,
+                GarageYN,
+                SpaYN,
+                BathroomsHalf as half_bathrooms,
+                AssociationAmenities,
+                StructureType,
+                ArchitecturalStyle,
+                Cooling,
+                Heating,
+                View,
+                FireplaceFeatures,
+                InteriorFeatures,
+                PoolFeatures,
+                CommunityFeatures,
+                SecurityFeatures,
+                SpaFeatures
+            FROM {table} WHERE {where_clause} LIMIT 50""")
         return sql, params
