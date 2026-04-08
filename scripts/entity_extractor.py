@@ -79,6 +79,195 @@ _WORD_TO_NUM = {
     "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10
 }
 
+# Phrase taxonomies for listing remarks (longest first → matched in ``_extract_taxonomy_phrases``).
+_FINANCING_PHRASES = tuple(
+    sorted(
+        {
+            "down payment assistance",
+            "subject to existing financing",
+            "owner will carry",
+            "seller financing",
+            "owner financing",
+            "assumable mortgage",
+            "assumable loan",
+            "conventional financing",
+            "conventional loan",
+            "lease purchase option",
+            "1031 exchange",
+            "third party financing",
+            "financing available",
+            "mortgage available",
+            "investor friendly",
+            "rent to own",
+            "lease option",
+            "land contract",
+            "contract for deed",
+            "jumbo loan",
+            "fha approved",
+            "fha eligible",
+            "fha financing",
+            "fha loan",
+            "usda eligible",
+            "usda financing",
+            "usda loan",
+            "va approved",
+            "va financing",
+            "va loan",
+            "cash buyers only",
+            "bridge loan",
+            "hard money",
+            "assumable",
+            "short sale",
+            "foreclosure",
+            "foreclosed",
+            "bank owned",
+            "reo property",
+            "cash only",
+            "cash sale",
+            "all cash",
+            "subject to",
+            "probate sale",
+            "estate sale",
+            "reo",
+            "fha",
+            "va",
+        },
+        key=len,
+        reverse=True,
+    )
+)
+
+_LOCATION_PHRASES = tuple(
+    sorted(
+        {
+            "walking distance to schools",
+            "easy freeway access",
+            "golf course community",
+            "close to public transit",
+            "public transportation",
+            "freeway access",
+            "highway access",
+            "golf course lot",
+            "conservation area",
+            "gated community",
+            "near train station",
+            "near public transit",
+            "close to schools",
+            "near schools",
+            "walk to school",
+            "downtown location",
+            "suburban neighborhood",
+            "backs to greenbelt",
+            "backs to preserve",
+            "oversized lot",
+            "waterfront property",
+            "waterfront home",
+            "skyline view",
+            "panoramic view",
+            "mountain view",
+            "preserve view",
+            "lakefront",
+            "lake front",
+            "lake view",
+            "lake access",
+            "riverfront",
+            "river front",
+            "ocean view",
+            "water view",
+            "bay view",
+            "city view",
+            "cul-de-sac lot",
+            "on golf course",
+            "golf course",
+            "greenbelt",
+            "in downtown",
+            "rural setting",
+            "rural acreage",
+            "infill location",
+            "corner lot",
+            "corner unit",
+            "end unit",
+            "private road",
+            "wooded lot",
+            "treed lot",
+            "mature trees",
+            "interior lot",
+            "large lot",
+            "waterfront",
+            "water front",
+            "hilltop",
+            "hillside",
+            "cul-de-sac",
+            "cul de sac",
+            "downtown",
+            "walkable",
+            "near metro",
+            "near bus",
+            "zero lot line",
+        },
+        key=len,
+        reverse=True,
+    )
+)
+
+_CONDITION_PHRASES = tuple(
+    sorted(
+        {
+            "brand new construction",
+            "completely renovated",
+            "completely remodeled",
+            "excellent condition",
+            "move-in ready",
+            "move in ready",
+            "newly renovated",
+            "newly remodeled",
+            "original condition",
+            "partially renovated",
+            "partially updated",
+            "pristine condition",
+            "recently renovated",
+            "recently updated",
+            "turnkey property",
+            "as-is sale",
+            "sold as-is",
+            "sold as is",
+            "fixer upper",
+            "fixer-upper",
+            "good condition",
+            "fair condition",
+            "poor condition",
+            "great condition",
+            "handyman special",
+            "like new condition",
+            "needs everything",
+            "never lived in",
+            "new construction",
+            "tear down",
+            "fully renovated",
+            "fully updated",
+            "updated throughout",
+            "new build",
+            "turnkey",
+            "renovated",
+            "remodeled",
+            "updated",
+            "like new",
+            "needs repairs",
+            "needs some tlc",
+            "needs tlc",
+            "needs work",
+            "vintage charm",
+            "mostly original",
+            "as-is",
+            "as is",
+            "gutted",
+            "mint condition",
+        },
+        key=len,
+        reverse=True,
+    )
+)
+
 
 def _spell_num_from_word(word):
     """Map spelled-out digit to int; ``re.I`` can yield ``Two`` so normalize case."""
@@ -252,6 +441,53 @@ class EntityExtractor:
             return int(match.group(1))
         return None
 
+    def _extract_taxonomy_phrases(self, text, phrases, neg_spans=None):
+        """
+        Match phrases from a taxonomy (same word-boundary rules as amenities).
+
+        - If ``neg_spans`` is a list of ``(start, end)`` (e.g. from negated amenity/feature
+          detection), drops positive hits that overlap any negated span.
+        - Then drops overlapping spans among positives (longer span wins at same start).
+        """
+        if not text:
+            return [], []
+        lowered = text.lower()
+        neg_spans = neg_spans or []
+        matches = []
+        for phrase in phrases:
+            pat = _amenity_feature_pattern(phrase)
+            for m in pat.finditer(lowered):
+                if any(
+                    m.start() < ne and m.end() > ns for ns, ne in neg_spans
+                ):
+                    continue
+                matches.append((m.start(), m.end(), phrase))
+        if not matches:
+            return [], []
+        matches.sort(key=lambda x: (x[0], -(x[1] - x[0])))
+        kept = []
+        used = []
+        for start, end, phrase in matches:
+            if any(start < ue and end > us for us, ue in used):
+                continue
+            used.append((start, end))
+            kept.append((start, end, phrase))
+        kept.sort(key=lambda x: x[0])
+        only_terms = list({p for _, _, p in kept})
+        return only_terms, kept
+
+    def extract_financing_options(self, text):
+        """Financing and sale-type cues (e.g. FHA, VA, cash, seller financing, short sale)."""
+        return self._extract_taxonomy_phrases(text, _FINANCING_PHRASES)
+
+    def extract_location_features(self, text):
+        """Location-oriented phrases (views, lot type, schools, transit, downtown, etc.)."""
+        return self._extract_taxonomy_phrases(text, _LOCATION_PHRASES)
+
+    def extract_condition(self, text):
+        """Condition and renovation status (e.g. move-in ready, as-is, renovated, new construction)."""
+        return self._extract_taxonomy_phrases(text, _CONDITION_PHRASES)
+
     def extract_negated_amenities_features(self, text, type):
         """Amenities/features explicitly rejected (e.g. ``no pool``, ``without a garage``)."""
         if not text:
@@ -284,33 +520,12 @@ class EntityExtractor:
         """
         if not text:
             return [], []
-        lowered = text.lower()
         if neg_kept is None:
             _, neg_kept = self.extract_negated_amenities_features(text, type)
         neg_spans = [(s, e) for s, e, _ in neg_kept]
-        matches = []
         tax = self.amenities if type == "amenity" else self.features
-        for phrase in sorted(tax, key=len, reverse=True):
-            pat = _amenity_feature_pattern(phrase)
-            for m in pat.finditer(lowered):
-                if any(
-                    m.start() < ne and m.end() > ns for ns, ne in neg_spans
-                ):
-                    continue
-                matches.append((m.start(), m.end(), phrase))
-        if not matches:
-            return [], []
-        matches.sort(key=lambda x: (x[0], -(x[1] - x[0])))
-        kept = []
-        used = []
-        for start, end, phrase in matches:
-            if any(start < ue and end > us for us, ue in used):
-                continue
-            used.append((start, end))
-            kept.append((start, end, phrase))
-        kept.sort(key=lambda x: x[0])
-        only_terms = list({p for _, _, p in kept})
-        return only_terms, kept
+        phrases = sorted(tax, key=len, reverse=True)
+        return self._extract_taxonomy_phrases(text, phrases, neg_spans=neg_spans)
 
     def extract_all(self, text):
         neg_amenity_terms, neg_amenity_kept = self.extract_negated_amenities_features(text, type = "amenity")
@@ -321,6 +536,9 @@ class EntityExtractor:
         feature_terms, feature_tuple = self.extract_amenities_features(
             text, type = "feature", neg_kept=neg_feature_kept
         )
+        financing_terms, financing_tuple = self.extract_financing_options(text)
+        location_terms, location_tuple = self.extract_location_features(text)
+        condition_terms, condition_tuple = self.extract_condition(text)
         return {
             "bedrooms": self.extract_bedrooms(text),
             "bathrooms": self.extract_bathrooms(text),
@@ -333,7 +551,13 @@ class EntityExtractor:
             "interior features": feature_terms,
             "interior features tuple": feature_tuple,
             "negated features": neg_feature_terms,
-            "negated features tuple": neg_feature_kept
+            "negated features tuple": neg_feature_kept,
+            "financing options": financing_terms,
+            "financing options tuple": financing_tuple,
+            "location features": location_terms,
+            "location features tuple": location_tuple,
+            "condition": condition_terms,
+            "condition tuple": condition_tuple,
         }
     def extract_column(self, col):
         results = col.apply(self.extract_all)
