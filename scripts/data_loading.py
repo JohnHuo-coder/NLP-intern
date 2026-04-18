@@ -8,7 +8,8 @@ conn = mysql.connector.connect(
 
 query = """
 SELECT L_ListingID, L_Address, L_City, L_Keyword2 as beds,
-        LM_Dec_3 as bath, L_SystemPrice as price, L_Remarks as remarks
+        LM_Dec_3 as bath, BathroomsHalf as bath_half, 
+        L_SystemPrice as price, LM_Int2_3 as sqft, L_Remarks as remarks
 FROM rets_property
 WHERE L_Remarks IS NOT NULL AND LENGTH(L_Remarks) > 50
 ORDER BY RAND() LIMIT 1000
@@ -28,6 +29,7 @@ load_numeric_value_query = """
 SELECT 
     L_Keyword2 as bedrooms,
     LM_Dec_3 as bathrooms,
+    BathroomsHalf as bathrooms_half,
     L_SystemPrice as price,
     L_Keyword1 as sqft
 FROM rets_property;   
@@ -53,7 +55,8 @@ SELECT
     Cooling as cooling,
     Heating as heating,
     Appliances as appl,
-    Flooring as flr_type
+    Flooring as flr_type,
+    ListingTerms as financing
 FROM rets_property
 """
 
@@ -72,6 +75,18 @@ ORDER BY RAND() LIMIT 10000
 
 df_text = pd.read_sql(load_10k_listing_query, conn)
 df_text.to_csv('data/unprocessed/listing_sample_10k.csv', index = False)
+
+
+# load all listings for semantic searcher to create embeddings and store
+load_all_listing_query = """
+SELECT L_ListingID, L_Remarks as remarks
+FROM rets_property
+WHERE L_Remarks IS NOT NULL AND LENGTH(L_Remarks) > 50
+ORDER BY RAND()
+"""
+
+df_text = pd.read_sql(load_all_listing_query, conn)
+df_text.to_csv('data/unprocessed/all_listings.csv', index = False)
 
 conn.close
 
