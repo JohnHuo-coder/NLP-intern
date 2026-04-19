@@ -39,7 +39,7 @@ def _listing_bed_bath_slash(text):
     return None
 
 
-def _amenity_feature_pattern(phrase):
+def _build_pattern(phrase):
     words = phrase.split()
     if len(words) == 1:
         return re.compile(rf"\b{re.escape(phrase)}s?\b", re.I)
@@ -58,7 +58,7 @@ NEGATIONS = [
     "without any"
 ]
 
-def _amenity_feature_negation_pattern(phrase):
+def _build_negation_pattern(phrase):
     """Match negation cue + optional article + amenity phrase (same plural ``s?`` as positive)."""
     words = phrase.split()
     neg_alternation = "|".join(
@@ -79,77 +79,16 @@ _WORD_TO_NUM = {
     "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10
 }
 
-# Phrase taxonomies for listing remarks (longest first → matched in ``_extract_taxonomy_phrases``).
-_FINANCING_PHRASES = tuple(
-    sorted(
-        {
-            "down payment assistance",
-            "subject to existing financing",
-            "owner will carry",
-            "seller financing",
-            "owner financing",
-            "assumable mortgage",
-            "assumable loan",
-            "conventional financing",
-            "conventional loan",
-            "lease purchase option",
-            "1031 exchange",
-            "third party financing",
-            "financing available",
-            "mortgage available",
-            "investor friendly",
-            "rent to own",
-            "lease option",
-            "land contract",
-            "contract for deed",
-            "jumbo loan",
-            "fha approved",
-            "fha eligible",
-            "fha financing",
-            "fha loan",
-            "usda eligible",
-            "usda financing",
-            "usda loan",
-            "va approved",
-            "va financing",
-            "va loan",
-            "cash buyers only",
-            "bridge loan",
-            "hard money",
-            "assumable",
-            "short sale",
-            "foreclosure",
-            "foreclosed",
-            "bank owned",
-            "reo property",
-            "cash only",
-            "cash sale",
-            "all cash",
-            "subject to",
-            "probate sale",
-            "estate sale",
-            "reo",
-            "fha",
-            "va",
-        },
-        key=len,
-        reverse=True,
-    )
-)
 
 _LOCATION_PHRASES = tuple(
     sorted(
         {
             "walking distance to schools",
-            "easy freeway access",
-            "golf course community",
             "close to public transit",
             "public transportation",
             "freeway access",
             "highway access",
-            "golf course lot",
             "conservation area",
-            "gated community",
             "near train station",
             "near public transit",
             "close to schools",
@@ -162,24 +101,12 @@ _LOCATION_PHRASES = tuple(
             "oversized lot",
             "waterfront property",
             "waterfront home",
-            "skyline view",
-            "panoramic view",
-            "mountain view",
-            "preserve view",
             "lakefront",
             "lake front",
-            "lake view",
             "lake access",
             "riverfront",
             "river front",
-            "ocean view",
-            "water view",
-            "bay view",
-            "city view",
             "cul-de-sac lot",
-            "on golf course",
-            "golf course",
-            "greenbelt",
             "in downtown",
             "rural setting",
             "rural acreage",
@@ -193,14 +120,11 @@ _LOCATION_PHRASES = tuple(
             "mature trees",
             "interior lot",
             "large lot",
-            "waterfront",
-            "water front",
             "hilltop",
             "hillside",
             "cul-de-sac",
             "cul de sac",
             "downtown",
-            "walkable",
             "near metro",
             "near bus",
             "zero lot line",
@@ -256,8 +180,6 @@ _CONDITION_PHRASES = tuple(
             "needs some tlc",
             "needs tlc",
             "needs work",
-            "vintage charm",
-            "mostly original",
             "as-is",
             "as is",
             "gutted",
@@ -280,10 +202,13 @@ class EntityExtractor:
     def __init__(self):
         amenity_full_dict = self._load_amenities()
         feature_full_dict = self._load_features()
+        finance_full_dict = self._load_finance()
         self.amenity_full = amenity_full_dict
         self.feature_full = feature_full_dict
+        self.finance_full = finance_full_dict
         self.amenities = amenity_full_dict["amenities"]
         self.features = feature_full_dict["features"]
+        self.finance = finance_full_dict["finance"]
     
     def _load_amenities(self, amenities_path=None):
         path = (
@@ -302,6 +227,17 @@ class EntityExtractor:
             Path(features_path)
             if features_path
             else _PROJECT_ROOT / "data" / "processed" / "features.json"
+        )
+        if not path.is_absolute():
+            path = _PROJECT_ROOT / path
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data
+    def _load_finance(self, finance_path=None):
+        path = (
+            Path(finance_path)
+            if finance_path
+            else _PROJECT_ROOT / "data" / "processed" / "finance.json"
         )
         if not path.is_absolute():
             path = _PROJECT_ROOT / path
@@ -455,7 +391,7 @@ class EntityExtractor:
         neg_spans = neg_spans or []
         matches = []
         for phrase in phrases:
-            pat = _amenity_feature_pattern(phrase)
+            pat = _build_pattern(phrase)
             for m in pat.finditer(lowered):
                 if any(
                     m.start() < ne and m.end() > ns for ns, ne in neg_spans
@@ -478,7 +414,7 @@ class EntityExtractor:
 
     def extract_financing_options(self, text):
         """Financing and sale-type cues (e.g. FHA, VA, cash, seller financing, short sale)."""
-        return self._extract_taxonomy_phrases(text, _FINANCING_PHRASES)
+        return self._extract_taxonomy_phrases(text, self.finance)
 
     def extract_location_features(self, text):
         """Location-oriented phrases (views, lot type, schools, transit, downtown, etc.)."""
@@ -496,7 +432,7 @@ class EntityExtractor:
         lowered = text.lower()
         matches = []
         for phrase in sorted(tax, key=len, reverse=True):
-            pat = _amenity_feature_negation_pattern(phrase)
+            pat = _build_negation_pattern(phrase)
             for m in pat.finditer(lowered):
                 matches.append((m.start(), m.end(), phrase))
         if not matches:
