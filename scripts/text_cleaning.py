@@ -29,7 +29,8 @@ class TextCleaner:
             "sq. ft": "square feet", 
             "sq. ft.": "square feet",
             "sq.ft": "square feet",
-            "sq.ft.": "square feet"
+            "sq.ft.": "square feet",
+            "sq .ft": "square feet"
         }
 
         self.normal_abbrev_map = {
@@ -50,7 +51,7 @@ class TextCleaner:
             'incl': 'including', 'nr': 'near', 'reo': 'bank-owned', 'dom': 'days on market', 'approx': 'approximately',
             'pvt': 'private', 'avail': 'available', 'hvac': 'heating and cooling', 'fin': 'finished', 'ch': 'central heat', 
             'mls': 'multiple listing service', 'hoa': 'homeowners association', 'ss': 'stainless steel', 'hw': 'hardwood', 
-            'w/d': 'washer dryer','wd': 'washer dryer', 
+            'w/d': 'washer dryer','wd': 'washer dryer', "bbq": "barbecue"
         }
         self.stop_words = set(stopwords.words("english"))
     def _abbrev_pattern(self):
@@ -258,13 +259,18 @@ if __name__ == "__main__":
     root = Path(__file__).resolve().parents[1]
     in_path = root / "data" / "unprocessed" / "listing_sample.csv"
     in_path_10k = root / "data" / "unprocessed" / "listing_sample_10k.csv"
+    in_path_all = root / "data" / "unprocessed" / "all_listings.csv"
     out_path = root / "data" / "processed" / "listing_sample_cleaned.csv"
     out_path_10k = root / "data" / "processed" / "listing_sample_cleaned_10k.csv"
+    out_path_all = root / "data" / "processed" / "all_listings_cleaned.csv"
 
     df = pd.read_csv(in_path)
     df_10k = pd.read_csv(in_path_10k)
+    df_all = pd.read_csv(in_path_all)
     cleaner = TextCleaner()
     df["remarks"] = cleaner.clean_column(df["remarks"])
     df.to_csv(out_path, index=False)
     df_10k["remarks"] = cleaner.clean_column(df_10k["remarks"])
     df_10k.to_csv(out_path_10k, index=False)
+    df_all["remarks"] = cleaner.clean_column(df_all["remarks"])
+    df_all.to_csv(out_path_all, index=False)
