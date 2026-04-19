@@ -46,8 +46,8 @@ class SchemaValidator:
         # an amenity or feature can't be in both negated and wanted
         for key in ["amenities", "features"]:
             negated_key = f"negated_{key}"
-            negated_set = set(self.filters[negated_key])
-            for i in self.filters[key]:
+            negated_set = set(self.filters.get(negated_key, []))
+            for i in self.filters.get(key, []):
                 if i in negated_set:
                     self.errors.append(f"{i} can't be both wanted and negated")
 
