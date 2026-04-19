@@ -340,6 +340,11 @@ class QueryParser:
         if feature_terms:
             self.filters["features"] = feature_terms
 
+    def parse_finance(self, query):
+        finance_terms, _ = self.extractor.extract_financing_options(query)
+        if finance_terms:
+            self.filters["finance"] = finance_terms
+
     def parse(self, query):
         self.filters = {}
         query = self._clean_query(query)
@@ -351,6 +356,7 @@ class QueryParser:
         self.parse_city(query)
         self.parse_amenity(query)
         self.parse_features(query)
+        self.parse_finance(query)
         
 
         return self.filters
@@ -361,23 +367,22 @@ class QueryParser:
 
         amenity_full_dict = self.extractor.amenity_full
         set_from_db = amenity_full_dict["set_from_db"]
-        pool_set = set_from_db["pool"]
+        pool_set = set(set_from_db["pool"])
         pool2raw = amenity_full_dict["pool2raw"]
-        spa_set = set_from_db["spa"]
+        spa_set = set(set_from_db["spa"])
         spa2raw = amenity_full_dict["spa2raw"]
-        view_set = set_from_db["view"]
+        view_set = set(set_from_db["view"])
         view2raw = amenity_full_dict["view2raw"]
-        security_set = set_from_db["security"]
+        security_set = set(set_from_db["security"])
         security2raw = amenity_full_dict["security2raw"]
-        association_set = set_from_db["association"]
+        association_set = set(set_from_db["association"])
         association2raw = amenity_full_dict["association2raw"]
-        community_set = set_from_db["community"]
+        community_set = set(set_from_db["community"])
         community2raw = amenity_full_dict["community2raw"]
 
 
         # Amenities
         for amenity in self.filters.get("amenities", []):
-            flag = False
             if amenity == "private pool":
                 conditions.append("PoolPrivateYN = 1")
                 continue
@@ -556,15 +561,15 @@ class QueryParser:
         house_feature_full_dict = self.extractor.feature_full
         set_from_db = house_feature_full_dict["set_from_db"]
 
-        interior_set = set_from_db["interior"]
+        interior_set = set(set_from_db["interior"])
         interior2raw = house_feature_full_dict["interior2raw"]
-        floor_set = set_from_db["floor"]
+        floor_set = set(set_from_db["floor"])
         floor2raw = house_feature_full_dict["floor2raw"]
-        appl_set = set_from_db["appl"]
+        appl_set = set(set_from_db["appl"])
         appl2raw = house_feature_full_dict["appl2raw"]
-        cooling_set = set_from_db["cooling"]
+        cooling_set = set(set_from_db["cooling"])
         cool2raw = house_feature_full_dict["cool2raw"]
-        heating_set = set_from_db["heating"]
+        heating_set = set(set_from_db["heating"])
         heat2raw = house_feature_full_dict["heat2raw"]
 
         for feature in self.filters.get("features", []):
@@ -671,11 +676,39 @@ class QueryParser:
                 conditions.append("(LOWER(L_Remarks) NOT LIKE %s OR L_Remarks IS NULL)")
                 params.append(f"%{feature.lower()}%")
 
+    def parse_finance_to_sql(self, conditions, params):
+
+        finance_full_dict = self.extractor.finance_full
+        finance_set = set(finance_full_dict["set_from_db"])
+        finance2raw = finance_full_dict["finance2raw"]
+
+        for finance in self.filters.get("finance", []):
+            if finance in finance_set:
+                raw_list = finance2raw[finance]
+                cond = []
+                for raw in raw_list:
+                    raw_no_space = raw.replace(" ", "")
+                    cond.append("LOWER(ListingTerms) LIKE %s")
+                    params.append(f"%{raw_no_space}%")
+
+                or_clause = "(" + " OR ".join(cond) + " OR LOWER(L_Remarks) LIKE %s" + ")"
+                params.append(f"%{finance}%")
+                conditions.append(or_clause)
+
+            else:
+                conditions.append("LOWER(L_Remarks) LIKE %s")
+                params.append(f"%{finance}%")
+
     def to_sql(self, table = 'rets_property', filters = None):
         conditions = []
         params = []
+        saved_filters = None
         if filters is None:
             filters = self.filters
+        else:
+            # parse_amenity_to_sql / parse_house_feature_to_sql 读 self.filters，须与传入的 filters 一致
+            saved_filters = self.filters
+            self.filters = filters
         
         if "price_max" in filters:
             conditions.append("L_SystemPrice <= %s")
@@ -733,9 +766,13 @@ class QueryParser:
             conditions.append("L_City = %s")
             params.append(filters["city"])
 
-        self.parse_amenity_to_sql(conditions, params)
-        self.parse_house_feature_to_sql(conditions, params)
-        
+        try:
+            self.parse_amenity_to_sql(conditions, params)
+            self.parse_house_feature_to_sql(conditions, params)
+            self.parse_finance_to_sql(conditions, params)
+        finally:
+            if saved_filters is not None:
+                self.filters = saved_filters
 
         where_clause = " AND ".join(conditions) if conditions else "1=1"
         sql = (
@@ -748,6 +785,7 @@ class QueryParser:
                 L_Keyword2 as bedrooms,
                 LM_Dec_3 as bathrooms,
                 L_SystemPrice as price,
+                LM_Int2_3 as living_area,
                 L_Remarks as remark,
                 L_Photos as photos,
                 Flooring as flooring,
