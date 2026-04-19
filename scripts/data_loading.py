@@ -79,7 +79,7 @@ df_text.to_csv('data/unprocessed/listing_sample_10k.csv', index = False)
 
 # load all listings for semantic searcher to create embeddings and store
 load_all_listing_query = """
-SELECT L_ListingID, L_Remarks as remarks
+SELECT id, L_ListingID, L_Remarks as remarks
 FROM rets_property
 WHERE L_Remarks IS NOT NULL AND LENGTH(L_Remarks) > 50
 ORDER BY RAND()
