@@ -56,11 +56,7 @@ It parses user queries into structured filters, validates them, and retrieves li
 ## Prerequisites
 
 1. Python 3.11 or newer
-2. MySQL available at:
-   - host: `localhost`
-   - user: `root`
-   - password: `root`
-   - database: `real_estate`
+2. MySQL available locally or from a managed provider (for example Railway)
 3. Required data artifacts under `data/processed/` (for parser and semantic search), such as:
    - `all_listings_cleaned.csv`
    - `distinct_cities.csv`
@@ -82,11 +78,41 @@ pip install -r requirements.txt
 pip install fastapi uvicorn sentence-transformers rank-bm25 faiss-cpu
 ```
 
-4. Start MySQL with Docker (optional if you already run MySQL locally):
+4. Start MySQL with Docker (optional; skip if you use Railway MySQL):
 
 ```bash
 docker-compose up -d
 ```
+
+## Use Railway MySQL
+
+Set environment variables before starting the API.
+
+Option A (Railway standard variables):
+
+```bash
+MYSQLHOST=your-host
+MYSQLPORT=3306
+MYSQLUSER=your-user
+MYSQLPASSWORD=your-password
+MYSQLDATABASE=railway
+```
+
+Option B (single URL):
+
+```bash
+MYSQL_URL=mysql://user:password@host:3306/database
+```
+
+Optional pool/SSL settings:
+
+```bash
+MYSQL_POOL_SIZE=5
+MYSQL_POOL_NAME=mypool
+MYSQL_SSL_DISABLED=true
+```
+
+If your provider requires SSL, set `MYSQL_SSL_DISABLED=false` and provide the extra SSL parameters supported by `mysql-connector-python`.
 
 ## Run the API
 
