@@ -73,7 +73,13 @@ def _ensure_processed_data_from_hf() -> None:
     """
     missing = [name for name in REQUIRED_PROCESSED_FILES if not (PROCESSED_DIR / name).exists()]
     if not missing:
+        print(
+            f"[startup] data/processed: all {len(REQUIRED_PROCESSED_FILES)} required files present "
+            f"under {PROCESSED_DIR}; skip Hugging Face download."
+        )
         return
+
+    print(f"[startup] data/processed: missing {len(missing)} file(s): {missing}; will fetch from Hugging Face if configured.")
 
     repo_id = os.getenv("HF_DATA_REPO_ID")
     if not repo_id:
