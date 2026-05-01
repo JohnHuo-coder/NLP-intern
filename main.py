@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
 from pydantic import BaseModel
 from typing import Any
+import os
+from urllib.parse import urlparse, unquote
 
 
 import sys
@@ -23,13 +25,61 @@ searcher = SemanticSearcher()
 cities_path = str(ROOT / "data" / "processed" / "distinct_cities.csv")
 stats_path = str(ROOT / "data" / "processed" / "stats.json")
 
+def _parse_bool_env(name: str, default: bool) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "y", "on"}
+
+
+def _get_mysql_config() -> dict[str, Any]:
+    """
+    Build MySQL config from env vars.
+
+    Supported:
+    - Railway style: MYSQLHOST, MYSQLPORT, MYSQLUSER, MYSQLPASSWORD, MYSQLDATABASE
+    - URL style: MYSQL_URL / MYSQL_PUBLIC_URL / DATABASE_URL
+    """
+    mysql_url = (
+        os.getenv("MYSQL_URL")
+        or os.getenv("MYSQL_PUBLIC_URL")
+        or os.getenv("DATABASE_URL")
+    )
+
+    config: dict[str, Any] = {
+        "host": os.getenv("MYSQLHOST", "localhost"),
+        "port": int(os.getenv("MYSQLPORT", "3306")),
+        "user": os.getenv("MYSQLUSER", "root"),
+        "password": os.getenv("MYSQLPASSWORD", "root"),
+        "database": os.getenv("MYSQLDATABASE", "real_estate"),
+    }
+
+    if mysql_url:
+        parsed = urlparse(mysql_url)
+        if parsed.scheme and not parsed.scheme.startswith("mysql"):
+            raise ValueError(f"Unsupported DB scheme in URL: {parsed.scheme}")
+        if parsed.hostname:
+            config["host"] = parsed.hostname
+        if parsed.port:
+            config["port"] = parsed.port
+        if parsed.username:
+            config["user"] = unquote(parsed.username)
+        if parsed.password:
+            config["password"] = unquote(parsed.password)
+        if parsed.path and parsed.path != "/":
+            config["database"] = parsed.path.lstrip("/")
+
+    # For managed DB providers, SSL can be required; keep it configurable.
+    if _parse_bool_env("MYSQL_SSL_DISABLED", True):
+        config["ssl_disabled"] = True
+
+    return config
+
+
 pool = MySQLConnectionPool(
-    pool_name="mypool",
-    pool_size=5,
-    host="localhost",
-    user="root",
-    password="root",
-    database="real_estate"
+    pool_name=os.getenv("MYSQL_POOL_NAME", "mypool"),
+    pool_size=int(os.getenv("MYSQL_POOL_SIZE", "5")),
+    **_get_mysql_config(),
 )
 
 
