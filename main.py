@@ -32,6 +32,40 @@ REQUIRED_PROCESSED_FILES = (
 OPTIONAL_PROCESSED_FILES = ("index.faiss",)
 
 
+def _parse_bool_env(name: str, default: bool) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "y", "on"}
+
+
+def _ensure_nltk_data() -> None:
+    """Download NLTK corpora/tokenizers if missing (needed on Railway fresh images)."""
+    import nltk
+
+    bundles: tuple[tuple[str, str], ...] = (
+        ("corpora/stopwords", "stopwords"),
+        ("tokenizers/punkt", "punkt"),
+        ("corpora/wordnet", "wordnet"),
+    )
+    for resource_path, download_name in bundles:
+        try:
+            nltk.data.find(resource_path)
+        except LookupError:
+            print(f"[startup] NLTK: downloading {download_name!r} ...")
+            nltk.download(download_name, quiet=True)
+
+    # NLTK 3.8.2+ uses punkt_tab for word_tokenize.
+    try:
+        nltk.data.find("tokenizers/punkt_tab")
+    except LookupError:
+        try:
+            print("[startup] NLTK: downloading 'punkt_tab' ...")
+            nltk.download("punkt_tab", quiet=True)
+        except Exception:
+            pass
+
+
 def _ensure_processed_data_from_hf() -> None:
     """
     Ensure required files exist in data/processed.
@@ -92,17 +126,12 @@ def _ensure_processed_data_from_hf() -> None:
 
 
 _ensure_processed_data_from_hf()
+_ensure_nltk_data()
 
 parser = QueryParser()
 searcher = SemanticSearcher()
 cities_path = str(PROCESSED_DIR / "distinct_cities.csv")
 stats_path = str(PROCESSED_DIR / "stats.json")
-
-def _parse_bool_env(name: str, default: bool) -> bool:
-    raw = os.getenv(name)
-    if raw is None:
-        return default
-    return raw.strip().lower() in {"1", "true", "yes", "y", "on"}
 
 
 def _get_mysql_config() -> dict[str, Any]:
