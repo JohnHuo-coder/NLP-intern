@@ -58,10 +58,11 @@ normalize_feature = {
     "all bedrooms up": ["all bedrooms on the same floor", "bedrooms upstairs", "all bedrooms together"],
     "all bedrooms down": ["all bedrooms on the same floor", "bedrooms downstairs", "all bedrooms together"],
     "atrium": ["atrium", "house with lots of natural light", "bright open space", "indoor garden space"],
-    "in law floorplan": [ "house for my parents", "home for elderly parents", 
+    "in law floorplan": [ "in law suite", "in-law suite", 
+                          "house for my parents", "home for elderly parents", 
                           "separate living space", "separate area", 
                           "adu", "extra unit",
-                          "guest suite", "extra space for guests", "room for guest", "rooms for guests"],
+                          "guest suite", "extra space for guests", "room for guest", "rooms for guests", "guest room", "guests room"],
     "living room deck attached": ["living room with deck", "living room with attached deck"]
 }
 interior_to_raw_dict = defaultdict(list) # 2 different raw term can be match to same normalized term. 
@@ -147,7 +148,7 @@ excluded_term_heating = set([
 ])
 normalize_heating = {
     "ductless": ["ductless AC", "ductless", "ductless heating", "ductless system", "mini split"],
-    "natural gass": ["natural gas heating", "gas heating"],
+    "natural gas": ["natural gas heating", "gas heating"],
     "high efficiency": ["energy efficient", "high efficiency", "energy-saving"],
     "zoned": ["zoned heating", "zoned heating and cooling"],
     "solar": ["solar heating", "solar energy", "solar panel"],
