@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from typing import Any
 import os
 from urllib.parse import urlparse, unquote
+from huggingface_hub import hf_hub_download
 
 
 import sys
@@ -19,11 +20,83 @@ import json
 from mysql.connector.pooling import MySQLConnectionPool
 
 ROOT = Path(__file__).resolve().parent
+PROCESSED_DIR = ROOT / "data" / "processed"
+REQUIRED_PROCESSED_FILES = (
+    "amenities.json",
+    "features.json",
+    "finance.json",
+    "distinct_cities.csv",
+    "stats.json",
+    "all_listings_cleaned.csv",
+)
+OPTIONAL_PROCESSED_FILES = ("index.faiss",)
+
+
+def _ensure_processed_data_from_hf() -> None:
+    """
+    Ensure required files exist in data/processed.
+    If any are missing, download them from Hugging Face.
+    """
+    missing = [name for name in REQUIRED_PROCESSED_FILES if not (PROCESSED_DIR / name).exists()]
+    if not missing:
+        return
+
+    repo_id = os.getenv("HF_DATA_REPO_ID")
+    if not repo_id:
+        raise RuntimeError(
+            "Missing required processed data files and HF_DATA_REPO_ID is not set. "
+            f"Missing files: {missing}"
+        )
+
+    repo_type = os.getenv("HF_DATA_REPO_TYPE", "dataset")
+    revision = os.getenv("HF_DATA_REVISION")
+    token = os.getenv("HF_TOKEN") or os.getenv("HUGGINGFACE_TOKEN")
+    repo_subdir = os.getenv("HF_DATA_SUBDIR", "data/processed").strip("/\\")
+
+    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
+
+    for filename in missing:
+        remote_name = f"{repo_subdir}/{filename}" if repo_subdir else filename
+        print(f"[startup] Downloading {remote_name} from Hugging Face repo {repo_id} ...")
+        downloaded = hf_hub_download(
+            repo_id=repo_id,
+            filename=remote_name,
+            repo_type=repo_type,
+            revision=revision,
+            token=token,
+        )
+        (PROCESSED_DIR / filename).write_bytes(Path(downloaded).read_bytes())
+
+    # Try to prefetch optional artifacts (e.g., FAISS index) to avoid heavy rebuild.
+    prefetch_optional = _parse_bool_env("HF_DATA_PREFETCH_OPTIONAL", True)
+    if not prefetch_optional:
+        return
+    for filename in OPTIONAL_PROCESSED_FILES:
+        local_path = PROCESSED_DIR / filename
+        if local_path.exists():
+            continue
+        remote_name = f"{repo_subdir}/{filename}" if repo_subdir else filename
+        try:
+            print(f"[startup] Prefetching optional file {remote_name} ...")
+            downloaded = hf_hub_download(
+                repo_id=repo_id,
+                filename=remote_name,
+                repo_type=repo_type,
+                revision=revision,
+                token=token,
+            )
+            local_path.write_bytes(Path(downloaded).read_bytes())
+        except Exception:
+            # Keep startup resilient when optional artifacts are absent.
+            print(f"[startup] Optional file not downloaded: {remote_name}")
+
+
+_ensure_processed_data_from_hf()
 
 parser = QueryParser()
 searcher = SemanticSearcher()
-cities_path = str(ROOT / "data" / "processed" / "distinct_cities.csv")
-stats_path = str(ROOT / "data" / "processed" / "stats.json")
+cities_path = str(PROCESSED_DIR / "distinct_cities.csv")
+stats_path = str(PROCESSED_DIR / "stats.json")
 
 def _parse_bool_env(name: str, default: bool) -> bool:
     raw = os.getenv(name)
