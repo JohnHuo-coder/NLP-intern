@@ -275,7 +275,7 @@ def process_query(query: str):
     where_clause = _get_where_clause(sql)
     mode = "regex"
 
-    if not ({"amenities", "negated_amenities", "features", "negated_features", "finance"} & filter.keys()):
+    if not ({"amenities", "negated_amenities", "features", "negated_features", "finance"} & filter.keys()) and q != "browse":
         if not ({"price_max", "price_min", "price","bedrooms", "bedrooms_min", "bedrooms_max", "bathrooms", 
                 "bathrooms_min", "bathrooms_max", "bathroom_half", "sqft_min", "sqft_max", "sqft", "city"} & filter.keys()):
                 results, ids, latency_ms = searcher.search_hybrid(q, top_k = 50)
