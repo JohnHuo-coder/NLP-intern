@@ -7,77 +7,13 @@ import numpy as np
 import pandas as pd
 import time
 
+from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
 
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 _DEFAULT_LISTINGS_PATH = _PROJECT_ROOT / "data" / "processed" / "all_listings_cleaned.csv"
 _INDEX_PATH = _PROJECT_ROOT / "data" / "processed" / "index.faiss"
-
-def _chunk_text(text, max_chars=480, overlap=80):
-    """
-    Split listing text into overlapping chunks by **whole words** (whitespace-split),
-    growing each chunk until adding the next word would exceed ``max_chars``.
-    The next chunk starts with a suffix of the previous chunk of up to ``overlap``
-    characters (still whole words), so BM25 / embeddings never split a token.
-
-    A single word longer than ``max_chars`` is hard-truncated (rare in remarks).
-    """
-    text = (text or "").strip()
-    if not text:
-        return []
-    words = text.split()
-    if not words:
-        return []
-    joined = " ".join(words)
-    if len(joined) <= max_chars:
-        return [joined]
-
-    chunks = []
-    start = 0
-    n = len(words)
-    while start < n:
-        w0 = words[start]
-        if len(w0) > max_chars:
-            chunks.append(w0[:max_chars])
-            start += 1
-            continue
-
-        char_len = 0
-        end = start
-        while end < n:
-            w = words[end]
-            if len(w) > max_chars:
-                break
-            add = len(w) + (1 if end > start else 0)
-            if char_len + add > max_chars and end > start:
-                break
-            char_len += add
-            end += 1
-
-        if end > start:
-            chunks.append(" ".join(words[start:end]))
-        if end >= n:
-            break
-
-        if overlap <= 0:
-            start = end
-            continue
-
-        ov_len = 0
-        new_start = end
-        for j in range(end - 1, start - 1, -1):
-            piece = len(words[j]) + (1 if ov_len > 0 else 0)
-            if ov_len + piece > overlap:
-                break
-            ov_len += piece
-            new_start = j
-
-        # If overlap would reuse the whole chunk (e.g. single-word chunk), advance.
-        if new_start > start and new_start < end:
-            start = new_start
-        else:
-            start = end
-
-    return chunks if chunks else [joined[:max_chars]]
 
 MODEL = SentenceTransformer("all-MiniLM-L6-v2")
 
@@ -92,10 +28,18 @@ class SemanticSearcher:
         self.model = MODEL  # dim 384
         self.max_chunk_chars = max_chunk_chars
         self.chunk_overlap = chunk_overlap
+        self.splitter = RecursiveCharacterTextSplitter(
+            chunk_size =  max_chunk_chars,
+            chunk_overlap = chunk_overlap,
+            separators = ["\n\n", "\n", " ", ""]
+        )
         self.index = None
         self.listings = self._load_listings(listings_path)
+        self._row_by_listing_id = {
+            int(lid): i for i, lid in enumerate(self.listings["id"].tolist())
+        } # easier to locate the row with listing_id to get the remark
         self.remarks = self._extract_remarks()
-        self._build_chunk_tables()
+        self._build_chunk_tables_with_langchain()
         self._initialize_index()
         self.bm25 = self._build_BM_corpus()
 
@@ -108,18 +52,21 @@ class SemanticSearcher:
     def _extract_remarks(self):
         return self.listings["remarks"].to_list()
 
-    def _build_chunk_tables(self):
-        """One listing -> many chunks; record mapping chunk row -> listing row index."""
-        self.chunk_texts = []
-        self.chunk_listing_idx = []
-        for li, remark in enumerate(self.remarks):
-            parts = _chunk_text(
-                remark, self.max_chunk_chars, self.chunk_overlap
+    def _build_chunk_tables_with_langchain(self):
+        base_docs = []
+        for _, row in self.listings.iterrows():
+            base_docs.append(
+                Document(
+                    page_content = str(row["remarks"]),
+                    metadata = {"listing_id": int(row["id"])}
+                )
             )
-            for ch in parts:
-                self.chunk_texts.append(ch)
-                self.chunk_listing_idx.append(li)
-        self.chunk_listing_idx = np.asarray(self.chunk_listing_idx, dtype=np.int32)
+        split_docs = self.splitter.split_documents(base_docs)
+        self.chunk_docs = split_docs
+        self.chunk_texts = [d.page_content for d in split_docs]
+        self.chunk_listing_ids = np.asarray(
+            [int(d.metadata["listing_id"]) for d in split_docs], dtype=np.int64
+        )
         self._n_chunks = len(self.chunk_texts)
 
     def embed_chunks(self, batch_size=64):
@@ -141,7 +88,9 @@ class SemanticSearcher:
         if _INDEX_PATH.exists():
             print("Loading existing FAISS index...")
             self.index = faiss.read_index(str(_INDEX_PATH))
-            return
+            if int(self.index.ntotal) == int(self._n_chunks):
+                return
+            print("FAISS size mismatch with current chunks. Rebuilding index...")
         print("Building FAISS index from scratch...")
         embeddings = self.embed_chunks()
         dim = embeddings.shape[1]
@@ -173,7 +122,15 @@ class SemanticSearcher:
         return (x - lo) / (hi - lo)
 
     def _chunk_embedding_scores(self, query_emb, chunk_indices, search_idx, search_scores):
-        """IP scores from the FAISS hit list, or reconstruct + dot for other chunks."""
+        """
+        calculate the embedding approach score for result from both embedding approach and 
+        bm25 approach
+        chunk_indices: the index for most relavant text chunks, from bm25 and embedding search
+                       (tok_k from bm25 + top_k from embedding)
+        search_idx, search_score: result from embedding approach, we don't need to calculate their 
+                                  score again
+        return cos_sim in the order of chunk_indices
+        """
         hit = {}
         for cidx, s in zip(search_idx, search_scores):
             if cidx < 0:
@@ -199,8 +156,8 @@ class SemanticSearcher:
         chunk achieved it (among hits only).
 
         Returns:
-            ranked: [(listing_row_idx, best_score), ...] sorted by score desc
-            best_chunk_idx: listing_row_idx -> global chunk index into chunk_texts
+            ranked: [(listing_id, best_score), ...] sorted by score desc
+            best_chunk_idx: listing_id -> global chunk index into chunk_texts
         """
         best_score = {}
         best_chunk_idx = {}
@@ -209,10 +166,10 @@ class SemanticSearcher:
                 continue
             cidx = int(cidx)
             s = float(chunk_scores[i])
-            li = int(self.chunk_listing_idx[cidx])
+            li = int(self.chunk_docs[cidx].metadata["listing_id"])
             if li not in best_score or s > best_score[li]:
-                best_score[li] = s
-                best_chunk_idx[li] = cidx
+                best_score[li] = s # listing id to best score
+                best_chunk_idx[li] = cidx # listing id to best chunk idx
         ranked = sorted(best_score.items(), key=lambda x: -x[1])
         return ranked, best_chunk_idx
 
@@ -232,16 +189,16 @@ class SemanticSearcher:
 
         results = []
         ids = []
-        for li, sc in ranked:
-            remark = self.remarks[li]
-            lid = self.listings.iloc[li]["id"]
+        for lid, sc in ranked:
+            row_idx = self._row_by_listing_id[int(lid)]
+            remark = self.remarks[row_idx]
             if return_chunks:
-                cidx = chunk_for_listing[li]
+                cidx = chunk_for_listing[int(lid)]
                 chunk_text = self.chunk_texts[cidx]
                 results.append((remark, sc, chunk_text))
             else:
                 results.append((remark, sc))
-            ids.append((lid, sc))
+            ids.append((int(lid), sc))
         return results, ids, latency_ms
 
     def search_hybrid(self, query, top_k=5, return_chunks=False, alpha=0.5):
@@ -268,10 +225,13 @@ class SemanticSearcher:
         emb_scores, emb_idx = self.index.search(query_emb, k)
 
         query_tokens = query.split()
+        # bm score for each chunk
         bm_full = np.asarray(self.bm25.get_scores(query_tokens), dtype=np.float64)
+        # top_k score index
         bm_order = np.argsort(bm_full)[::-1][:k]
         bm_top_idx = bm_order.astype(np.int64)
 
+        # [top_k embd index| top_k bm25 index]
         cand = np.unique(np.concatenate([emb_idx[0].astype(np.int64), bm_top_idx]))
 
         emb_raw = self._chunk_embedding_scores(
@@ -291,32 +251,29 @@ class SemanticSearcher:
 
         results = []
         ids = []
-        for li, sc in ranked:
-            remark = self.remarks[li]
-            lid = self.listings.iloc[li]["id"]
+        for lid, sc in ranked:
+            row_idx = self._row_by_listing_id[int(lid)]
+            remark = self.remarks[row_idx]
             if return_chunks:
-                cidx = chunk_for_listing[li]
+                cidx = chunk_for_listing[int(lid)]
                 chunk_text = self.chunk_texts[cidx]
                 results.append((remark, sc, chunk_text))
             else:
                 results.append((remark, sc))
-            ids.append((lid, sc))
+            ids.append((int(lid), sc))
         return results, ids, latency_ms
 
-    def _listing_ids_to_rows(self, listing_ids):
-        """Map business listing ``id`` values to dataframe row indices."""
+    def _chunk_indices_for_listing_id(self, listing_ids):
+        """Chunk indices belonging to the given listing id"""
+
         if isinstance(listing_ids, (int, np.integer)):
             id_set = {int(listing_ids)}
         else:
             id_set = {int(x) for x in listing_ids}
-        mask = self.listings["id"].isin(id_set)
-        return np.flatnonzero(mask.to_numpy()).astype(np.int32)
-
-    def _chunk_indices_for_listing_rows(self, listing_rows):
-        """Chunk indices whose ``chunk_listing_idx`` is in ``listing_rows``."""
-        if listing_rows.size == 0:
+        if not id_set:
             return np.array([], dtype=np.int64)
-        m = np.isin(self.chunk_listing_idx, listing_rows.astype(np.int32, copy=False))
+        ids = np.array(sorted(id_set), dtype=np.int64) 
+        m = np.isin(self.chunk_listing_ids, ids)
         return np.flatnonzero(m).astype(np.int64)
 
     def _subset_chunk_depth(self, top_k, n_chunks_allowed):
@@ -351,8 +308,7 @@ class SemanticSearcher:
         return sims[best].astype(np.float32), allowed_chunks[best]
 
     def _search_emb_for_listings(self, query, listing_ids, top_k, return_chunks):
-        rows = self._listing_ids_to_rows(listing_ids)
-        allowed = self._chunk_indices_for_listing_rows(rows)
+        allowed = self._chunk_indices_for_listing_id(listing_ids)
         if allowed.size == 0:
             return [], [], 0.0
 
@@ -368,21 +324,20 @@ class SemanticSearcher:
 
         results = []
         ids = []
-        for li, sc in ranked:
-            remark = self.remarks[li]
-            lid = self.listings.iloc[li]["id"]
+        for lid, sc in ranked:
+            row_idx = self._row_by_listing_id[int(lid)]
+            remark = self.remarks[row_idx]
             if return_chunks:
-                cidx = chunk_for_listing[li]
+                cidx = chunk_for_listing[int(lid)]
                 chunk_text = self.chunk_texts[cidx]
                 results.append((remark, sc, chunk_text))
             else:
                 results.append((remark, sc))
-            ids.append((lid, sc))
+            ids.append((int(lid), sc))
         return results, ids, latency_ms
 
     def _search_bm25_for_listings(self, query, listing_ids, top_k, return_chunks):
-        rows = self._listing_ids_to_rows(listing_ids)
-        allowed = self._chunk_indices_for_listing_rows(rows)
+        allowed = self._chunk_indices_for_listing_id(listing_ids)
         if allowed.size == 0:
             return [], [], 0.0
 
@@ -403,16 +358,16 @@ class SemanticSearcher:
 
         results = []
         ids = []
-        for li, sc in ranked:
-            remark = self.remarks[li]
-            lid = self.listings.iloc[li]["id"]
+        for lid, sc in ranked:
+            row_idx = self._row_by_listing_id[int(lid)]
+            remark = self.remarks[row_idx]
             if return_chunks:
-                cidx = chunk_for_listing[li]
+                cidx = chunk_for_listing[int(lid)]
                 chunk_text = self.chunk_texts[cidx]
                 results.append((remark, sc, chunk_text))
             else:
                 results.append((remark, sc))
-            ids.append((lid, sc))
+            ids.append((int(lid), sc))
         return results, ids, latency_ms
 
     def search_hybrid_for_listings(
@@ -439,8 +394,7 @@ class SemanticSearcher:
                 query, listing_ids, top_k, return_chunks
             )
 
-        rows = self._listing_ids_to_rows(listing_ids)
-        allowed = self._chunk_indices_for_listing_rows(rows)
+        allowed = self._chunk_indices_for_listing_id(listing_ids)
         if allowed.size == 0:
             return [], [], 0.0
 
@@ -480,16 +434,16 @@ class SemanticSearcher:
 
         results = []
         ids_out = []
-        for li, sc in ranked:
-            remark = self.remarks[li]
-            lid = self.listings.iloc[li]["id"]
+        for lid, sc in ranked:
+            row_idx = self._row_by_listing_id[int(lid)]
+            remark = self.remarks[row_idx]
             if return_chunks:
-                cidx = chunk_for_listing[li]
+                cidx = chunk_for_listing[int(lid)]
                 chunk_text = self.chunk_texts[cidx]
                 results.append((remark, sc, chunk_text))
             else:
                 results.append((remark, sc))
-            ids_out.append((lid, sc))
+            ids_out.append((int(lid), sc))
         return results, ids_out, latency_ms
 
     def search_bm25(self, query, top_k=5, return_chunks=False):
@@ -508,14 +462,14 @@ class SemanticSearcher:
 
         results = []
         ids = []
-        for li, sc in ranked:
-            remark = self.remarks[li]
-            lid = self.listings.iloc[li]["id"]
+        for lid, sc in ranked:
+            row_idx = self._row_by_listing_id[int(lid)]
+            remark = self.remarks[row_idx]
             if return_chunks:
-                cidx = chunk_for_listing[li]
+                cidx = chunk_for_listing[int(lid)]
                 chunk_text = self.chunk_texts[cidx]
                 results.append((remark, sc, chunk_text))
             else:
                 results.append((remark, sc))
-            ids.append((lid, sc))
+            ids.append((int(lid), sc))
         return results, ids, latency_ms
