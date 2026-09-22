@@ -1,0 +1,4428 @@
+{
+  "n_queries": 30,
+  "k": 10,
+  "relevant_at": 2,
+  "judge_model": "gpt-4.1-mini",
+  "source": "D:\\nlp-internship\\data\\analyze_result\\llm_vs_raw_semantic_30.json",
+  "elapsed_s": 341.54,
+  "note": "Relevance is leftover-only (A/B phrase vs remark chunk). nDCG@10 uses gain 2^rel-1. SQL is structured filters only, id DESC (no remarks ranker). Full-query and leftover are hybrid rankers on the same candidate set. Empty leftover falls back to the full query.",
+  "latency": {
+    "search_elapsed_s": 95.65,
+    "extract_mean_s": 1.137,
+    "note": "search_elapsed_s is leftover extract plus two hybrid searches per query. SQL top-10 is computed from the same candidate ids (id DESC), no extra search."
+  },
+  "summary": {
+    "n": 30,
+    "ndcg_sql": 0.6695,
+    "ndcg_raw": 0.6909,
+    "ndcg_llm": 0.8123,
+    "ndcg_union_sql": 0.4663,
+    "ndcg_union_raw": 0.4651,
+    "ndcg_union_llm": 0.709,
+    "mrr_sql": 0.5062,
+    "mrr_raw": 0.592,
+    "mrr_llm": 0.7861,
+    "p5_sql": 0.3733,
+    "p5_raw": 0.44,
+    "p5_llm": 0.5867,
+    "p10_sql": 0.3679,
+    "p10_raw": 0.3745,
+    "p10_llm": 0.5512,
+    "coverage_raw": 0.1119,
+    "coverage_llm": 0.181,
+    "ndcg_wins": 23,
+    "ndcg_ties": 0,
+    "ndcg_losses": 7,
+    "ndcg_wins_vs_sql": 25,
+    "ndcg_ties_vs_sql": 0,
+    "ndcg_losses_vs_sql": 5,
+    "by_kind": {
+      "A": {
+        "n": 10,
+        "ndcg_sql": 0.5964,
+        "ndcg_raw": 0.5783,
+        "ndcg_llm": 0.7235,
+        "mrr_sql": 0.4204,
+        "mrr_raw": 0.451,
+        "mrr_llm": 0.5583,
+        "p10_sql": 0.23,
+        "p10_raw": 0.25,
+        "p10_llm": 0.38,
+        "ndcg_wins_vs_raw": 8,
+        "ndcg_wins_vs_sql": 9
+      },
+      "B": {
+        "n": 10,
+        "ndcg_sql": 0.7236,
+        "ndcg_raw": 0.7413,
+        "ndcg_llm": 0.8667,
+        "mrr_sql": 0.6667,
+        "mrr_raw": 0.625,
+        "mrr_llm": 0.9167,
+        "p10_sql": 0.3781,
+        "p10_raw": 0.3781,
+        "p10_llm": 0.6281,
+        "ndcg_wins_vs_raw": 7,
+        "ndcg_wins_vs_sql": 7
+      },
+      "A+B": {
+        "n": 10,
+        "ndcg_sql": 0.6885,
+        "ndcg_raw": 0.753,
+        "ndcg_llm": 0.8468,
+        "mrr_sql": 0.4317,
+        "mrr_raw": 0.7,
+        "mrr_llm": 0.8833,
+        "p10_sql": 0.4956,
+        "p10_raw": 0.4956,
+        "p10_llm": 0.6456,
+        "ndcg_wins_vs_raw": 8,
+        "ndcg_wins_vs_sql": 9
+      }
+    },
+    "n_candidates_ge_30": {
+      "n": 14,
+      "ndcg_sql": 0.6566,
+      "ndcg_raw": 0.6875,
+      "ndcg_llm": 0.852,
+      "mrr_sql": 0.4515,
+      "mrr_raw": 0.4769,
+      "mrr_llm": 0.8452
+    }
+  },
+  "rows": [
+    {
+      "id": 1,
+      "kind": "A",
+      "query": "Looking for a 2-bedroom, 2-bathroom home in Irvine under $900000, with living spaces bright throughout the day.",
+      "llm_text": "living spaces bright throughout the day",
+      "search_text": "living spaces bright throughout the day",
+      "leftover_fallback": false,
+      "n_candidates": 26,
+      "overlap_n": 5,
+      "sql_leftover_overlap_n": 3,
+      "grades": {
+        "119968": {
+          "rel": 0,
+          "why": "The chunk does not mention any aspect of brightness or natural light in the living spaces."
+        },
+        "119784": {
+          "rel": 3,
+          "why": "The listing explicitly mentions a bright living room and bright dining area, supporting the leftover about bright living spaces."
+        },
+        "118684": {
+          "rel": 0,
+          "why": "The chunk only discusses parking convenience and does not mention brightness or living spaces."
+        },
+        "118495": {
+          "rel": 1,
+          "why": "The listing mentions a quiet interior location with garden views but does not mention brightness or natural light in living spaces."
+        },
+        "114824": {
+          "rel": 0,
+          "why": "The chunk focuses on location and upgrades but does not mention brightness or natural light in living spaces."
+        },
+        "114640": {
+          "rel": 0,
+          "why": "The chunk mentions a thoughtfully arranged floor plan but does not mention brightness or natural light in living spaces."
+        },
+        "110889": {
+          "rel": 3,
+          "why": "The listing states the condo is filled with natural light and has vaulted ceilings, clearly supporting bright living spaces throughout the day."
+        },
+        "109664": {
+          "rel": 1,
+          "why": "The chunk mentions light and thoughtful upgrades for comfortable living, giving a vague hint of brightness but not clearly about living spaces."
+        },
+        "108544": {
+          "rel": 1,
+          "why": "The listing mentions hardwood flooring and 9-foot ceilings but does not explicitly mention brightness or natural light in living spaces."
+        },
+        "106279": {
+          "rel": 1,
+          "why": "The chunk focuses on luxury features and energy efficient windows but does not explicitly mention brightness or natural light in living spaces."
+        },
+        "43835": {
+          "rel": 3,
+          "why": "The listing highlights bright, open living spaces with floor-to-ceiling windows, strongly supporting bright living spaces throughout the day."
+        },
+        "4810": {
+          "rel": 0,
+          "why": "The chunk describes an expansive porch and cozy fireplace but does not mention brightness or natural light in living spaces."
+        },
+        "71919": {
+          "rel": 0,
+          "why": "The chunk focuses on location and upgrades but does not mention brightness or natural light in living spaces."
+        },
+        "90150": {
+          "rel": 3,
+          "why": "The listing mentions a light and bright interior with soaring vaulted ceilings, clearly supporting bright living spaces throughout the day."
+        },
+        "6243": {
+          "rel": 0,
+          "why": "The chunk discusses location and HOA dues but does not mention brightness or living spaces."
+        },
+        "104750": {
+          "rel": 3,
+          "why": "The listing describes a light and bright interior and open-concept living space, strongly supporting bright living spaces throughout the day."
+        },
+        "84044": {
+          "rel": 1,
+          "why": "The chunk mentions plush carpet and a private patio but does not explicitly mention brightness or natural light in living spaces."
+        },
+        "43223": {
+          "rel": 1,
+          "why": "The chunk describes a light and bright patio and outdoor living space but does not mention brightness inside living spaces."
+        },
+        "2222": {
+          "rel": 0,
+          "why": "The chunk lists many community amenities but does not mention brightness or living spaces inside the unit."
+        }
+      },
+      "sql_rels": [
+        0,
+        3,
+        0,
+        1,
+        0,
+        0,
+        3,
+        1,
+        1,
+        1
+      ],
+      "raw_rels": [
+        3,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        1,
+        1,
+        0
+      ],
+      "llm_rels": [
+        3,
+        3,
+        1,
+        0,
+        1,
+        3,
+        1,
+        1,
+        0,
+        0
+      ],
+      "ndcg_sql": 0.6177,
+      "ndcg_raw": 0.8188,
+      "ndcg_llm": 0.9405,
+      "ndcg_union_sql": 0.3637,
+      "ndcg_union_raw": 0.4547,
+      "ndcg_union_llm": 0.6947,
+      "mrr_sql": 0.5,
+      "mrr_raw": 1.0,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.2,
+      "p5_raw": 0.2,
+      "p5_llm": 0.4,
+      "p10_sql": 0.2,
+      "p10_raw": 0.2,
+      "p10_llm": 0.3,
+      "coverage_raw": 0.22,
+      "coverage_llm": 0.38,
+      "mean_shared_rank_delta": -1.0,
+      "extract_s": 2.151
+    },
+    {
+      "id": 2,
+      "kind": "A",
+      "query": "Find me a 3-bedroom, 2-bathroom house in Sacramento under $750,000, with a private outdoor place where I can grow vegetables and herbs.",
+      "llm_text": "private outdoor place where I can grow vegetables and herbs",
+      "search_text": "private outdoor place where I can grow vegetables and herbs",
+      "leftover_fallback": false,
+      "n_candidates": 15,
+      "overlap_n": 7,
+      "sql_leftover_overlap_n": 6,
+      "grades": {
+        "123926": {
+          "rel": 0,
+          "why": "The listing mentions general home features and inspections but does not mention any private outdoor space or gardening potential."
+        },
+        "122155": {
+          "rel": 2,
+          "why": "The listing mentions a spacious backyard and garden lawns on site, which partially supports the desire for a private outdoor place to grow vegetables and herbs."
+        },
+        "119657": {
+          "rel": 0,
+          "why": "The listing focuses on interior updates and appliances with no mention of outdoor space or gardening potential."
+        },
+        "115866": {
+          "rel": 0,
+          "why": "The listing mentions a gated community with access to a nearby park but does not mention a private outdoor space for gardening."
+        },
+        "114655": {
+          "rel": 2,
+          "why": "The listing mentions a generous lot and natural light, implying some outdoor space that could be personalized, which partially supports the leftover."
+        },
+        "113809": {
+          "rel": 3,
+          "why": "The listing explicitly mentions a spacious backyard with ample room for gardening or future improvements, strongly supporting the leftover."
+        },
+        "103031": {
+          "rel": 1,
+          "why": "The listing mentions outdoor space perfect for relaxing or entertaining but does not specifically mention gardening or growing vegetables and herbs."
+        },
+        "92630": {
+          "rel": 0,
+          "why": "The listing mentions a spacious layout and potential but does not mention any private outdoor space or gardening potential."
+        },
+        "78948": {
+          "rel": 0,
+          "why": "The listing highlights natural light and modern features but does not mention any private outdoor space or gardening potential."
+        },
+        "59597": {
+          "rel": 0,
+          "why": "The listing mentions a sunroom with electric outlets and ceiling fan but does not mention any private outdoor space or gardening potential."
+        },
+        "36507": {
+          "rel": 2,
+          "why": "The listing mentions a manageable yard on a large lot, which could support outdoor activities including gardening, partially supporting the leftover."
+        },
+        "10738": {
+          "rel": 1,
+          "why": "The listing mentions a large backyard ideal for entertaining but does not specifically mention gardening or growing vegetables and herbs."
+        },
+        "57071": {
+          "rel": 1,
+          "why": "The listing mentions a fully fenced yard and a corner lot but does not specifically mention gardening or growing vegetables and herbs."
+        },
+        "23870": {
+          "rel": 3,
+          "why": "The listing explicitly mentions fruit trees and gardening, strongly supporting the leftover for a private outdoor place to grow vegetables and herbs."
+        },
+        "22940": {
+          "rel": 1,
+          "why": "The listing mentions outdoor entertaining and relaxing moments but does not specifically mention gardening or growing vegetables and herbs."
+        }
+      },
+      "sql_rels": [
+        0,
+        2,
+        0,
+        0,
+        2,
+        3,
+        1,
+        0,
+        0,
+        0
+      ],
+      "raw_rels": [
+        3,
+        2,
+        2,
+        2,
+        1,
+        1,
+        1,
+        0,
+        0,
+        3
+      ],
+      "llm_rels": [
+        0,
+        3,
+        2,
+        1,
+        0,
+        1,
+        1,
+        3,
+        2,
+        0
+      ],
+      "ndcg_sql": 0.5433,
+      "ndcg_raw": 0.9029,
+      "ndcg_llm": 0.6639,
+      "ndcg_union_sql": 0.3526,
+      "ndcg_union_raw": 0.8866,
+      "ndcg_union_llm": 0.6086,
+      "mrr_sql": 0.5,
+      "mrr_raw": 1.0,
+      "mrr_llm": 0.5,
+      "p5_sql": 0.4,
+      "p5_raw": 0.8,
+      "p5_llm": 0.4,
+      "p10_sql": 0.3,
+      "p10_raw": 0.5,
+      "p10_llm": 0.4,
+      "coverage_raw": 0.0625,
+      "coverage_llm": 0.1,
+      "mean_shared_rank_delta": -0.286,
+      "extract_s": 2.179
+    },
+    {
+      "id": 3,
+      "kind": "A",
+      "query": "I'm looking for a 2-bedroom, 2-bathroom condo in San Diego under $1.1 million, with enough area to keep clothes, luggage, and household items out of sight.",
+      "llm_text": "enough area to keep clothes, luggage, and household items out of sight",
+      "search_text": "enough area to keep clothes, luggage, and household items out of sight",
+      "leftover_fallback": false,
+      "n_candidates": 321,
+      "overlap_n": 1,
+      "sql_leftover_overlap_n": 0,
+      "grades": {
+        "124793": {
+          "rel": 0,
+          "why": "The chunk mentions a dedicated laundry room and a 2 car garage but does not specify storage space for clothes, luggage, or household items out of sight."
+        },
+        "124646": {
+          "rel": 0,
+          "why": "The chunk highlights a townhouse with private outdoor spaces and an open living area but does not mention storage space for clothes, luggage, or household items."
+        },
+        "124351": {
+          "rel": 0,
+          "why": "The chunk describes a unit with updated interiors and large balconies but does not mention storage or closet space to keep items out of sight."
+        },
+        "124145": {
+          "rel": 3,
+          "why": "The chunk explicitly mentions excellent storage through an exclusive mini-storage unit just outside the front door, supporting the leftover about enough area to keep items out of sight."
+        },
+        "123962": {
+          "rel": 0,
+          "why": "The chunk describes bedrooms with private bathrooms and a bonus room but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "123910": {
+          "rel": 0,
+          "why": "The chunk mentions a laundry closet and a good sized balcony but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "123847": {
+          "rel": 0,
+          "why": "The chunk details updated kitchen and appliances but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "123819": {
+          "rel": 0,
+          "why": "The chunk describes a condo with a covered balcony and a complete renovation but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "123704": {
+          "rel": 0,
+          "why": "The chunk highlights a remodeled condo with modern cabinetry and a split-bedroom layout but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "123696": {
+          "rel": 3,
+          "why": "The chunk mentions a large mirrored-door closet in the primary suite and additional storage, supporting the leftover about enough area to keep items out of sight."
+        },
+        "105835": {
+          "rel": 0,
+          "why": "The chunk describes a condo with essential appliances and a community pool but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "122288": {
+          "rel": 0,
+          "why": "The chunk highlights an open and airy floor plan with abundant windows but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "29207": {
+          "rel": 0,
+          "why": "The chunk describes balconies and living space but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "97205": {
+          "rel": 0,
+          "why": "The chunk mentions natural light and an open-concept layout but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "98109": {
+          "rel": 0,
+          "why": "The chunk mentions an open floorplan, upgraded bathroom, and indoor washer and dryer but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "81410": {
+          "rel": 0,
+          "why": "The chunk describes a remodeled condo but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "102372": {
+          "rel": 2,
+          "why": "The chunk mentions a full-size laundry closet and garage for parking and storage, partially supporting the leftover about enough area to keep items out of sight."
+        },
+        "48731": {
+          "rel": 0,
+          "why": "The chunk describes an open-concept living space with custom flooring but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "101435": {
+          "rel": 0,
+          "why": "The chunk highlights vaulted ceilings and an open kitchen but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "76812": {
+          "rel": 0,
+          "why": "The chunk mentions a bright, move-in-ready space with abundant natural light but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "121545": {
+          "rel": 3,
+          "why": "The chunk mentions an abundance of cabinet space in the kitchen, which supports the leftover about enough area to keep items out of sight."
+        },
+        "95820": {
+          "rel": 0,
+          "why": "The chunk describes a spacious condo with vaulted ceilings and a versatile bonus loft but does not mention specific storage for clothes, luggage, or household items out of sight."
+        },
+        "118535": {
+          "rel": 0,
+          "why": "The chunk mentions parking space and location but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "80847": {
+          "rel": 0,
+          "why": "The chunk mentions in-unit laundry, central air conditioning, and a spacious balcony but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "68256": {
+          "rel": 3,
+          "why": "The chunk mentions a spacious storage area and a large private patio, supporting the leftover about enough area to keep items out of sight."
+        },
+        "105203": {
+          "rel": 0,
+          "why": "The chunk highlights a prime location and modern updates but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "101738": {
+          "rel": 0,
+          "why": "The chunk mentions access to amenities and convenience but does not mention storage space for clothes, luggage, or household items out of sight."
+        },
+        "83000": {
+          "rel": 3,
+          "why": "The chunk mentions a designated locked storage area, supporting the leftover about enough area to keep items out of sight."
+        },
+        "67958": {
+          "rel": 0,
+          "why": "The chunk describes a spacious end unit with tile flooring and an enclosed patio but does not mention storage space for clothes, luggage, or household items out of sight."
+        }
+      },
+      "sql_rels": [
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      "raw_rels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0
+      ],
+      "llm_rels": [
+        0,
+        3,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        3,
+        0
+      ],
+      "ndcg_sql": 0.4413,
+      "ndcg_raw": 0.3333,
+      "ndcg_llm": 0.6045,
+      "ndcg_union_sql": 0.2321,
+      "ndcg_union_raw": 0.0461,
+      "ndcg_union_llm": 0.4154,
+      "mrr_sql": 0.25,
+      "mrr_raw": 0.1429,
+      "mrr_llm": 0.5,
+      "p5_sql": 0.2,
+      "p5_raw": 0.0,
+      "p5_llm": 0.2,
+      "p10_sql": 0.2,
+      "p10_raw": 0.1,
+      "p10_llm": 0.3,
+      "coverage_raw": 0.0889,
+      "coverage_llm": 0.1333,
+      "mean_shared_rank_delta": 2.0,
+      "extract_s": 1.03
+    },
+    {
+      "id": 4,
+      "kind": "A",
+      "query": "Show me 4-bedroom, 3-bathroom homes in Irvine with at least 2200 sqft, with a kitchen that opens directly into the main living area for entertaining guests.",
+      "llm_text": "kitchen that opens directly into the main living area for entertaining guests",
+      "search_text": "kitchen that opens directly into the main living area for entertaining guests",
+      "leftover_fallback": false,
+      "n_candidates": 46,
+      "overlap_n": 4,
+      "sql_leftover_overlap_n": 1,
+      "grades": {
+        "124366": {
+          "rel": 1,
+          "why": "The chunk mentions an expanded living room creating an open and inviting home but does not explicitly mention the kitchen opening directly into the main living area for entertaining guests."
+        },
+        "123764": {
+          "rel": 3,
+          "why": "The listing clearly states an open-concept main level that seamlessly connects the kitchen, living room, and dining area, supporting the leftover about a kitchen opening directly into the main living area for entertaining guests."
+        },
+        "123194": {
+          "rel": 3,
+          "why": "The chunk explicitly describes an open concept kitchen, living, and dining area perfect for entertaining, directly supporting the leftover phrase."
+        },
+        "117913": {
+          "rel": 3,
+          "why": "The listing mentions an open-concept interior anchored by a chef's kitchen, implying the kitchen opens into the main living area for entertaining."
+        },
+        "116762": {
+          "rel": 2,
+          "why": "The description includes a great room floorplan downstairs with a breakfast nook and modern kitchen but does not explicitly state the kitchen opens directly into the main living area for entertaining guests."
+        },
+        "116481": {
+          "rel": 0,
+          "why": "The chunk focuses on bedrooms, bathrooms, and location but does not mention the kitchen or its relation to the main living area for entertaining."
+        },
+        "116442": {
+          "rel": 0,
+          "why": "The chunk mentions bedrooms and bathrooms but does not provide any information about the kitchen or its openness to the main living area."
+        },
+        "116395": {
+          "rel": 1,
+          "why": "The listing mentions a complete renovation including kitchens but does not specify if the kitchen opens directly into the main living area for entertaining guests."
+        },
+        "115248": {
+          "rel": 1,
+          "why": "The chunk highlights panoramic doors connecting indoor and outdoor living but does not mention the kitchen opening directly into the main living area for entertaining guests."
+        },
+        "114179": {
+          "rel": 1,
+          "why": "The description focuses on the family room opening to the backyard and general entertaining space but does not mention the kitchen opening directly into the main living area."
+        },
+        "22012": {
+          "rel": 1,
+          "why": "The chunk mentions a beautiful kitchen with stylish finishes but does not specify that the kitchen opens directly into the main living area for entertaining guests."
+        },
+        "50085": {
+          "rel": 2,
+          "why": "The listing describes an open floorplan with living areas flowing into each other, creating an ideal setting for entertaining, which supports the leftover about a kitchen opening into the main living area."
+        },
+        "105600": {
+          "rel": 3,
+          "why": "The chunk states a bright and open floor plan with a living room that flows seamlessly to both kitchen and dining room, supporting the leftover phrase."
+        },
+        "92717": {
+          "rel": 3,
+          "why": "The listing describes an open-concept living space where the kitchen flows effortlessly into the living room, clearly supporting the leftover phrase."
+        },
+        "41682": {
+          "rel": 3,
+          "why": "The chunk describes an expansive chef's kitchen with a large center island and an open-concept layout flowing seamlessly into living and dining areas, strongly supporting the leftover phrase."
+        },
+        "88653": {
+          "rel": 1,
+          "why": "The listing mentions a kitchen with quartz countertops and pantry space but does not specify that it opens directly into the main living area for entertaining guests."
+        },
+        "102299": {
+          "rel": 2,
+          "why": "The chunk describes a gourmet kitchen with a large center island and a spacious living area but does not explicitly state the kitchen opens directly into the main living area for entertaining guests."
+        },
+        "110733": {
+          "rel": 0,
+          "why": "The chunk focuses on location and community amenities without mentioning the kitchen or its openness to the main living area."
+        },
+        "15019": {
+          "rel": 3,
+          "why": "The listing describes a light, bright, and open great room that flows seamlessly into the dining area and gourmet kitchen, supporting the leftover phrase."
+        },
+        "82183": {
+          "rel": 3,
+          "why": "The chunk mentions the great room flowing to an upgraded chef's kitchen, indicating an open layout suitable for entertaining guests."
+        },
+        "81211": {
+          "rel": 3,
+          "why": "The listing describes an open-concept great room seamlessly connected to the kitchen and dining area, supporting the leftover phrase."
+        },
+        "95872": {
+          "rel": 1,
+          "why": "The chunk focuses on the great room flowing into the dining area and outdoor living but does not mention the kitchen opening directly into the main living area."
+        },
+        "105868": {
+          "rel": 3,
+          "why": "The listing states the gourmet kitchen flows seamlessly into the dining area and great room, perfectly supporting the leftover phrase about entertaining guests."
+        }
+      },
+      "sql_rels": [
+        1,
+        3,
+        3,
+        3,
+        2,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "raw_rels": [
+        1,
+        2,
+        2,
+        3,
+        3,
+        3,
+        1,
+        1,
+        2,
+        0
+      ],
+      "llm_rels": [
+        3,
+        1,
+        3,
+        3,
+        3,
+        3,
+        3,
+        2,
+        1,
+        3
+      ],
+      "ndcg_sql": 0.7953,
+      "ndcg_raw": 0.7304,
+      "ndcg_llm": 0.924,
+      "ndcg_union_sql": 0.4401,
+      "ndcg_union_raw": 0.4452,
+      "ndcg_union_llm": 0.7845,
+      "mrr_sql": 0.5,
+      "mrr_raw": 0.5,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.8,
+      "p5_raw": 0.8,
+      "p5_llm": 0.8,
+      "p10_sql": 0.4,
+      "p10_raw": 0.6,
+      "p10_llm": 0.8,
+      "coverage_raw": 0.25,
+      "coverage_llm": 0.49,
+      "mean_shared_rank_delta": 0.0,
+      "extract_s": 1.431
+    },
+    {
+      "id": 5,
+      "kind": "A",
+      "query": "Find a 3-bedroom, 2-bathroom house in Oakland with at least 1,500 sqft, with a sheltered area outside where I can sit or dine even when the weather is not ideal.",
+      "llm_text": "sheltered area outside where I can sit or dine even when the weather is not ideal",
+      "search_text": "sheltered area outside where I can sit or dine even when the weather is not ideal",
+      "leftover_fallback": false,
+      "n_candidates": 15,
+      "overlap_n": 7,
+      "sql_leftover_overlap_n": 9,
+      "grades": {
+        "124680": {
+          "rel": 0,
+          "why": "The description highlights expansive windows and architectural design but does not mention any sheltered outdoor area for sitting or dining in bad weather."
+        },
+        "123167": {
+          "rel": 0,
+          "why": "The listing mentions indoor spaces like a sun-filled breakfast room and family room but does not describe any sheltered outdoor area for sitting or dining."
+        },
+        "122504": {
+          "rel": 0,
+          "why": "The focus is on indoor kitchen and living spaces with no mention of any sheltered outdoor area for sitting or dining."
+        },
+        "122348": {
+          "rel": 0,
+          "why": "The chunk describes indoor kitchen and master bedroom features but does not mention any sheltered outdoor area for sitting or dining."
+        },
+        "117403": {
+          "rel": 3,
+          "why": "This listing clearly mentions an expansive tile patio and DG patio space outside, which are suitable for outdoor sitting or dining even in less ideal weather, supporting the leftover well."
+        },
+        "117136": {
+          "rel": 3,
+          "why": "The listing includes private rear gardens, patios, and a second deck off the kitchen perfect for dining al fresco, indicating sheltered or defined outdoor dining areas."
+        },
+        "117017": {
+          "rel": 0,
+          "why": "The description mentions a level backyard but does not specify any sheltered outdoor area for sitting or dining in bad weather."
+        },
+        "115327": {
+          "rel": 1,
+          "why": "The rear yard is described as ideal for relaxing and entertaining but no sheltered or covered outdoor area is mentioned."
+        },
+        "107914": {
+          "rel": 2,
+          "why": "The listing mentions a private balcony for morning coffee or evening use, which suggests a small sheltered outdoor sitting area."
+        },
+        "105295": {
+          "rel": 0,
+          "why": "The description focuses on indoor spaces and does not mention any sheltered outdoor area for sitting or dining."
+        },
+        "104707": {
+          "rel": 0,
+          "why": "The listing describes a historic compound with commercial space but does not mention any sheltered outdoor area for sitting or dining."
+        },
+        "103857": {
+          "rel": 1,
+          "why": "The listing mentions a private deck and landscaped backyard oasis but does not specify if the outdoor area is sheltered for use in bad weather."
+        },
+        "105070": {
+          "rel": 0,
+          "why": "The terraced backyard is described as abundant but there is no mention of a sheltered outdoor area for sitting or dining in inclement weather."
+        }
+      },
+      "sql_rels": [
+        0,
+        0,
+        0,
+        0,
+        3,
+        3,
+        0,
+        1,
+        2,
+        0
+      ],
+      "raw_rels": [
+        1,
+        2,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "llm_rels": [
+        1,
+        0,
+        0,
+        3,
+        0,
+        3,
+        2,
+        0,
+        1,
+        0
+      ],
+      "ndcg_sql": 0.481,
+      "ndcg_raw": 0.7865,
+      "ndcg_llm": 0.5686,
+      "ndcg_union_sql": 0.4674,
+      "ndcg_union_raw": 0.2366,
+      "ndcg_union_llm": 0.5686,
+      "mrr_sql": 0.2,
+      "mrr_raw": 0.5,
+      "mrr_llm": 0.25,
+      "p5_sql": 0.2,
+      "p5_raw": 0.2,
+      "p5_llm": 0.2,
+      "p10_sql": 0.3,
+      "p10_raw": 0.1,
+      "p10_llm": 0.3,
+      "coverage_raw": 0.0833,
+      "coverage_llm": 0.1333,
+      "mean_shared_rank_delta": -0.286,
+      "extract_s": 1.117
+    },
+    {
+      "id": 6,
+      "kind": "A",
+      "query": "Looking for a 3-bedroom, 2-bathroom house in Fresno under $650000, with a separate space that could be used for remote work without taking over a bedroom.",
+      "llm_text": "separate space that could be used for remote work without taking over a bedroom",
+      "search_text": "separate space that could be used for remote work without taking over a bedroom",
+      "leftover_fallback": false,
+      "n_candidates": 21,
+      "overlap_n": 6,
+      "sql_leftover_overlap_n": 4,
+      "grades": {
+        "124726": {
+          "rel": 0,
+          "why": "The chunk mentions space and functionality but does not specify a separate area suitable for remote work distinct from bedrooms."
+        },
+        "123465": {
+          "rel": 3,
+          "why": "The listing clearly states an additional 440 square feet game room, which can serve as a separate space for remote work without using a bedroom."
+        },
+        "121294": {
+          "rel": 1,
+          "why": "The chunk mentions a functional layout and usable yard but does not clearly indicate a separate indoor space suitable for remote work apart from bedrooms."
+        },
+        "120892": {
+          "rel": 0,
+          "why": "The description focuses on bedrooms and bathrooms without mentioning any separate space for remote work."
+        },
+        "119461": {
+          "rel": 3,
+          "why": "The garage converted into a mother-in-law setup with its own living room and kitchen suggests a separate space that could be used for remote work without taking over a bedroom."
+        },
+        "116796": {
+          "rel": 1,
+          "why": "The listing mentions a formal dining room and an additional dining area, which could be used as separate spaces, but it is not explicitly stated for remote work."
+        },
+        "115707": {
+          "rel": 0,
+          "why": "The chunk describes general features like hardwood floors and yard but does not mention any separate space for remote work."
+        },
+        "114537": {
+          "rel": 1,
+          "why": "The listing mentions a covered patio that could be used as an exercising room, implying a separate space that might be adapted for remote work."
+        },
+        "111703": {
+          "rel": 0,
+          "why": "The description highlights a spacious backyard and comfortable living space but does not mention a separate indoor space for remote work."
+        },
+        "108992": {
+          "rel": 0,
+          "why": "The chunk focuses on investment potential and lot size without mentioning any separate space suitable for remote work."
+        },
+        "79582": {
+          "rel": 2,
+          "why": "The listing mentions potential space for a small accessory dwelling unit, which could serve as a separate remote work area."
+        },
+        "91985": {
+          "rel": 1,
+          "why": "The chunk describes a sitting area by the door to the patio and vaulted ceilings but does not clearly indicate a separate space for remote work distinct from bedrooms."
+        },
+        "106378": {
+          "rel": 0,
+          "why": "The description highlights upgraded living space but does not mention any separate area for remote work."
+        },
+        "91000": {
+          "rel": 3,
+          "why": "The listing explicitly mentions three large and distinct living spaces including a flex space ideal for a home office, strongly supporting the leftover."
+        },
+        "86089": {
+          "rel": 0,
+          "why": "The chunk focuses on general home features and kitchen upgrades without mentioning a separate space for remote work."
+        },
+        "99956": {
+          "rel": 1,
+          "why": "The description mentions both open gathering spaces and private rooms but does not specify a separate space for remote work distinct from bedrooms."
+        },
+        "99906": {
+          "rel": 2,
+          "why": "The listing mentions dual living rooms providing flexible options, which could include a separate space for remote work without taking over a bedroom."
+        },
+        "94474": {
+          "rel": 0,
+          "why": "The chunk highlights smart-home upgrades and an open floor plan but does not mention a separate space suitable for remote work."
+        }
+      },
+      "sql_rels": [
+        0,
+        3,
+        1,
+        0,
+        3,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "raw_rels": [
+        0,
+        2,
+        0,
+        1,
+        0,
+        0,
+        1,
+        3,
+        0,
+        0
+      ],
+      "llm_rels": [
+        1,
+        1,
+        3,
+        2,
+        3,
+        0,
+        2,
+        0,
+        0,
+        0
+      ],
+      "ndcg_sql": 0.6515,
+      "ndcg_raw": 0.4952,
+      "ndcg_llm": 0.6776,
+      "ndcg_union_sql": 0.4375,
+      "ndcg_union_raw": 0.2565,
+      "ndcg_union_llm": 0.5342,
+      "mrr_sql": 0.5,
+      "mrr_raw": 0.5,
+      "mrr_llm": 0.3333,
+      "p5_sql": 0.4,
+      "p5_raw": 0.2,
+      "p5_llm": 0.6,
+      "p10_sql": 0.2,
+      "p10_raw": 0.2,
+      "p10_llm": 0.4,
+      "coverage_raw": 0.1727,
+      "coverage_llm": 0.1909,
+      "mean_shared_rank_delta": -0.667,
+      "extract_s": 1.45
+    },
+    {
+      "id": 7,
+      "kind": "A",
+      "query": "Find me a 2-bedroom, 2-bathroom condo in San Francisco under $1.4 million, where I can securely leave my car.",
+      "llm_text": "securely leave my car",
+      "search_text": "securely leave my car",
+      "leftover_fallback": false,
+      "n_candidates": 12,
+      "overlap_n": 9,
+      "sql_leftover_overlap_n": 9,
+      "grades": {
+        "124718": {
+          "rel": 0,
+          "why": "The chunk does not mention any parking or security features related to leaving a car securely."
+        },
+        "123902": {
+          "rel": 3,
+          "why": "The listing explicitly mentions two secured garage parking spaces, directly supporting the desire to securely leave a car."
+        },
+        "116064": {
+          "rel": 0,
+          "why": "The chunk focuses on mortgage insurance and down payment options, with no mention of parking or car security."
+        },
+        "106074": {
+          "rel": 0,
+          "why": "The description highlights bright living spaces and views but does not mention parking or secure car storage."
+        },
+        "103863": {
+          "rel": 3,
+          "why": "The listing mentions direct access to the garage and a private outdoor area, implying secure parking availability."
+        },
+        "93992": {
+          "rel": 0,
+          "why": "The chunk only provides verification and open house dates, with no information about parking or car security."
+        },
+        "74697": {
+          "rel": 3,
+          "why": "Includes assigned covered parking, which supports securely leaving a car."
+        },
+        "72983": {
+          "rel": 0,
+          "why": "The description focuses on ownership and residence usage without mentioning parking or car security."
+        },
+        "71530": {
+          "rel": 0,
+          "why": "The chunk highlights location and lifestyle but does not mention parking or secure car storage."
+        },
+        "59322": {
+          "rel": 3,
+          "why": "Deeded parking and covered garage included with the unit clearly support securely leaving a car."
+        },
+        "33146": {
+          "rel": 3,
+          "why": "Mentions a secure building with concierge and virtual doorman, which implies secure parking and package handling, supporting secure car leaving."
+        }
+      },
+      "sql_rels": [
+        0,
+        3,
+        0,
+        0,
+        3,
+        0,
+        3,
+        0,
+        0,
+        3
+      ],
+      "raw_rels": [
+        0,
+        0,
+        3,
+        0,
+        3,
+        0,
+        0,
+        3,
+        3,
+        0
+      ],
+      "llm_rels": [
+        0,
+        3,
+        0,
+        3,
+        0,
+        3,
+        3,
+        0,
+        0,
+        3
+      ],
+      "ndcg_sql": 0.6403,
+      "ndcg_raw": 0.5869,
+      "ndcg_llm": 0.692,
+      "ndcg_union_sql": 0.5563,
+      "ndcg_union_raw": 0.5099,
+      "ndcg_union_llm": 0.692,
+      "mrr_sql": 0.5,
+      "mrr_raw": 0.3333,
+      "mrr_llm": 0.5,
+      "p5_sql": 0.4,
+      "p5_raw": 0.4,
+      "p5_llm": 0.4,
+      "p10_sql": 0.4,
+      "p10_raw": 0.4,
+      "p10_llm": 0.5,
+      "coverage_raw": 0.0,
+      "coverage_llm": 0.0,
+      "mean_shared_rank_delta": 0.0,
+      "extract_s": 2.019
+    },
+    {
+      "id": 8,
+      "kind": "A",
+      "query": "I'm looking for a 4-bedroom, 3-bathroom home in Riverside under $900,000, with a comfortable place to gather around a real fire during colder evenings.",
+      "llm_text": "comfortable place to gather around a real fire during colder evenings",
+      "search_text": "comfortable place to gather around a real fire during colder evenings",
+      "leftover_fallback": false,
+      "n_candidates": 33,
+      "overlap_n": 3,
+      "sql_leftover_overlap_n": 2,
+      "grades": {
+        "123619": {
+          "rel": 0,
+          "why": "The chunk does not mention any fireplace or gathering space related to a fire for colder evenings."
+        },
+        "123037": {
+          "rel": 0,
+          "why": "No mention of a fireplace or a cozy gathering spot around a real fire is present in the description."
+        },
+        "122549": {
+          "rel": 0,
+          "why": "The description lacks any reference to a fireplace or a comfortable fire gathering area."
+        },
+        "122331": {
+          "rel": 0,
+          "why": "No indication of a fireplace or a cozy fire gathering place is found in the chunk."
+        },
+        "119725": {
+          "rel": 0,
+          "why": "No mention of a fireplace or a cozy fire gathering area for colder evenings is included."
+        },
+        "119176": {
+          "rel": 1,
+          "why": "The chunk mentions a Victorian home designed for unforgettable gatherings but does not specify a fireplace or fire gathering spot."
+        },
+        "116035": {
+          "rel": 3,
+          "why": "The listing clearly mentions a family room with fireplace and a primary bedroom with fireplace, supporting a comfortable place to gather around a real fire."
+        },
+        "115674": {
+          "rel": 0,
+          "why": "The description highlights a large backyard with patio cover and built-in barbecue but does not mention a fireplace or fire gathering area."
+        },
+        "115342": {
+          "rel": 0,
+          "why": "No mention of a fireplace or a cozy fire gathering spot is present in the description."
+        },
+        "115166": {
+          "rel": 0,
+          "why": "The chunk describes bright and airy spaces but does not mention a fireplace or fire gathering area."
+        },
+        "27363": {
+          "rel": 0,
+          "why": "No reference to a fireplace or a cozy fire gathering place is included."
+        },
+        "103251": {
+          "rel": 3,
+          "why": "The description mentions a brick fireplace in a formal dining room, supporting a real fire gathering place."
+        },
+        "78808": {
+          "rel": 3,
+          "why": "The chunk describes a family room with a brick fireplace, ideal for gatherings around a real fire."
+        },
+        "103618": {
+          "rel": 0,
+          "why": "No mention of a fireplace or a cozy fire gathering area is included in the description."
+        },
+        "95762": {
+          "rel": 0,
+          "why": "No reference to a fireplace or a fire gathering spot is present in the chunk."
+        },
+        "107625": {
+          "rel": 0,
+          "why": "The bright, open living room is described but no fireplace or fire gathering area is mentioned."
+        },
+        "113175": {
+          "rel": 0,
+          "why": "No mention of a fireplace or a cozy fire gathering area is included in the description."
+        },
+        "41526": {
+          "rel": 0,
+          "why": "No indication of a fireplace or a fire gathering spot is present in the chunk."
+        },
+        "107815": {
+          "rel": 1,
+          "why": "The description mentions cozy evenings and intimate gatherings but does not specify a fireplace or real fire."
+        },
+        "108732": {
+          "rel": 3,
+          "why": "The family room centers around a cozy fireplace, supporting a comfortable place to gather around a real fire."
+        },
+        "46670": {
+          "rel": 0,
+          "why": "No mention of a fireplace or a fire gathering area is included in the description."
+        },
+        "114781": {
+          "rel": 0,
+          "why": "The backyard features a custom pool, spa, and barbecue but no fireplace or fire gathering area is mentioned."
+        },
+        "49085": {
+          "rel": 3,
+          "why": "The family room with fireplace off the remodeled kitchen supports a comfortable place to gather around a real fire."
+        }
+      },
+      "sql_rels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        3,
+        0,
+        0,
+        0
+      ],
+      "raw_rels": [
+        0,
+        0,
+        3,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "llm_rels": [
+        1,
+        3,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        1
+      ],
+      "ndcg_sql": 0.3525,
+      "ndcg_raw": 0.5438,
+      "ndcg_llm": 0.719,
+      "ndcg_union_sql": 0.1261,
+      "ndcg_union_raw": 0.2911,
+      "ndcg_union_llm": 0.5304,
+      "mrr_sql": 0.1429,
+      "mrr_raw": 0.3333,
+      "mrr_llm": 0.5,
+      "p5_sql": 0.0,
+      "p5_raw": 0.4,
+      "p5_llm": 0.4,
+      "p10_sql": 0.1,
+      "p10_raw": 0.2,
+      "p10_llm": 0.3,
+      "coverage_raw": 0.0222,
+      "coverage_llm": 0.1778,
+      "mean_shared_rank_delta": 3.333,
+      "extract_s": 0.942
+    },
+    {
+      "id": 9,
+      "kind": "A",
+      "query": "Show me 3-bedroom, 2-bathroom houses in Anaheim under $1 million, with a dedicated area for washing and drying clothes rather than having the machines in the kitchen.",
+      "llm_text": "dedicated area for washing and drying clothes rather than having the machines in the kitchen",
+      "search_text": "dedicated area for washing and drying clothes rather than having the machines in the kitchen",
+      "leftover_fallback": false,
+      "n_candidates": 20,
+      "overlap_n": 5,
+      "sql_leftover_overlap_n": 4,
+      "grades": {
+        "124645": {
+          "rel": 3,
+          "why": "The listing explicitly mentions a laundry room next to the kitchen, indicating a dedicated area for washing and drying clothes separate from the kitchen itself."
+        },
+        "124620": {
+          "rel": 0,
+          "why": "The chunk does not mention any laundry or dedicated washing/drying area, only outdoor space and garage potential."
+        },
+        "123532": {
+          "rel": 0,
+          "why": "No mention of laundry or dedicated washing/drying area in the description."
+        },
+        "123191": {
+          "rel": 0,
+          "why": "No mention of laundry or dedicated washing/drying area; focuses on backyard and other features."
+        },
+        "121905": {
+          "rel": 0,
+          "why": "No mention of laundry or dedicated washing/drying area; focuses on kitchen and living areas."
+        },
+        "120045": {
+          "rel": 0,
+          "why": "No mention of laundry or dedicated washing/drying area; focuses on kitchen and smart home features."
+        },
+        "118925": {
+          "rel": 0,
+          "why": "No mention of laundry or dedicated washing/drying area; focuses on layout and living areas."
+        },
+        "117147": {
+          "rel": 0,
+          "why": "No mention of laundry or dedicated washing/drying area; focuses on bedrooms, bathrooms, and community."
+        },
+        "113088": {
+          "rel": 0,
+          "why": "No mention of laundry or dedicated washing/drying area; focuses on kitchen and backyard."
+        },
+        "108945": {
+          "rel": 0,
+          "why": "No mention of laundry or dedicated washing/drying area; focuses on kitchen and living space."
+        },
+        "61222": {
+          "rel": 0,
+          "why": "No mention of laundry or dedicated washing/drying area; focuses on backyard and location."
+        },
+        "96841": {
+          "rel": 0,
+          "why": "No mention of laundry or dedicated washing/drying area; focuses on kitchen and living space."
+        },
+        "82044": {
+          "rel": 0,
+          "why": "No mention of laundry or dedicated washing/drying area; focuses on garage and community amenities."
+        },
+        "80438": {
+          "rel": 0,
+          "why": "No mention of laundry or dedicated washing/drying area; focuses on kitchen and community amenities."
+        },
+        "99615": {
+          "rel": 0,
+          "why": "No mention of laundry or dedicated washing/drying area; focuses on upgrades and parking."
+        },
+        "106643": {
+          "rel": 0,
+          "why": "No mention of laundry or dedicated washing/drying area; focuses on bedrooms and patio."
+        },
+        "62125": {
+          "rel": 3,
+          "why": "Mentions an open laundry room inside by the kitchen area, indicating a dedicated laundry space separate from the kitchen itself."
+        },
+        "108913": {
+          "rel": 0,
+          "why": "No mention of laundry or dedicated washing/drying area; focuses on energy efficiency features."
+        }
+      },
+      "sql_rels": [
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "raw_rels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "llm_rels": [
+        0,
+        3,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ndcg_sql": 1.0,
+      "ndcg_raw": 0.0,
+      "ndcg_llm": 0.6509,
+      "ndcg_union_sql": 0.6131,
+      "ndcg_union_raw": 0.0,
+      "ndcg_union_llm": 0.6509,
+      "mrr_sql": 1.0,
+      "mrr_raw": 0.0,
+      "mrr_llm": 0.5,
+      "p5_sql": 0.2,
+      "p5_raw": 0.0,
+      "p5_llm": 0.4,
+      "p10_sql": 0.1,
+      "p10_raw": 0.0,
+      "p10_llm": 0.2,
+      "coverage_raw": 0.07,
+      "coverage_llm": 0.11,
+      "mean_shared_rank_delta": -1.6,
+      "extract_s": 1.017
+    },
+    {
+      "id": 10,
+      "kind": "A",
+      "query": "Find a 2-bedroom, 2-bathroom home in Palm Springs under $850,000, with a private place to cool off and swim during hot afternoons.",
+      "llm_text": "private place to cool off and swim during hot afternoons",
+      "search_text": "private place to cool off and swim during hot afternoons",
+      "leftover_fallback": false,
+      "n_candidates": 161,
+      "overlap_n": 2,
+      "sql_leftover_overlap_n": 0,
+      "grades": {
+        "124783": {
+          "rel": 0,
+          "why": "The chunk describes a condo with natural light and cathedral ceilings but does not mention any private swimming or cooling-off place."
+        },
+        "124754": {
+          "rel": 1,
+          "why": "The listing mentions two patios, one fully enclosed and another with a lush hedge for privacy, suggesting some private outdoor space but no mention of swimming or cooling-off water features."
+        },
+        "124661": {
+          "rel": 0,
+          "why": "The description focuses on interior features and location but does not mention any private place to swim or cool off."
+        },
+        "124436": {
+          "rel": 0,
+          "why": "The listing highlights a large back patio and mountain views but does not mention any private pool or swimming area to cool off."
+        },
+        "123489": {
+          "rel": 1,
+          "why": "The listing mentions standout outdoor living but does not specify a private swimming or cooling-off place."
+        },
+        "122264": {
+          "rel": 1,
+          "why": "This condo has a very private front courtyard entry but no mention of a private pool or swimming area to cool off."
+        },
+        "121799": {
+          "rel": 1,
+          "why": "The listing mentions a large land area and potential for a desert oasis but does not explicitly mention a private swimming or cooling-off place."
+        },
+        "121512": {
+          "rel": 0,
+          "why": "The chunk describes a charming property with a garage and interior space but no mention of a private swimming or cooling-off place."
+        },
+        "121322": {
+          "rel": 3,
+          "why": "This unit features a private pool and gorgeous outdoor space, clearly supporting a private place to cool off and swim during hot afternoons."
+        },
+        "120519": {
+          "rel": 1,
+          "why": "The listing mentions two outdoor decks providing private space but does not mention a pool or swimming area to cool off."
+        },
+        "116446": {
+          "rel": 0,
+          "why": "The description focuses on interior amenities and location with no mention of private swimming or cooling-off places."
+        },
+        "120138": {
+          "rel": 0,
+          "why": "The listing highlights mountain views and interior features but does not mention any private swimming or cooling-off place."
+        },
+        "79635": {
+          "rel": 1,
+          "why": "The chunk mentions a private patio but no swimming or cooling-off place is described."
+        },
+        "20212": {
+          "rel": 1,
+          "why": "The listing includes two private patios and stone tile floors extending to them, but no mention of a private pool or swimming area."
+        },
+        "28191": {
+          "rel": 2,
+          "why": "The listing mentions three private patios with one opening directly to the community pool and spa, but the pool is community, not private, so only partial support."
+        },
+        "113738": {
+          "rel": 1,
+          "why": "The listing mentions heated pools and clubhouse but does not specify private swimming or cooling-off places."
+        },
+        "117059": {
+          "rel": 2,
+          "why": "The listing mentions direct pool access and two pools and spas in a well-kept community but does not specify a private pool or swimming area."
+        },
+        "9515": {
+          "rel": 0,
+          "why": "The listing mentions cold air conditioning and a private community but no private swimming or cooling-off place."
+        },
+        "65170": {
+          "rel": 1,
+          "why": "The listing highlights a private, newly remodeled patio ideal for indoor-outdoor living but does not mention a private pool or swimming area."
+        },
+        "83657": {
+          "rel": 1,
+          "why": "The listing mentions a private patio perfect for relaxing or entertaining but no private swimming or cooling-off place."
+        },
+        "117188": {
+          "rel": 1,
+          "why": "The listing describes a beautifully landscaped private patio with a retractable awning ideal for hot summer days but no private swimming or cooling-off place."
+        },
+        "68465": {
+          "rel": 2,
+          "why": "The listing mentions a private courtyard with access to the pool and multiple pools in the community but does not specify a private pool, so partial support."
+        },
+        "117713": {
+          "rel": 1,
+          "why": "The listing mentions pools, spas, tennis, and pickleball courts in the community but no private swimming or cooling-off place."
+        },
+        "44770": {
+          "rel": 0,
+          "why": "The listing describes a tranquil fountain and outdoor spaces but no private swimming or cooling-off place."
+        },
+        "113042": {
+          "rel": 0,
+          "why": "The listing mentions a recently improved patio area but no private swimming or cooling-off place."
+        },
+        "27003": {
+          "rel": 1,
+          "why": "The listing mentions a sparkling community pool and spa but no private swimming or cooling-off place."
+        },
+        "91745": {
+          "rel": 1,
+          "why": "The listing mentions three pools in the community to cool off but no private swimming or cooling-off place."
+        },
+        "64136": {
+          "rel": 2,
+          "why": "The listing mentions a patio with a barbecue and access to a pool and jacuzzi but does not specify the pool is private, so partial support."
+        }
+      },
+      "sql_rels": [
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        3,
+        1
+      ],
+      "raw_rels": [
+        0,
+        0,
+        1,
+        1,
+        2,
+        1,
+        2,
+        0,
+        1,
+        1
+      ],
+      "llm_rels": [
+        1,
+        2,
+        1,
+        2,
+        0,
+        1,
+        0,
+        1,
+        1,
+        2
+      ],
+      "ndcg_sql": 0.441,
+      "ndcg_raw": 0.5852,
+      "ndcg_llm": 0.7942,
+      "ndcg_union_sql": 0.2842,
+      "ndcg_union_raw": 0.2796,
+      "ndcg_union_llm": 0.4518,
+      "mrr_sql": 0.1111,
+      "mrr_raw": 0.2,
+      "mrr_llm": 0.5,
+      "p5_sql": 0.0,
+      "p5_raw": 0.2,
+      "p5_llm": 0.4,
+      "p10_sql": 0.1,
+      "p10_raw": 0.2,
+      "p10_llm": 0.3,
+      "coverage_raw": 0.15,
+      "coverage_llm": 0.2625,
+      "mean_shared_rank_delta": 0.5,
+      "extract_s": 0.732
+    },
+    {
+      "id": 11,
+      "kind": "B",
+      "query": "Looking for a 2-bedroom, 2-bathroom condo in Santa Monica under $1.5 million, somewhere I can easily walk to the beach and enjoy the ocean atmosphere.",
+      "llm_text": "easily walk to the beach and enjoy the ocean atmosphere",
+      "search_text": "easily walk to the beach and enjoy the ocean atmosphere",
+      "leftover_fallback": false,
+      "n_candidates": 24,
+      "overlap_n": 5,
+      "sql_leftover_overlap_n": 5,
+      "grades": {
+        "124733": {
+          "rel": 3,
+          "why": "The listing mentions a 10-15 minute walk to the beach, supporting easy walking access and proximity to the ocean atmosphere."
+        },
+        "124679": {
+          "rel": 3,
+          "why": "The listing highlights being moments from the Santa Monica Bay and beach city living, implying easy beach access and ocean atmosphere enjoyment."
+        },
+        "124036": {
+          "rel": 3,
+          "why": "The listing states it is just moments from the beach and offers coastal charm, supporting easy walking to the beach and ocean atmosphere."
+        },
+        "119218": {
+          "rel": 1,
+          "why": "The listing mentions a prime Santa Monica location and coastal charm but does not explicitly mention walking distance to the beach or ocean atmosphere."
+        },
+        "118008": {
+          "rel": 1,
+          "why": "The listing notes a sought-after Santa Monica neighborhood and everyday convenience but does not specifically mention walking to the beach or ocean atmosphere."
+        },
+        "112310": {
+          "rel": 0,
+          "why": "The listing is located directly across from Reed Park but does not mention proximity to the beach or ocean atmosphere."
+        },
+        "112142": {
+          "rel": 3,
+          "why": "The listing mentions being close to the beach and recreational options, supporting easy access to the beach and ocean atmosphere."
+        },
+        "111212": {
+          "rel": 1,
+          "why": "The listing is in a coveted Santa Monica neighborhood but does not explicitly mention walking distance to the beach or ocean atmosphere."
+        },
+        "110879": {
+          "rel": 1,
+          "why": "The listing mentions a desirable Santa Monica address but does not specify walking distance to the beach or ocean atmosphere."
+        },
+        "107092": {
+          "rel": 0,
+          "why": "The listing highlights a large balcony and modern features but does not mention proximity to the beach or ocean atmosphere."
+        },
+        "8175": {
+          "rel": 3,
+          "why": "The listing states it is just moments from the beach and offers coastal living, supporting easy walking to the beach and ocean atmosphere."
+        },
+        "94822": {
+          "rel": 3,
+          "why": "The listing mentions being just minutes from the beach and near vibrant shops, supporting easy walking access and ocean atmosphere."
+        },
+        "74096": {
+          "rel": 2,
+          "why": "The listing is just minutes from the beach and features natural light and a private terrace, partially supporting the leftover."
+        },
+        "86134": {
+          "rel": 3,
+          "why": "The listing is just steps from the sand and minutes from the Santa Monica Pier, strongly supporting easy beach access and ocean atmosphere."
+        },
+        "106237": {
+          "rel": 3,
+          "why": "The listing emphasizes beach living and being ready to go, supporting easy access to the beach and ocean atmosphere."
+        },
+        "54778": {
+          "rel": 3,
+          "why": "The listing mentions being moments from Santa Monica's beaches and ocean views, strongly supporting the leftover."
+        },
+        "83397": {
+          "rel": 2,
+          "why": "The listing is 10 minutes from the beach, which is a bit farther than 'easily walk,' so only partial support."
+        },
+        "73610": {
+          "rel": 2,
+          "why": "The listing is a half mile to the beach and near popular local spots, partially supporting easy walking to the beach and ocean atmosphere."
+        }
+      },
+      "sql_rels": [
+        3,
+        3,
+        3,
+        1,
+        1,
+        0,
+        3,
+        1,
+        1,
+        0
+      ],
+      "raw_rels": [
+        3,
+        1,
+        0,
+        3,
+        2,
+        3,
+        3,
+        3,
+        1,
+        3
+      ],
+      "llm_rels": [
+        3,
+        3,
+        2,
+        3,
+        1,
+        3,
+        3,
+        2,
+        3,
+        3
+      ],
+      "ndcg_sql": 0.9669,
+      "ndcg_raw": 0.8552,
+      "ndcg_llm": 0.9499,
+      "ndcg_union_sql": 0.6096,
+      "ndcg_union_raw": 0.6906,
+      "ndcg_union_llm": 0.8556,
+      "mrr_sql": 1.0,
+      "mrr_raw": 1.0,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.6,
+      "p5_raw": 0.6,
+      "p5_llm": 0.8,
+      "p10_sql": 0.4,
+      "p10_raw": 0.7,
+      "p10_llm": 0.9,
+      "coverage_raw": 0.1667,
+      "coverage_llm": 0.2333,
+      "mean_shared_rank_delta": 1.0,
+      "extract_s": 0.846
+    },
+    {
+      "id": 12,
+      "kind": "B",
+      "query": "Find me a 3-bedroom house in Berkeley with at least 1,500 sqft, in a peaceful setting that still feels warm and inviting rather than isolated.",
+      "llm_text": "peaceful setting that still feels warm and inviting rather than isolated",
+      "search_text": "peaceful setting that still feels warm and inviting rather than isolated",
+      "leftover_fallback": false,
+      "n_candidates": 10,
+      "overlap_n": 10,
+      "sql_leftover_overlap_n": 10,
+      "grades": {
+        "123591": {
+          "rel": 2,
+          "why": "The description emphasizes warmth and ease with a central bar as the heart of the home, suggesting a warm and inviting atmosphere, but does not clearly mention peacefulness or setting."
+        },
+        "121922": {
+          "rel": 1,
+          "why": "The listing highlights indoor/outdoor flow and designer finishes but lacks mention of a peaceful or warm inviting setting, focusing more on features and layout."
+        },
+        "121920": {
+          "rel": 2,
+          "why": "Mentions outdoor living with privacy and reconfigured yard for usability, which supports a peaceful and somewhat inviting setting, though not explicitly warm."
+        },
+        "120908": {
+          "rel": 2,
+          "why": "The generous backyard offers space for entertaining and gardening, implying a peaceful and inviting outdoor setting, but no direct mention of warmth or isolation."
+        },
+        "116384": {
+          "rel": 2,
+          "why": "The primary suite is described as a delightful retreat bathed in natural light with warm wood cabinetry, suggesting warmth and inviting qualities, but no explicit mention of peaceful setting."
+        },
+        "116321": {
+          "rel": 3,
+          "why": "Located on a quiet, tree-lined street with gated privacy and nearby amenities, this supports a peaceful yet connected and inviting setting."
+        },
+        "116077": {
+          "rel": 1,
+          "why": "The listing mentions a backyard patio and play area with recent updates but lacks clear reference to a peaceful or warm inviting setting."
+        },
+        "115225": {
+          "rel": 2,
+          "why": "Describes a light-filled primary suite as a sanctuary with seamless indoor-outdoor living perfect for entertaining, supporting a warm and inviting atmosphere though peacefulness is less explicit."
+        },
+        "103836": {
+          "rel": 3,
+          "why": "The primary suite is described as a peaceful retreat with serene garden-facing room and views, clearly supporting a peaceful and inviting setting."
+        },
+        "62451": {
+          "rel": 0,
+          "why": "Focuses on investment potential and location convenience without mention of peacefulness or warmth in the setting."
+        }
+      },
+      "sql_rels": [
+        2,
+        1,
+        2,
+        2,
+        2,
+        3,
+        1,
+        2,
+        3,
+        0
+      ],
+      "raw_rels": [
+        2,
+        2,
+        3,
+        2,
+        3,
+        1,
+        2,
+        1,
+        2,
+        0
+      ],
+      "llm_rels": [
+        2,
+        2,
+        3,
+        2,
+        2,
+        2,
+        1,
+        0,
+        1,
+        3
+      ],
+      "ndcg_sql": 0.7457,
+      "ndcg_raw": 0.829,
+      "ndcg_llm": 0.8071,
+      "ndcg_union_sql": 0.7457,
+      "ndcg_union_raw": 0.829,
+      "ndcg_union_llm": 0.8071,
+      "mrr_sql": 1.0,
+      "mrr_raw": 1.0,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.8,
+      "p5_raw": 1.0,
+      "p5_llm": 1.0,
+      "p10_sql": 0.7,
+      "p10_raw": 0.7,
+      "p10_llm": 0.7,
+      "coverage_raw": 0.06,
+      "coverage_llm": 0.05,
+      "mean_shared_rank_delta": 0.0,
+      "extract_s": 0.789
+    },
+    {
+      "id": 13,
+      "kind": "B",
+      "query": "I'm looking for a 2-bedroom home in Riverside, with an open outlook and beautiful scenery from the property.",
+      "llm_text": "open outlook and beautiful scenery from the property",
+      "search_text": "open outlook and beautiful scenery from the property",
+      "leftover_fallback": false,
+      "n_candidates": 47,
+      "overlap_n": 2,
+      "sql_leftover_overlap_n": 3,
+      "grades": {
+        "124544": {
+          "rel": 3,
+          "why": "The listing clearly mentions overlooking beautiful hills and a private balcony with views of the golf course and surrounding hills, supporting open outlook and beautiful scenery."
+        },
+        "124255": {
+          "rel": 0,
+          "why": "The listing does not mention any views or scenery from the property."
+        },
+        "122719": {
+          "rel": 0,
+          "why": "The listing focuses on interior updates and finishes without mentioning any views or scenery."
+        },
+        "122174": {
+          "rel": 3,
+          "why": "The listing highlights serene views of the 6th fairway and a picturesque outlook enhancing the patio, clearly supporting open outlook and beautiful scenery."
+        },
+        "121924": {
+          "rel": 1,
+          "why": "The listing mentions a bright layout and spacious backyard but does not mention any views or scenery."
+        },
+        "121026": {
+          "rel": 0,
+          "why": "The listing focuses on features like EV charging and pet-friendliness without mentioning views or scenery."
+        },
+        "120809": {
+          "rel": 1,
+          "why": "The listing mentions a private balcony overlooking the pool and spa but does not emphasize open outlook or natural scenery."
+        },
+        "120346": {
+          "rel": 0,
+          "why": "The listing describes an open layout inside but does not mention any views or scenery from the property."
+        },
+        "120252": {
+          "rel": 0,
+          "why": "The listing describes rural lifestyle and business components but does not mention open outlook or beautiful scenery from the property."
+        },
+        "114751": {
+          "rel": 0,
+          "why": "The listing mentions a large lot with potential but does not describe any views or scenery."
+        },
+        "85229": {
+          "rel": 1,
+          "why": "The listing mentions great natural light but does not mention any views or scenery from the property."
+        },
+        "73739": {
+          "rel": 0,
+          "why": "The listing focuses on interior charm and updates without mentioning views or scenery."
+        },
+        "65729": {
+          "rel": 0,
+          "why": "The listing mentions proximity to outdoor recreation but does not describe views or scenery from the property itself."
+        },
+        "92869": {
+          "rel": 0,
+          "why": "The listing mentions location and potential but does not mention views or scenery from the property."
+        },
+        "79325": {
+          "rel": 0,
+          "why": "The listing mentions balance of style and functionality but no views or scenery."
+        },
+        "106782": {
+          "rel": 0,
+          "why": "The listing mentions community pool and quiet but no views or scenery from the property."
+        },
+        "52827": {
+          "rel": 0,
+          "why": "The listing mentions charm and location but no views or scenery from the property."
+        },
+        "85450": {
+          "rel": 1,
+          "why": "The listing mentions open space on a large lot but does not describe views or scenery from the residence."
+        },
+        "89665": {
+          "rel": 0,
+          "why": "The listing focuses on comfort and convenience without mentioning views or scenery."
+        },
+        "107484": {
+          "rel": 0,
+          "why": "The listing mentions a large yard but does not describe any views or scenery from the property."
+        },
+        "70053": {
+          "rel": 0,
+          "why": "The listing mentions convenience and quiet area but no views or scenery."
+        },
+        "102485": {
+          "rel": 0,
+          "why": "The listing mentions location convenience but no views or scenery."
+        },
+        "76652": {
+          "rel": 0,
+          "why": "The listing mentions backyard and outdoor gatherings but no views or scenery."
+        },
+        "81721": {
+          "rel": 3,
+          "why": "The listing clearly mentions beautiful views of the foothills and a private backyard, supporting open outlook and beautiful scenery."
+        }
+      },
+      "sql_rels": [
+        3,
+        0,
+        0,
+        3,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "raw_rels": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "llm_rels": [
+        3,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        3,
+        0
+      ],
+      "ndcg_sql": 0.8694,
+      "ndcg_raw": 0.8066,
+      "ndcg_llm": 0.7945,
+      "ndcg_union_sql": 0.6536,
+      "ndcg_union_raw": 0.0801,
+      "ndcg_union_llm": 0.5973,
+      "mrr_sql": 1.0,
+      "mrr_raw": 0.0,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.4,
+      "p5_raw": 0.0,
+      "p5_llm": 0.2,
+      "p10_sql": 0.2,
+      "p10_raw": 0.0,
+      "p10_llm": 0.2,
+      "coverage_raw": 0.2167,
+      "coverage_llm": 0.2167,
+      "mean_shared_rank_delta": -6.0,
+      "extract_s": 0.806
+    },
+    {
+      "id": 14,
+      "kind": "B",
+      "query": "Show me 4-bedroom, 3-bathroom homes in San Jose with at least 2,000 sqft, in a calm residential area suitable for raising young children.",
+      "llm_text": "calm residential area suitable for raising young children",
+      "search_text": "calm residential area suitable for raising young children",
+      "leftover_fallback": false,
+      "n_candidates": 29,
+      "overlap_n": 5,
+      "sql_leftover_overlap_n": 5,
+      "grades": {
+        "124673": {
+          "rel": 1,
+          "why": "The listing mentions a private oasis with landscaped garden and patios for relaxing, which hints at a calm and private setting but does not explicitly mention a residential area or suitability for children."
+        },
+        "123875": {
+          "rel": 3,
+          "why": "This listing explicitly states it is on a quiet residential street known for scenic surroundings and proximity to schools and parks, supporting a calm residential area suitable for children."
+        },
+        "123638": {
+          "rel": 0,
+          "why": "The description focuses on architectural style and quiet confidence but does not mention the residential setting or suitability for children."
+        },
+        "121119": {
+          "rel": 1,
+          "why": "The listing highlights a spacious home in a desirable neighborhood with family room and cozy fireplace but does not explicitly mention a calm residential area or child suitability."
+        },
+        "121084": {
+          "rel": 1,
+          "why": "The listing emphasizes outdoor living with decks, pool, spa, and good schools but does not clearly state a calm residential area or suitability for young children."
+        },
+        "119258": {
+          "rel": 0,
+          "why": "The home is perched in scenic hills with views and open airy feel but no mention of calm residential area or child-friendly environment."
+        },
+        "117191": {
+          "rel": 0,
+          "why": "Located in a sought-after neighborhood with multiple living spaces and hardwood floors but no explicit mention of calm residential area or child suitability."
+        },
+        "116975": {
+          "rel": 0,
+          "why": "The listing describes a modern elegant home in scenic foothills with spacious bedrooms but does not mention calm residential area or suitability for children."
+        },
+        "116487": {
+          "rel": 3,
+          "why": "The description mentions a calm and inviting atmosphere with mature trees providing privacy and a serene setting, supporting a calm residential area suitable for children."
+        },
+        "115882": {
+          "rel": 3,
+          "why": "This listing explicitly states it is in a quiet residential setting with privacy and comfort, supporting the leftover phrase well."
+        },
+        "113717": {
+          "rel": 0,
+          "why": "The listing focuses on interior features like vaulted ceilings and hardwood floors but does not mention the residential setting or suitability for children."
+        },
+        "114929": {
+          "rel": 3,
+          "why": "Located in a sought-after neighborhood with top-rated schools and a thoughtful floor plan, supporting a calm residential area suitable for raising children."
+        },
+        "61789": {
+          "rel": 0,
+          "why": "The home is in serene hills with breathtaking views and an airy atmosphere but does not mention a calm residential area or child suitability."
+        },
+        "114825": {
+          "rel": 3,
+          "why": "Located on a quiet cul-de-sac in a cherished neighborhood with a bright, open layout, supporting a calm residential area suitable for children."
+        },
+        "104573": {
+          "rel": 1,
+          "why": "The listing mentions a spacious backyard ideal for entertaining and a family room with natural light but does not explicitly mention a calm residential area or child suitability."
+        },
+        "104616": {
+          "rel": 1,
+          "why": "The listing highlights a generous lot with outdoor space and proximity to parks but does not explicitly mention a calm residential area or suitability for children."
+        },
+        "104870": {
+          "rel": 1,
+          "why": "The home has patios, outdoor kitchen, lush lawns, and mature trees for comfort and style but does not explicitly mention a calm residential area or child suitability."
+        },
+        "112768": {
+          "rel": 1,
+          "why": "The listing describes a modern home ideal for multigenerational living with an open floor plan but does not mention a calm residential area or suitability for children."
+        }
+      },
+      "sql_rels": [
+        1,
+        3,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        3,
+        3
+      ],
+      "raw_rels": [
+        3,
+        0,
+        0,
+        3,
+        0,
+        1,
+        3,
+        0,
+        1,
+        1
+      ],
+      "llm_rels": [
+        3,
+        3,
+        1,
+        3,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "ndcg_sql": 0.6442,
+      "ndcg_raw": 0.8262,
+      "ndcg_llm": 0.974,
+      "ndcg_union_sql": 0.4662,
+      "ndcg_union_raw": 0.5979,
+      "ndcg_union_llm": 0.7465,
+      "mrr_sql": 0.5,
+      "mrr_raw": 1.0,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.2,
+      "p5_raw": 0.4,
+      "p5_llm": 0.6,
+      "p10_sql": 0.3,
+      "p10_raw": 0.3,
+      "p10_llm": 0.3,
+      "coverage_raw": 0.0714,
+      "coverage_llm": 0.1,
+      "mean_shared_rank_delta": -0.4,
+      "extract_s": 0.791
+    },
+    {
+      "id": 15,
+      "kind": "B",
+      "query": "Find a 2-bedroom house in Monterey under $1.4 million, surrounded by greenery and offering a relaxing retreat from city life.",
+      "llm_text": "surrounded by greenery and offering a relaxing retreat from city life",
+      "search_text": "surrounded by greenery and offering a relaxing retreat from city life",
+      "leftover_fallback": false,
+      "n_candidates": 14,
+      "overlap_n": 8,
+      "sql_leftover_overlap_n": 7,
+      "grades": {
+        "114956": {
+          "rel": 0,
+          "why": "The listing emphasizes ocean views and city lights but does not mention greenery or a relaxing retreat from city life."
+        },
+        "113119": {
+          "rel": 2,
+          "why": "The listing mentions rare outdoor space ideal for gardening and entertaining, suggesting some greenery and a retreat-like setting."
+        },
+        "111579": {
+          "rel": 0,
+          "why": "The listing highlights proximity to parks and convenience but does not mention greenery or a relaxing retreat from city life."
+        },
+        "109219": {
+          "rel": 2,
+          "why": "The listing mentions access to beautifully landscaped common areas, which supports greenery and a relaxing lifestyle."
+        },
+        "105043": {
+          "rel": 0,
+          "why": "The listing focuses on coastal living with views of the bay and city lights but does not mention greenery or a retreat from city life."
+        },
+        "104422": {
+          "rel": 3,
+          "why": "The listing describes a wooded setting with decks and patios overlooking forested open space, clearly supporting greenery and a relaxing retreat."
+        },
+        "95859": {
+          "rel": 3,
+          "why": "The listing mentions a private green outdoor space adding charm and functionality, supporting greenery and a retreat-like atmosphere."
+        },
+        "95792": {
+          "rel": 0,
+          "why": "The listing focuses on new upgrades and proximity to beach and town but does not mention greenery or a relaxing retreat from city life."
+        },
+        "93575": {
+          "rel": 0,
+          "why": "The listing only mentions community amenities and low-maintenance coastal living without reference to greenery or a retreat."
+        },
+        "80595": {
+          "rel": 0,
+          "why": "The listing describes a cozy cottage with no mention of greenery or a relaxing retreat from city life."
+        },
+        "63220": {
+          "rel": 0,
+          "why": "The listing highlights interior features and parking but does not mention greenery or a relaxing retreat from city life."
+        },
+        "49082": {
+          "rel": 0,
+          "why": "The listing mentions warm natural light and a soothing coastal feel but does not mention greenery or a retreat from city life."
+        },
+        "69442": {
+          "rel": 0,
+          "why": "The listing emphasizes convenience and coastal charm but does not mention greenery or a relaxing retreat from city life."
+        }
+      },
+      "sql_rels": [
+        0,
+        2,
+        0,
+        2,
+        0,
+        3,
+        3,
+        0,
+        0,
+        0
+      ],
+      "raw_rels": [
+        0,
+        0,
+        0,
+        3,
+        3,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      "llm_rels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        2,
+        0,
+        0
+      ],
+      "ndcg_sql": 0.5639,
+      "ndcg_raw": 0.5258,
+      "ndcg_llm": 0.3868,
+      "ndcg_union_sql": 0.5639,
+      "ndcg_union_raw": 0.478,
+      "ndcg_union_llm": 0.2421,
+      "mrr_sql": 0.5,
+      "mrr_raw": 0.25,
+      "mrr_llm": 0.1667,
+      "p5_sql": 0.4,
+      "p5_raw": 0.4,
+      "p5_llm": 0.0,
+      "p10_sql": 0.4,
+      "p10_raw": 0.3,
+      "p10_llm": 0.2,
+      "coverage_raw": 0.1625,
+      "coverage_llm": 0.15,
+      "mean_shared_rank_delta": 0.25,
+      "extract_s": 1.087
+    },
+    {
+      "id": 16,
+      "kind": "B",
+      "query": "Looking for a 3-bedroom, 2-bathroom house in Malibu with at least 1,600 sqft, close enough to the coast to hear and feel the ocean.",
+      "llm_text": "close enough to the coast to hear and feel the ocean",
+      "search_text": "close enough to the coast to hear and feel the ocean",
+      "leftover_fallback": false,
+      "n_candidates": 8,
+      "overlap_n": 8,
+      "sql_leftover_overlap_n": 8,
+      "grades": {
+        "115972": {
+          "rel": 0,
+          "why": "The listing mentions Malibu location but does not indicate proximity to the coast or ocean sensory experience."
+        },
+        "103747": {
+          "rel": 0,
+          "why": "The listing describes a luxurious outdoor setting with palm trees and a gazebo but does not mention ocean proximity or sensory ocean features."
+        },
+        "96712": {
+          "rel": 3,
+          "why": "The listing clearly states ocean views of Santa Monica Bay, implying close enough to see and likely hear and feel the ocean."
+        },
+        "86200": {
+          "rel": 0,
+          "why": "The listing highlights mountain views and sunsets but does not mention ocean proximity or sensory ocean features."
+        },
+        "49779": {
+          "rel": 3,
+          "why": "The listing mentions being steps from the beach and sweeping ocean views, supporting close proximity to the ocean and sensory experience."
+        },
+        "46467": {
+          "rel": 3,
+          "why": "The listing mentions panoramic ocean vistas and proximity to Malibu's premier lifestyle destinations, supporting close coastal proximity."
+        },
+        "43113": {
+          "rel": 2,
+          "why": "The listing notes being moments from beaches and indoor-outdoor living but does not explicitly mention ocean sensory experience."
+        },
+        "32198": {
+          "rel": 3,
+          "why": "The listing describes a dramatic ocean backdrop and a beachfront deck, clearly supporting close proximity to the ocean and sensory experience."
+        }
+      },
+      "sql_rels": [
+        0,
+        0,
+        3,
+        0,
+        3,
+        3,
+        2,
+        3
+      ],
+      "raw_rels": [
+        2,
+        3,
+        3,
+        3,
+        0,
+        0,
+        3,
+        0
+      ],
+      "llm_rels": [
+        3,
+        3,
+        3,
+        0,
+        2,
+        3,
+        0,
+        0
+      ],
+      "ndcg_sql": 0.6238,
+      "ndcg_raw": 0.8519,
+      "ndcg_llm": 0.9727,
+      "ndcg_union_sql": 0.6238,
+      "ndcg_union_raw": 0.8519,
+      "ndcg_union_llm": 0.9727,
+      "mrr_sql": 0.3333,
+      "mrr_raw": 1.0,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.4,
+      "p5_raw": 0.8,
+      "p5_llm": 0.8,
+      "p10_sql": 0.625,
+      "p10_raw": 0.625,
+      "p10_llm": 0.625,
+      "coverage_raw": 0.1042,
+      "coverage_llm": 0.125,
+      "mean_shared_rank_delta": 0.0,
+      "extract_s": 1.19
+    },
+    {
+      "id": 17,
+      "kind": "B",
+      "query": "Find me a 2-bedroom, 2-bathroom condo in San Diego under $1 million, in a lively area where restaurants, cafés, and everyday essentials are easy to reach on foot.",
+      "llm_text": "lively area where restaurants, cafés, and everyday essentials are easy to reach on foot",
+      "search_text": "lively area where restaurants, cafés, and everyday essentials are easy to reach on foot",
+      "leftover_fallback": false,
+      "n_candidates": 307,
+      "overlap_n": 0,
+      "sql_leftover_overlap_n": 0,
+      "grades": {
+        "124793": {
+          "rel": 3,
+          "why": "The listing explicitly states the location is within a 30-second walk to eateries, bars, and markets, clearly supporting a lively area with restaurants and essentials within walking distance."
+        },
+        "124646": {
+          "rel": 0,
+          "why": "The listing mentions city views and proximity to Electra Park but does not clearly support a lively area with restaurants, cafés, or everyday essentials within walking distance."
+        },
+        "124351": {
+          "rel": 1,
+          "why": "The listing highlights a prime location near the bay and outdoor activities but does not mention nearby restaurants, cafés, or everyday essentials within walking distance."
+        },
+        "124145": {
+          "rel": 0,
+          "why": "The listing focuses on hill views, modern improvements, and storage but does not mention proximity to restaurants, cafés, or everyday essentials."
+        },
+        "123962": {
+          "rel": 0,
+          "why": "The listing mentions a great opportunity and flexible layout but does not provide information about nearby restaurants, cafés, or essentials within walking distance."
+        },
+        "123910": {
+          "rel": 0,
+          "why": "The listing describes condo features and upgrades but does not mention proximity to restaurants, cafés, or everyday essentials."
+        },
+        "123847": {
+          "rel": 1,
+          "why": "The listing emphasizes coastal living and proximity to the ocean but does not mention a lively area with restaurants, cafés, or everyday essentials within walking distance."
+        },
+        "123819": {
+          "rel": 0,
+          "why": "The listing highlights resort-style living in a gated community with serene views but does not mention nearby restaurants, cafés, or everyday essentials within walking distance."
+        },
+        "123704": {
+          "rel": 1,
+          "why": "The listing mentions proximity to SDSU but does not clearly support a lively area with restaurants, cafés, or everyday essentials within walking distance."
+        },
+        "123696": {
+          "rel": 0,
+          "why": "The listing describes condo features and resort-style amenities but does not mention proximity to restaurants, cafés, or everyday essentials within walking distance."
+        },
+        "105835": {
+          "rel": 0,
+          "why": "The listing mentions a community pool and essential appliances but does not mention proximity to restaurants, cafés, or everyday essentials within walking distance."
+        },
+        "113688": {
+          "rel": 2,
+          "why": "The listing states convenient location near shopping, restaurants, parks, and community resources with easy access to everyday amenities, partially supporting the leftover."
+        },
+        "48731": {
+          "rel": 1,
+          "why": "The listing highlights a desirable neighborhood and convenience but does not explicitly mention proximity to restaurants, cafés, or everyday essentials within walking distance."
+        },
+        "97205": {
+          "rel": 0,
+          "why": "The listing emphasizes peaceful, low-traffic location with views but does not mention proximity to restaurants, cafés, or everyday essentials within walking distance."
+        },
+        "122288": {
+          "rel": 1,
+          "why": "The listing mentions privacy, natural light, and convenience but does not explicitly mention proximity to restaurants, cafés, or everyday essentials within walking distance."
+        },
+        "97491": {
+          "rel": 1,
+          "why": "The listing mentions stylish living in a central location and gated community but does not explicitly mention proximity to restaurants, cafés, or everyday essentials within walking distance."
+        },
+        "76269": {
+          "rel": 1,
+          "why": "The listing mentions community close to schools, parks, and easy freeway access but does not clearly support a lively area with restaurants, cafés, or everyday essentials within walking distance."
+        },
+        "86397": {
+          "rel": 3,
+          "why": "The listing states a bright, inviting condo perfectly located just a short walk to restaurants and other amenities, clearly supporting a lively area with restaurants and cafés within walking distance."
+        },
+        "101435": {
+          "rel": 0,
+          "why": "The listing describes a beautiful condo with natural light and vaulted ceilings but does not mention proximity to restaurants, cafés, or everyday essentials within walking distance."
+        },
+        "113958": {
+          "rel": 1,
+          "why": "The listing mentions a downtown location and light-filled residence but does not explicitly mention proximity to restaurants, cafés, or everyday essentials within walking distance."
+        },
+        "113882": {
+          "rel": 3,
+          "why": "The listing explicitly states cafés, restaurants, and other amenities are all within easy reach, clearly supporting a lively area with restaurants and cafés within walking distance."
+        },
+        "118238": {
+          "rel": 3,
+          "why": "The listing mentions location between vibrant neighborhoods with short distance to restaurants, cafés, shops, and nightlife, clearly supporting a lively area with restaurants and cafés within walking distance."
+        },
+        "68672": {
+          "rel": 2,
+          "why": "The listing mentions proximity to restaurants, entertainment venues, parks, and grocery stores, supporting a lively area with restaurants and essentials within walking distance."
+        },
+        "113936": {
+          "rel": 2,
+          "why": "The listing mentions amenities, parks, and easy access to city conveniences in a walkable community, partially supporting the leftover."
+        },
+        "121545": {
+          "rel": 3,
+          "why": "The listing highlights convenient walking access to restaurants, shops, coffee houses, breweries, and shopping, clearly supporting a lively area with restaurants and cafés within walking distance."
+        },
+        "106281": {
+          "rel": 3,
+          "why": "The listing mentions walking distance to dining centers, nightlife, coffee shops, and small grocers, clearly supporting a lively area with restaurants and essentials within walking distance."
+        },
+        "16294": {
+          "rel": 3,
+          "why": "The listing mentions endless dining, cafés, and boutique shops just outside the door, clearly supporting a lively area with restaurants and cafés within walking distance."
+        },
+        "122684": {
+          "rel": 3,
+          "why": "The listing mentions easy access to shopping, top-rated restaurants, cafés, and entertainment, clearly supporting a lively area with restaurants and cafés within walking distance."
+        },
+        "119556": {
+          "rel": 1,
+          "why": "The listing mentions easy access to restaurants and shops but does not specify walking distance or a lively area with restaurants and cafés within walking distance."
+        },
+        "111571": {
+          "rel": 2,
+          "why": "The listing mentions walking distance to shopping, dining, schools, parks, and rec center, supporting a lively area with restaurants and essentials within walking distance."
+        }
+      },
+      "sql_rels": [
+        3,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "raw_rels": [
+        0,
+        2,
+        1,
+        0,
+        1,
+        1,
+        1,
+        3,
+        0,
+        1
+      ],
+      "llm_rels": [
+        3,
+        3,
+        2,
+        2,
+        3,
+        3,
+        3,
+        3,
+        1,
+        2
+      ],
+      "ndcg_sql": 0.9501,
+      "ndcg_raw": 0.5474,
+      "ndcg_llm": 0.9562,
+      "ndcg_union_sql": 0.2763,
+      "ndcg_union_raw": 0.2026,
+      "ndcg_union_llm": 0.8531,
+      "mrr_sql": 1.0,
+      "mrr_raw": 0.5,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.2,
+      "p5_raw": 0.2,
+      "p5_llm": 1.0,
+      "p10_sql": 0.1,
+      "p10_raw": 0.2,
+      "p10_llm": 0.9,
+      "coverage_raw": 0.1273,
+      "coverage_llm": 0.2727,
+      "mean_shared_rank_delta": 0.0,
+      "extract_s": 1.425
+    },
+    {
+      "id": 18,
+      "kind": "B",
+      "query": "I'm looking for a 4-bedroom, 3-bathroom home in Thousand Oaks with at least 2,300 sqft, in a quiet, spacious setting away from heavy traffic and dense development.",
+      "llm_text": "quiet, spacious setting away from heavy traffic and dense development",
+      "search_text": "quiet, spacious setting away from heavy traffic and dense development",
+      "leftover_fallback": false,
+      "n_candidates": 9,
+      "overlap_n": 9,
+      "sql_leftover_overlap_n": 9,
+      "grades": {
+        "121617": {
+          "rel": 1,
+          "why": "Mentions beautifully maintained open spaces and low HOA fees but does not clearly indicate a quiet or spacious setting away from traffic or dense development."
+        },
+        "121446": {
+          "rel": 1,
+          "why": "Describes a resort-style backyard with lush landscaping and outdoor misting system, suggesting a pleasant outdoor environment but no clear indication of quietness or being away from heavy traffic and dense development."
+        },
+        "117579": {
+          "rel": 2,
+          "why": "Highlights a spacious primary suite with private deck and hillside views, implying some spaciousness and a peaceful setting, partially supporting the leftover."
+        },
+        "115823": {
+          "rel": 3,
+          "why": "Explicitly states a large lot and off the beaten path location offering privacy and seclusion away from hustle and bustle, strongly supporting a quiet, spacious setting away from heavy traffic and dense development."
+        },
+        "115059": {
+          "rel": 3,
+          "why": "Located on a quiet cul-de-sac with spacious, light-filled living space and an open, airy feel, clearly supporting a quiet and spacious setting away from heavy traffic and dense development."
+        },
+        "112954": {
+          "rel": 0,
+          "why": "Describes large bedrooms and immaculate condition but does not mention quietness, spacious setting, or location away from traffic or dense development."
+        },
+        "111346": {
+          "rel": 2,
+          "why": "Located in a gated community with a private front patio and bright living areas, suggesting some privacy and spaciousness but no explicit mention of quietness or being away from heavy traffic and dense development."
+        },
+        "101666": {
+          "rel": 3,
+          "why": "Mentions a true sense of privacy and escape with surrounding mountains and city lights, implying a quiet and spacious setting away from dense development and traffic."
+        },
+        "75939": {
+          "rel": 1,
+          "why": "Describes spacious living spaces and high ceilings but does not mention quietness or location away from heavy traffic and dense development."
+        }
+      },
+      "sql_rels": [
+        1,
+        1,
+        2,
+        3,
+        3,
+        0,
+        2,
+        3,
+        1
+      ],
+      "raw_rels": [
+        1,
+        3,
+        3,
+        1,
+        2,
+        1,
+        3,
+        0,
+        2
+      ],
+      "llm_rels": [
+        3,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        0,
+        1
+      ],
+      "ndcg_sql": 0.6728,
+      "ndcg_raw": 0.7674,
+      "ndcg_llm": 0.9853,
+      "ndcg_union_sql": 0.6728,
+      "ndcg_union_raw": 0.7674,
+      "ndcg_union_llm": 0.9853,
+      "mrr_sql": 0.3333,
+      "mrr_raw": 0.5,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.6,
+      "p5_raw": 0.6,
+      "p5_llm": 0.6,
+      "p10_sql": 0.5556,
+      "p10_raw": 0.5556,
+      "p10_llm": 0.5556,
+      "coverage_raw": 0.0494,
+      "coverage_llm": 0.0988,
+      "mean_shared_rank_delta": 0.0,
+      "extract_s": 0.962
+    },
+    {
+      "id": 19,
+      "kind": "B",
+      "query": "Show me 2-bedroom houses in San Jose under $1.3 million, with a peaceful countryside feel and attractive surroundings.",
+      "llm_text": "peaceful countryside feel and attractive surroundings",
+      "search_text": "peaceful countryside feel and attractive surroundings",
+      "leftover_fallback": false,
+      "n_candidates": 150,
+      "overlap_n": 0,
+      "sql_leftover_overlap_n": 1,
+      "grades": {
+        "124764": {
+          "rel": 0,
+          "why": "The listing describes a gated community with modern living and natural light but does not mention peaceful countryside or attractive surroundings."
+        },
+        "123904": {
+          "rel": 2,
+          "why": "The listing mentions peaceful, quiet surroundings and a friendly neighborhood atmosphere, partially supporting the peaceful countryside feel and attractive surroundings."
+        },
+        "123753": {
+          "rel": 0,
+          "why": "The listing highlights privacy and light-filled space but does not mention peaceful countryside or attractive surroundings."
+        },
+        "123614": {
+          "rel": 0,
+          "why": "The listing focuses on urban loft-style living with no mention of peaceful countryside or attractive surroundings."
+        },
+        "123603": {
+          "rel": 0,
+          "why": "The listing describes a classic home in a well-established neighborhood with light-filled rooms but does not mention peaceful countryside or attractive surroundings."
+        },
+        "123434": {
+          "rel": 0,
+          "why": "The listing describes a modern condo in the heart of San Jose with no mention of peaceful countryside or attractive surroundings."
+        },
+        "123346": {
+          "rel": 0,
+          "why": "The listing mentions a sunny, bright condo in Japantown with indoor-outdoor relaxation but no mention of peaceful countryside or attractive surroundings."
+        },
+        "123328": {
+          "rel": 3,
+          "why": "The listing clearly supports the leftover by describing a peaceful, resort-style community with lake views, scenic trails, and open green space nearby."
+        },
+        "123263": {
+          "rel": 0,
+          "why": "The listing describes a charming bungalow with original character and modern updates but does not mention peaceful countryside or attractive surroundings."
+        },
+        "123107": {
+          "rel": 0,
+          "why": "The listing only mentions a desirable location close to downtown and transportation, not peaceful countryside or attractive surroundings."
+        },
+        "123090": {
+          "rel": 0,
+          "why": "The listing describes a charming home with interior features but no mention of peaceful countryside or attractive surroundings."
+        },
+        "109243": {
+          "rel": 0,
+          "why": "The listing describes a gated community residence with upgrades but no mention of peaceful countryside or attractive surroundings."
+        },
+        "91669": {
+          "rel": 1,
+          "why": "The listing mentions large lawns in the community but does not clearly support a peaceful countryside feel or attractive surroundings."
+        },
+        "80641": {
+          "rel": 0,
+          "why": "The listing describes a home with central heating and a temperate climate but no mention of peaceful countryside or attractive surroundings."
+        },
+        "109595": {
+          "rel": 0,
+          "why": "The listing describes a move-in ready townhome in a desirable neighborhood but does not mention peaceful countryside or attractive surroundings."
+        },
+        "119371": {
+          "rel": 0,
+          "why": "The listing is a fix and flip opportunity with no mention of peaceful countryside or attractive surroundings."
+        },
+        "28586": {
+          "rel": 0,
+          "why": "The listing mentions a large floor plan in a good area but does not mention peaceful countryside or attractive surroundings."
+        },
+        "122644": {
+          "rel": 0,
+          "why": "The listing describes a modern townhouse in a prime location near urban amenities, not peaceful countryside or attractive surroundings."
+        },
+        "78801": {
+          "rel": 0,
+          "why": "The listing describes a charming home with an open layout but no mention of peaceful countryside or attractive surroundings."
+        },
+        "61807": {
+          "rel": 2,
+          "why": "The listing mentions playgrounds, walking paths, and a peaceful and welcoming neighborhood, partially supporting the peaceful countryside feel and attractive surroundings."
+        },
+        "101867": {
+          "rel": 3,
+          "why": "The listing highlights bedrooms facing an interior courtyard providing a quiet and peaceful setting and landscaped grounds, supporting the peaceful countryside feel and attractive surroundings."
+        },
+        "36430": {
+          "rel": 3,
+          "why": "The listing mentions beautifully landscaped common areas for peaceful walks, supporting a peaceful and attractive environment."
+        },
+        "61911": {
+          "rel": 3,
+          "why": "The listing describes a vibrant yet peaceful community with scenic hiking trails, tranquil ponds, and attractive surroundings, strongly supporting the leftover."
+        },
+        "113110": {
+          "rel": 1,
+          "why": "The listing mentions a private patio and move-in-ready appeal but does not clearly support peaceful countryside or attractive surroundings."
+        },
+        "107792": {
+          "rel": 3,
+          "why": "The listing describes a vibrant yet peaceful community with scenic hiking trails and tranquil ponds, strongly supporting the leftover."
+        },
+        "121944": {
+          "rel": 3,
+          "why": "The listing mentions a private patio surrounded by peaceful greenbelt views, supporting the peaceful countryside feel and attractive surroundings."
+        },
+        "107652": {
+          "rel": 2,
+          "why": "The listing describes a private patio providing a peaceful outdoor retreat, partially supporting the leftover."
+        },
+        "93519": {
+          "rel": 2,
+          "why": "The listing mentions peaceful patios off the family room and master bedroom, supporting a peaceful environment."
+        }
+      },
+      "sql_rels": [
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0
+      ],
+      "raw_rels": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "llm_rels": [
+        2,
+        3,
+        3,
+        3,
+        1,
+        3,
+        3,
+        2,
+        2,
+        2
+      ],
+      "ndcg_sql": 0.4612,
+      "ndcg_raw": 0.5,
+      "ndcg_llm": 0.8799,
+      "ndcg_union_sql": 0.1527,
+      "ndcg_union_raw": 0.0186,
+      "ndcg_union_llm": 0.8142,
+      "mrr_sql": 0.5,
+      "mrr_raw": 0.0,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.2,
+      "p5_raw": 0.0,
+      "p5_llm": 0.8,
+      "p10_sql": 0.2,
+      "p10_raw": 0.0,
+      "p10_llm": 0.9,
+      "coverage_raw": 0.0,
+      "coverage_llm": 0.22,
+      "mean_shared_rank_delta": 0.0,
+      "extract_s": 1.23
+    },
+    {
+      "id": 20,
+      "kind": "B",
+      "query": "Find a 2-bedroom home in Los Angeles with at least 900 sqft, in a charming area with character and a relaxed coastal lifestyle.",
+      "llm_text": "charming area with character and a relaxed coastal lifestyle",
+      "search_text": "charming area with character and a relaxed coastal lifestyle",
+      "leftover_fallback": false,
+      "n_candidates": 639,
+      "overlap_n": 1,
+      "sql_leftover_overlap_n": 0,
+      "grades": {
+        "124687": {
+          "rel": 1,
+          "why": "The listing describes a bright, inviting condo with privacy and tranquility but does not mention any coastal lifestyle or charming area with character."
+        },
+        "124641": {
+          "rel": 2,
+          "why": "This listing highlights a California craftsman home with character and an inviting front porch, supporting the charming area with character aspect but lacks mention of a relaxed coastal lifestyle."
+        },
+        "124397": {
+          "rel": 0,
+          "why": "The listing focuses on a prestigious building with luxury amenities but does not support the idea of a charming area or relaxed coastal lifestyle."
+        },
+        "124377": {
+          "rel": 0,
+          "why": "This luxury loft in downtown LA emphasizes urban sophistication and industrial design, not a charming or relaxed coastal setting."
+        },
+        "124163": {
+          "rel": 1,
+          "why": "The listing describes a Hollywood Hills hideaway with unobstructed views and outdoor living but does not mention a charming area or coastal lifestyle."
+        },
+        "124136": {
+          "rel": 2,
+          "why": "Located in Mar Vista with exceptional indoor-outdoor living and private patio, this listing partially supports a charming area and relaxed lifestyle but lacks explicit coastal references."
+        },
+        "123812": {
+          "rel": 0,
+          "why": "This penthouse offers panoramic views and luxury features but does not support a charming or relaxed coastal lifestyle."
+        },
+        "123801": {
+          "rel": 2,
+          "why": "The listing describes a residence tucked among treetops with privacy and a peaceful, tree-lined hillside, suggesting a charming and relaxed setting but no coastal mention."
+        },
+        "123750": {
+          "rel": 0,
+          "why": "A luxury downtown residence with high ceilings and custom features, not supporting a charming or coastal lifestyle."
+        },
+        "123743": {
+          "rel": 1,
+          "why": "This high-floor residence offers sweeping city and coastline views but focuses on urban luxury rather than a charming area or relaxed coastal lifestyle."
+        },
+        "103992": {
+          "rel": 2,
+          "why": "Described as a charming and comfortable residence in a desirable community, supporting the charming area aspect but no coastal lifestyle mentioned."
+        },
+        "116970": {
+          "rel": 2,
+          "why": "A charming home with character and warmth in a sought-after location, supporting the charming area aspect but no coastal lifestyle mentioned."
+        },
+        "64101": {
+          "rel": 0,
+          "why": "A large, customized townhome in an exclusive tower with modern elegance, not supporting a charming or relaxed coastal lifestyle."
+        },
+        "122793": {
+          "rel": 0,
+          "why": "Listing emphasizes central location and lifestyle appeal but does not mention charm or coastal lifestyle."
+        },
+        "89927": {
+          "rel": 2,
+          "why": "Described as a charming home with endless character and exceptional convenience, supporting the charming area aspect but no coastal lifestyle mentioned."
+        },
+        "82385": {
+          "rel": 0,
+          "why": "A 1920s residence with development potential and functional layout, but no mention of charm or coastal lifestyle."
+        },
+        "63803": {
+          "rel": 1,
+          "why": "A first-floor unit with natural light and peaceful environment, but no mention of charm or coastal lifestyle."
+        },
+        "86999": {
+          "rel": 2,
+          "why": "A spacious, well-maintained condo in a desirable neighborhood with serene views, partially supporting a relaxed lifestyle but no explicit coastal mention."
+        },
+        "105005": {
+          "rel": 0,
+          "why": "A loft-style residence with historic character and modern sophistication in downtown, not supporting a charming or coastal lifestyle."
+        },
+        "14274": {
+          "rel": 3,
+          "why": "Describes a rare setting ideally located for a desired coastal lifestyle with potential for an estate-sized pool and idyllic setting, strongly supporting the relaxed coastal lifestyle and charming area."
+        },
+        "116145": {
+          "rel": 2,
+          "why": "A charming hillside residence with classic character and exceptional indoor-outdoor living, supporting the charming area aspect but no explicit coastal mention."
+        },
+        "65259": {
+          "rel": 2,
+          "why": "An elegant open-air courtyard with a charming fountain and lifestyle within, supporting the charming area aspect but no coastal mention."
+        },
+        "47104": {
+          "rel": 3,
+          "why": "Mentions a charming fountain and a true turnkey sanctuary in a coveted coastal setting, strongly supporting both charming area and relaxed coastal lifestyle."
+        },
+        "45104": {
+          "rel": 2,
+          "why": "Mentions lifestyle of charm and ease in an exceptional urban haven, supporting the charming area aspect but no coastal mention."
+        },
+        "105997": {
+          "rel": 2,
+          "why": "A charming Cape Cod-style home with warmth and timeless character on a quiet street, supporting the charming area aspect but no coastal lifestyle mentioned."
+        },
+        "106702": {
+          "rel": 2,
+          "why": "Located in a charming neighborhood with a private rooftop outdoor area and beautiful sunset views, partially supporting charming area and relaxed lifestyle but no explicit coastal mention."
+        },
+        "61927": {
+          "rel": 2,
+          "why": "Residence with natural light and views including ocean and mountains, partially supporting relaxed coastal lifestyle but no mention of charming area character."
+        },
+        "111202": {
+          "rel": 2,
+          "why": "A thoughtfully renovated Spanish Colonial Revival with timeless character and charm, supporting the charming area aspect but no coastal lifestyle mentioned."
+        }
+      },
+      "sql_rels": [
+        1,
+        2,
+        0,
+        0,
+        1,
+        2,
+        0,
+        2,
+        0,
+        1
+      ],
+      "raw_rels": [
+        2,
+        2,
+        0,
+        0,
+        2,
+        0,
+        1,
+        0,
+        2,
+        0
+      ],
+      "llm_rels": [
+        3,
+        2,
+        2,
+        3,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "ndcg_sql": 0.738,
+      "ndcg_raw": 0.9031,
+      "ndcg_llm": 0.9603,
+      "ndcg_union_sql": 0.277,
+      "ndcg_union_raw": 0.3617,
+      "ndcg_union_llm": 0.9603,
+      "mrr_sql": 0.5,
+      "mrr_raw": 1.0,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.2,
+      "p5_raw": 0.6,
+      "p5_llm": 1.0,
+      "p10_sql": 0.3,
+      "p10_raw": 0.4,
+      "p10_llm": 1.0,
+      "coverage_raw": 0.15,
+      "coverage_llm": 0.3167,
+      "mean_shared_rank_delta": -3.0,
+      "extract_s": 0.864
+    },
+    {
+      "id": 21,
+      "kind": "A+B",
+      "query": "Looking for a 3-bedroom, 2-bathroom house in Long Beach under $1.1 million, with a private outdoor area where my pets can move around safely, in a quiet neighborhood close to the coast.",
+      "llm_text": "private outdoor area where my pets can move around safely, quiet neighborhood close to the coast",
+      "search_text": "private outdoor area where my pets can move around safely, quiet neighborhood close to the coast",
+      "leftover_fallback": false,
+      "n_candidates": 35,
+      "overlap_n": 4,
+      "sql_leftover_overlap_n": 2,
+      "grades": {
+        "124505": {
+          "rel": 1,
+          "why": "The listing mentions an indoor/outdoor design but does not specify a private outdoor area for pets or a quiet neighborhood near the coast."
+        },
+        "121387": {
+          "rel": 0,
+          "why": "The chunk only mentions tree-lined streets and community charm without reference to private outdoor areas, pets, quietness, or proximity to the coast."
+        },
+        "115672": {
+          "rel": 1,
+          "why": "The listing mentions low-maintenance landscaping and an oversized garage but does not clearly support a private outdoor area for pets or a quiet coastal neighborhood."
+        },
+        "115669": {
+          "rel": 1,
+          "why": "The listing mentions a ground floor unit with double-pane windows and natural light but no private outdoor area or quiet neighborhood near the coast."
+        },
+        "115529": {
+          "rel": 2,
+          "why": "The listing highlights a fantastic location near the beach and rooftop views but does not mention a private outdoor area for pets or a quiet neighborhood."
+        },
+        "115476": {
+          "rel": 1,
+          "why": "The listing states the home is in a desirable Uptown Long Beach neighborhood but does not mention private outdoor areas for pets or proximity to the coast."
+        },
+        "115396": {
+          "rel": 2,
+          "why": "The listing mentions a side patio deck area extending indoor/outdoor living, which supports a private outdoor area, but does not mention a quiet neighborhood or proximity to the coast."
+        },
+        "114496": {
+          "rel": 1,
+          "why": "The listing mentions a charming home in a well-established neighborhood with nearby parks but does not specify a private outdoor area for pets or proximity to the coast."
+        },
+        "111106": {
+          "rel": 0,
+          "why": "The listing describes a bright living room and updated home but does not mention private outdoor areas for pets or a quiet coastal neighborhood."
+        },
+        "110926": {
+          "rel": 0,
+          "why": "The listing highlights an open, airy layout and a remodeled kitchen but does not mention private outdoor areas or a quiet neighborhood near the coast."
+        },
+        "76507": {
+          "rel": 0,
+          "why": "The listing mentions a convenient location near schools and shopping but does not support a private outdoor area for pets or a quiet coastal neighborhood."
+        },
+        "84190": {
+          "rel": 2,
+          "why": "The listing mentions a quiet neighborhood but does not mention a private outdoor area for pets or proximity to the coast."
+        },
+        "100903": {
+          "rel": 1,
+          "why": "The listing mentions a detached 2-car garage in the backyard but does not clearly support a private outdoor area for pets or proximity to the coast or quietness."
+        },
+        "86576": {
+          "rel": 2,
+          "why": "The listing mentions a peaceful residential pocket and proximity to downtown waterfront, supporting a quiet neighborhood near the coast but no mention of private outdoor area for pets."
+        },
+        "100825": {
+          "rel": 2,
+          "why": "The listing mentions a quiet private street and a home with a side patio deck area, supporting a private outdoor area and quiet neighborhood but no direct mention of proximity to the coast."
+        },
+        "2028": {
+          "rel": 1,
+          "why": "The listing mentions a cozy convenient neighborhood but does not mention private outdoor areas for pets or proximity to the coast."
+        },
+        "11638": {
+          "rel": 0,
+          "why": "The listing mentions parking availability but does not mention private outdoor areas for pets or a quiet neighborhood near the coast."
+        },
+        "104823": {
+          "rel": 3,
+          "why": "The listing mentions a dog park, outdoor deck with lake views, and proximity to a bike trail to the beach, supporting private outdoor area for pets and proximity to the coast in a quiet neighborhood."
+        },
+        "35702": {
+          "rel": 2,
+          "why": "The listing mentions a backyard with laminate outdoor decking and access to the family room, supporting a private outdoor area but no mention of quiet neighborhood or proximity to the coast."
+        },
+        "103520": {
+          "rel": 1,
+          "why": "The listing mentions a covered patio ideal for outdoor gatherings but does not mention private outdoor area for pets or proximity to the coast or quietness."
+        },
+        "55740": {
+          "rel": 2,
+          "why": "The listing mentions beach access, bike paths, and a neighborhood with high walk and bike scores, supporting proximity to the coast and an active neighborhood but no clear mention of private outdoor area for pets or quietness."
+        },
+        "14395": {
+          "rel": 2,
+          "why": "The listing mentions a private patio with privacy walls and a secluded primary suite, supporting a private outdoor area, but does not mention proximity to the coast or quiet neighborhood."
+        }
+      },
+      "sql_rels": [
+        1,
+        0,
+        1,
+        1,
+        2,
+        1,
+        2,
+        1,
+        0,
+        0
+      ],
+      "raw_rels": [
+        0,
+        2,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        0,
+        1
+      ],
+      "llm_rels": [
+        3,
+        2,
+        0,
+        1,
+        2,
+        0,
+        2,
+        1,
+        2,
+        2
+      ],
+      "ndcg_sql": 0.6903,
+      "ndcg_raw": 0.7292,
+      "ndcg_llm": 0.9318,
+      "ndcg_union_sql": 0.2793,
+      "ndcg_union_raw": 0.3513,
+      "ndcg_union_llm": 0.7958,
+      "mrr_sql": 0.2,
+      "mrr_raw": 0.5,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.2,
+      "p5_raw": 0.4,
+      "p5_llm": 0.6,
+      "p10_sql": 0.2,
+      "p10_raw": 0.3,
+      "p10_llm": 0.6,
+      "coverage_raw": 0.1231,
+      "coverage_llm": 0.1154,
+      "mean_shared_rank_delta": 1.25,
+      "extract_s": 0.896
+    },
+    {
+      "id": 22,
+      "kind": "A+B",
+      "query": "Find me a 2-bedroom, 2-bathroom condo in Los Angeles with at least 1,100 sqft, with plenty of daylight in the main living spaces and a peaceful, cozy atmosphere.",
+      "llm_text": "plenty of daylight in the main living spaces and a peaceful, cozy atmosphere",
+      "search_text": "plenty of daylight in the main living spaces and a peaceful, cozy atmosphere",
+      "leftover_fallback": false,
+      "n_candidates": 240,
+      "overlap_n": 1,
+      "sql_leftover_overlap_n": 1,
+      "grades": {
+        "124687": {
+          "rel": 3,
+          "why": "The listing mentions a bright and inviting top-floor corner condo with exceptional privacy and tranquility, supporting both plenty of daylight and a peaceful, cozy atmosphere."
+        },
+        "124397": {
+          "rel": 2,
+          "why": "The listing highlights a bright kitchen and stunning views, indicating some daylight, but does not clearly mention the main living spaces or a cozy atmosphere."
+        },
+        "124377": {
+          "rel": 3,
+          "why": "The listing describes expansive walls of glass providing natural light and a refined living experience, supporting plenty of daylight and a peaceful atmosphere."
+        },
+        "124163": {
+          "rel": 3,
+          "why": "The listing emphasizes oversized sliders opening the main living area to the outdoors and unobstructed views, indicating plenty of daylight and a peaceful atmosphere."
+        },
+        "124136": {
+          "rel": 3,
+          "why": "The listing notes hardwood floors and large sliding doors opening to a private patio, creating seamless indoor-outdoor living and a cozy atmosphere with daylight in main spaces."
+        },
+        "123743": {
+          "rel": 1,
+          "why": "The listing focuses on unobstructed views and privacy but does not explicitly mention daylight in main living spaces or a cozy atmosphere."
+        },
+        "123635": {
+          "rel": 3,
+          "why": "The listing describes a tranquil courtyard setting with lush greenery and an expansive living room with hardwood floors and fireplace, supporting a peaceful, cozy atmosphere and some daylight."
+        },
+        "123535": {
+          "rel": 0,
+          "why": "The listing is about an investor opportunity with detached units and does not mention daylight or cozy atmosphere in main living spaces."
+        },
+        "123404": {
+          "rel": 2,
+          "why": "The listing describes a warm, soft, and tranquil home with neutral tones, radiating tranquility, supporting a peaceful, cozy atmosphere but does not explicitly mention daylight in main living spaces."
+        },
+        "123196": {
+          "rel": 1,
+          "why": "The listing mentions a relaxing backyard and cozy fire pit but does not clearly support plenty of daylight in main living spaces or a cozy atmosphere inside the home."
+        },
+        "96163": {
+          "rel": 1,
+          "why": "The listing mentions a spacious condo with an open and functional floor plan but does not specify daylight or a cozy atmosphere in main living spaces."
+        },
+        "65259": {
+          "rel": 2,
+          "why": "The listing highlights an elegant open-air courtyard and living area designed for comfort and entertaining, implying some daylight and a cozy atmosphere."
+        },
+        "116507": {
+          "rel": 3,
+          "why": "The listing features an open-concept living room with hardwood floors and a cozy fireplace, supporting a cozy atmosphere and likely daylight in main living spaces."
+        },
+        "103378": {
+          "rel": 3,
+          "why": "The listing describes an inviting living room with fireplace and balcony access, suggesting daylight and a cozy atmosphere in main living spaces."
+        },
+        "101309": {
+          "rel": 3,
+          "why": "The listing emphasizes outstanding unobstructed views, open floor plan, and wooden floors, indicating plenty of daylight and a cozy atmosphere."
+        },
+        "33592": {
+          "rel": 1,
+          "why": "The listing mentions a functional floor plan with a generous primary bedroom and nooks for home office or storage but does not clearly support daylight or cozy atmosphere in main living spaces."
+        },
+        "116769": {
+          "rel": 3,
+          "why": "The listing describes a bright and airy home with a landscaped courtyard, supporting plenty of daylight and a peaceful atmosphere."
+        },
+        "47907": {
+          "rel": 3,
+          "why": "The listing highlights floor-to-ceiling glass walls flooding the space with natural light and breathtaking views, strongly supporting plenty of daylight and a cozy atmosphere."
+        },
+        "31667": {
+          "rel": 3,
+          "why": "The listing mentions abundant natural light in an open floorplan and a spacious balcony, supporting plenty of daylight and a cozy atmosphere."
+        },
+        "92126": {
+          "rel": 3,
+          "why": "The listing describes natural light flooding large windows and glass doors blending indoor and outdoor spaces, supporting plenty of daylight and a peaceful atmosphere."
+        },
+        "105559": {
+          "rel": 3,
+          "why": "The listing highlights expansive sliding doors flooding the home with natural light and a warm, inviting atmosphere, strongly supporting the leftover."
+        },
+        "114311": {
+          "rel": 3,
+          "why": "The listing mentions floor-to-ceiling windows and an inviting ambiance with a fireplace, supporting plenty of daylight and a cozy atmosphere."
+        },
+        "111360": {
+          "rel": 3,
+          "why": "The listing describes a sunlit living room with a cozy fireplace and balcony access, supporting daylight and a cozy atmosphere."
+        },
+        "102831": {
+          "rel": 3,
+          "why": "The listing notes a light-filled main living level with pitched ceilings and a decorative fireplace creating a warm environment, supporting daylight and cozy atmosphere."
+        },
+        "109351": {
+          "rel": 3,
+          "why": "The listing highlights 42 feet of sliding glass doors opening to a quiet corner, providing natural light and a peaceful atmosphere."
+        },
+        "77298": {
+          "rel": 2,
+          "why": "The listing mentions spacious living areas and a cozy family room but lacks explicit mention of daylight in main living spaces."
+        },
+        "112992": {
+          "rel": 2,
+          "why": "The listing describes a layout with true separation between main living spaces and private bedrooms, ideal for entertaining and a defined living experience, implying a cozy atmosphere but no explicit mention of daylight."
+        }
+      },
+      "sql_rels": [
+        3,
+        2,
+        3,
+        3,
+        3,
+        1,
+        3,
+        0,
+        2,
+        1
+      ],
+      "raw_rels": [
+        1,
+        2,
+        3,
+        3,
+        3,
+        3,
+        1,
+        3,
+        3,
+        3
+      ],
+      "llm_rels": [
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        1,
+        2,
+        2,
+        2
+      ],
+      "ndcg_sql": 0.9431,
+      "ndcg_raw": 0.7881,
+      "ndcg_llm": 0.9966,
+      "ndcg_union_sql": 0.6916,
+      "ndcg_union_raw": 0.6691,
+      "ndcg_union_llm": 0.8232,
+      "mrr_sql": 1.0,
+      "mrr_raw": 0.5,
+      "mrr_llm": 1.0,
+      "p5_sql": 1.0,
+      "p5_raw": 0.8,
+      "p5_llm": 1.0,
+      "p10_sql": 0.7,
+      "p10_raw": 0.8,
+      "p10_llm": 0.9,
+      "coverage_raw": 0.1,
+      "coverage_llm": 0.25,
+      "mean_shared_rank_delta": -6.0,
+      "extract_s": 1.289
+    },
+    {
+      "id": 23,
+      "kind": "A+B",
+      "query": "I'm looking for a 4-bedroom, 3-bathroom home in San Diego under $1.8 million, with enough room outside for hosting dinners and a setting that feels connected to the beach.",
+      "llm_text": "enough room outside for hosting dinners and a setting that feels connected to the beach",
+      "search_text": "enough room outside for hosting dinners and a setting that feels connected to the beach",
+      "leftover_fallback": false,
+      "n_candidates": 67,
+      "overlap_n": 1,
+      "sql_leftover_overlap_n": 1,
+      "grades": {
+        "124703": {
+          "rel": 0,
+          "why": "The chunk mentions a large driveway and open concept living but does not describe outdoor space suitable for hosting dinners or a beach-connected setting."
+        },
+        "124040": {
+          "rel": 0,
+          "why": "The description focuses on smart home features and modern amenities without mentioning outdoor space or beach proximity."
+        },
+        "123850": {
+          "rel": 0,
+          "why": "The listing highlights spacious rooms and vaulted ceilings but does not mention outdoor hosting space or a beach-related setting."
+        },
+        "123831": {
+          "rel": 2,
+          "why": "The backyard with pool, open skies, scenic views, and easy indoor-outdoor connection supports hosting and a connected natural setting, though not explicitly beach-related."
+        },
+        "123331": {
+          "rel": 0,
+          "why": "The listing mentions a large corner lot and flexible indoor spaces but does not describe outdoor hosting space or beach connection."
+        },
+        "122609": {
+          "rel": 0,
+          "why": "The chunk highlights a remodeled kitchen and dining room but does not mention outdoor space or beach proximity."
+        },
+        "122444": {
+          "rel": 2,
+          "why": "The home offers exceptional privacy, indoor-outdoor lifestyle, and is on an expansive lot near San Diego, suggesting ample outdoor space and a natural setting, though beach connection is not explicit."
+        },
+        "122091": {
+          "rel": 3,
+          "why": "The home backs to a protected canyon with privacy and ocean breeze, indicating a natural setting connected to the beach and outdoor space for enjoyment."
+        },
+        "122054": {
+          "rel": 3,
+          "why": "The backyard is ideal for entertaining with a large covered patio and outdoor lighting, and the home is minutes from beaches, supporting hosting and beach connection."
+        },
+        "122031": {
+          "rel": 2,
+          "why": "The fenced backyard with peaceful sunset views is ideal for relaxing or entertaining but does not mention beach connection."
+        },
+        "57703": {
+          "rel": 2,
+          "why": "The large backyard offers plenty of space for outdoor activities, supporting hosting, but no mention of beach connection."
+        },
+        "111663": {
+          "rel": 0,
+          "why": "The listing focuses on interior upgrades and kitchen but does not mention outdoor hosting space or beach connection."
+        },
+        "112626": {
+          "rel": 2,
+          "why": "The condo offers a coastal lifestyle and is in Pacific Beach, implying beach connection, but no mention of outdoor hosting space."
+        },
+        "109690": {
+          "rel": 0,
+          "why": "The home has a quiet neighborhood setting but no mention of outdoor hosting space or beach connection."
+        },
+        "108102": {
+          "rel": 1,
+          "why": "The inviting courtyard provides a peaceful retreat, supporting outdoor enjoyment, but no mention of hosting space or beach connection."
+        },
+        "54936": {
+          "rel": 0,
+          "why": "The home has a cozy family room with fireplace but no mention of outdoor hosting space or beach connection."
+        },
+        "27374": {
+          "rel": 1,
+          "why": "The private outdoor space and front porch overlooking a canyon support outdoor enjoyment but no explicit beach connection or hosting space."
+        },
+        "28538": {
+          "rel": 1,
+          "why": "The fenced backyard with abundant plants and fruits supports outdoor enjoyment but no mention of hosting space or beach connection."
+        },
+        "108103": {
+          "rel": 2,
+          "why": "The balcony offers views perfect for entertaining, supporting outdoor hosting, but no mention of beach connection."
+        },
+        "61052": {
+          "rel": 2,
+          "why": "The front patio is perfect for barbecue and entertaining, supporting outdoor hosting, but no mention of beach connection."
+        },
+        "107329": {
+          "rel": 1,
+          "why": "The home has an elevated view adding openness and calm but no mention of outdoor hosting space or beach connection."
+        },
+        "16180": {
+          "rel": 3,
+          "why": "The home has two spacious terraces, a vast rooftop deck, and is one block from the bay, strongly supporting outdoor hosting and beach connection."
+        },
+        "103938": {
+          "rel": 3,
+          "why": "Same as above, with terraces, rooftop deck, and proximity to the bay supporting hosting and beach connection."
+        },
+        "92741": {
+          "rel": 2,
+          "why": "The private patio with pavers and raised garden beds supports outdoor hosting but no mention of beach connection."
+        },
+        "92437": {
+          "rel": 0,
+          "why": "The extra-large family room supports indoor entertaining but no mention of outdoor hosting space or beach connection."
+        },
+        "95888": {
+          "rel": 3,
+          "why": "The fully fenced yard with mature fruit trees and space to entertain supports hosting, and being minutes from the beach supports beach connection."
+        },
+        "39147": {
+          "rel": 2,
+          "why": "The private backyard backs to open space and is an entertainment area, supporting outdoor hosting and a natural setting, though beach connection is not explicit."
+        }
+      },
+      "sql_rels": [
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        2,
+        3,
+        3,
+        2
+      ],
+      "raw_rels": [
+        2,
+        0,
+        2,
+        0,
+        1,
+        0,
+        1,
+        3,
+        1,
+        2
+      ],
+      "llm_rels": [
+        2,
+        1,
+        3,
+        3,
+        2,
+        0,
+        3,
+        2,
+        2,
+        2
+      ],
+      "ndcg_sql": 0.4863,
+      "ndcg_raw": 0.6737,
+      "ndcg_llm": 0.7907,
+      "ndcg_union_sql": 0.294,
+      "ndcg_union_raw": 0.3381,
+      "ndcg_union_llm": 0.6433,
+      "mrr_sql": 0.25,
+      "mrr_raw": 1.0,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.2,
+      "p5_raw": 0.4,
+      "p5_llm": 0.8,
+      "p10_sql": 0.5,
+      "p10_raw": 0.4,
+      "p10_llm": 0.8,
+      "coverage_raw": 0.13,
+      "coverage_llm": 0.19,
+      "mean_shared_rank_delta": 2.0,
+      "extract_s": 0.876
+    },
+    {
+      "id": 24,
+      "kind": "A+B",
+      "query": "Show me 3-bedroom houses in Santa Cruz with at least 1000 sqft, with a flexible extra room for working from home and views that make the property feel open and relaxing.",
+      "llm_text": "flexible extra room for working from home and views that make the property feel open and relaxing",
+      "search_text": "flexible extra room for working from home and views that make the property feel open and relaxing",
+      "leftover_fallback": false,
+      "n_candidates": 19,
+      "overlap_n": 7,
+      "sql_leftover_overlap_n": 6,
+      "grades": {
+        "121985": {
+          "rel": 0,
+          "why": "The listing highlights a peaceful setting near open space but does not mention any flexible extra room or views that create an open, relaxing feel."
+        },
+        "121836": {
+          "rel": 2,
+          "why": "The listing mentions natural light and backyard views that create a private oasis, supporting the relaxing views aspect, but does not mention a flexible extra room for working from home."
+        },
+        "120156": {
+          "rel": 1,
+          "why": "The listing notes oversized bedrooms and a peaceful setting with excellent land usability, but does not mention flexible extra rooms or views that make the property feel open and relaxing."
+        },
+        "118439": {
+          "rel": 1,
+          "why": "The listing describes a spacious backyard for relaxing activities but does not mention a flexible extra room for working from home or views that make the property feel open."
+        },
+        "114234": {
+          "rel": 2,
+          "why": "The listing emphasizes a light-filled, airy, open feel with soaring ceilings and large windows, supporting the relaxing views aspect, but does not mention a flexible extra room for working from home."
+        },
+        "112909": {
+          "rel": 2,
+          "why": "The listing clearly states a large, dedicated office ideal for remote work, supporting the flexible extra room for working from home, but does not mention views that make the property feel open and relaxing."
+        },
+        "109199": {
+          "rel": 0,
+          "why": "The listing mentions a fully fenced yard providing privacy and usability but does not mention any flexible extra room or views that make the property feel open and relaxing."
+        },
+        "90047": {
+          "rel": 0,
+          "why": "The listing mentions a cozy fireplace and a flowing floor plan but does not mention a flexible extra room or views that create an open, relaxing feel."
+        },
+        "82891": {
+          "rel": 2,
+          "why": "The listing highlights large expansive decks with spectacular views, supporting the relaxing views aspect, but does not mention a flexible extra room for working from home."
+        },
+        "79922": {
+          "rel": 0,
+          "why": "The listing focuses on barn and equestrian facilities with guest quarters but does not mention flexible extra rooms or views that make the property feel open and relaxing."
+        },
+        "20162": {
+          "rel": 2,
+          "why": "The listing mentions extra space ideal for gardening and a legal second residence with open living space, which partially supports flexible extra room and open feel, but does not mention views that make the property feel relaxing."
+        },
+        "33944": {
+          "rel": 1,
+          "why": "The listing mentions wildlife, sunsets, and serenity, supporting the relaxing views aspect, but does not mention a flexible extra room for working from home."
+        },
+        "59672": {
+          "rel": 2,
+          "why": "The listing mentions three cottages with design flexibility and privacy with mature trees and ocean breezes, supporting flexible use and relaxing views, but does not explicitly mention a flexible extra room for working from home."
+        },
+        "12377": {
+          "rel": 3,
+          "why": "The listing mentions bedrooms spaced apart great for working from home or studies, and a large backyard, supporting flexible extra room and relaxing outdoor space."
+        },
+        "14235": {
+          "rel": 3,
+          "why": "The listing describes a bonus room that would make a great work from home office and a huge ocean view deck, strongly supporting both flexible extra room for working from home and relaxing views that make the property feel open."
+        }
+      },
+      "sql_rels": [
+        0,
+        2,
+        1,
+        1,
+        2,
+        2,
+        0,
+        0,
+        2,
+        0
+      ],
+      "raw_rels": [
+        2,
+        1,
+        2,
+        0,
+        1,
+        2,
+        1,
+        0,
+        2,
+        3
+      ],
+      "llm_rels": [
+        3,
+        0,
+        1,
+        0,
+        3,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "ndcg_sql": 0.7067,
+      "ndcg_raw": 0.7109,
+      "ndcg_llm": 0.8445,
+      "ndcg_union_sql": 0.3139,
+      "ndcg_union_raw": 0.5189,
+      "ndcg_union_llm": 0.7902,
+      "mrr_sql": 0.5,
+      "mrr_raw": 1.0,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.4,
+      "p5_raw": 0.4,
+      "p5_llm": 0.4,
+      "p10_sql": 0.4,
+      "p10_raw": 0.5,
+      "p10_llm": 0.7,
+      "coverage_raw": 0.2538,
+      "coverage_llm": 0.3308,
+      "mean_shared_rank_delta": 0.571,
+      "extract_s": 1.058
+    },
+    {
+      "id": 25,
+      "kind": "A+B",
+      "query": "Find a 2-bedroom, 2-bathroom home in Irvine under $1.6 million, with indoor living areas that flow naturally into the outdoors, surrounded by trees in a quiet and secluded setting.",
+      "llm_text": "indoor living areas that flow naturally into the outdoors, surrounded by trees in a quiet and secluded setting",
+      "search_text": "indoor living areas that flow naturally into the outdoors, surrounded by trees in a quiet and secluded setting",
+      "leftover_fallback": false,
+      "n_candidates": 58,
+      "overlap_n": 2,
+      "sql_leftover_overlap_n": 2,
+      "grades": {
+        "122556": {
+          "rel": 1,
+          "why": "The listing mentions a private deck and mountain and city-lights views but does not describe indoor-outdoor flow or a secluded, tree-surrounded setting."
+        },
+        "121829": {
+          "rel": 1,
+          "why": "The listing highlights open and airy living spaces with custom finishes but does not mention indoor-outdoor flow or a secluded, tree-surrounded setting."
+        },
+        "121640": {
+          "rel": 2,
+          "why": "The listing emphasizes a lush landscape, custom hardscape, and a corner lot on a cul-de-sac, suggesting a quiet and somewhat secluded setting surrounded by greenery."
+        },
+        "119968": {
+          "rel": 1,
+          "why": "The listing describes a private top-level unit with no neighbors above, implying some privacy, but does not mention indoor-outdoor flow or a tree-surrounded setting."
+        },
+        "119784": {
+          "rel": 2,
+          "why": "The listing describes an open floor plan with a bright living room and a good size balcony, suggesting some indoor-outdoor flow, but does not mention a secluded, tree-surrounded setting."
+        },
+        "118684": {
+          "rel": 3,
+          "why": "The listing clearly describes indoor-outdoor flow with doors leading to a private patio and views overlooking a peaceful greenbelt, indicating a quiet, tree-surrounded setting."
+        },
+        "118495": {
+          "rel": 2,
+          "why": "The listing mentions a quiet interior location with serene garden views, suggesting a peaceful and somewhat secluded setting, but does not explicitly describe indoor-outdoor flow."
+        },
+        "118048": {
+          "rel": 3,
+          "why": "The listing describes sliding doors opening to private patios overlooking a fairway, indicating indoor-outdoor flow and a quiet setting, though trees are not explicitly mentioned."
+        },
+        "117179": {
+          "rel": 0,
+          "why": "The listing mentions a light-filled condominium with a functional layout but does not describe indoor-outdoor flow or a secluded, tree-surrounded setting."
+        },
+        "115792": {
+          "rel": 2,
+          "why": "The listing highlights warmth, privacy, and timeless curb appeal in a cottage-style residence, implying a quiet and private setting but does not mention indoor-outdoor flow or trees."
+        },
+        "101471": {
+          "rel": 1,
+          "why": "The listing describes a secluded top-floor condo with an open floor plan but does not mention indoor-outdoor flow or a tree-surrounded setting."
+        },
+        "112470": {
+          "rel": 3,
+          "why": "The listing explicitly mentions seamless indoor-outdoor living with a living and dining area opening to a spacious private patio, surrounded by natural light, supporting the leftover well."
+        },
+        "71919": {
+          "rel": 1,
+          "why": "The listing mentions privacy and townhome-style living but does not describe indoor-outdoor flow or a secluded, tree-surrounded setting."
+        },
+        "13729": {
+          "rel": 1,
+          "why": "The listing describes a light-filled open floorplan designed for contemporary living but does not mention indoor-outdoor flow or a secluded, tree-surrounded setting."
+        },
+        "43835": {
+          "rel": 2,
+          "why": "The listing highlights bright, open living spaces with floor-to-ceiling windows and tranquil garden views, suggesting a peaceful, tree-surrounded setting but does not mention indoor-outdoor flow."
+        },
+        "90150": {
+          "rel": 2,
+          "why": "The listing mentions private balcony and outdoor living space with serene park views, implying some indoor-outdoor connection and a quiet setting."
+        },
+        "4810": {
+          "rel": 2,
+          "why": "The listing describes a home in a gated community on a quiet cul-de-sac with an expansive front porch, suggesting a quiet and somewhat secluded setting but does not mention indoor-outdoor flow or trees."
+        },
+        "16181": {
+          "rel": 1,
+          "why": "The listing mentions serene golf course living with an open, spacious layout but does not describe indoor-outdoor flow or a tree-surrounded setting."
+        },
+        "109664": {
+          "rel": 1,
+          "why": "The listing highlights a quiet setting with abundant natural light and a versatile bonus room but does not mention indoor-outdoor flow or a tree-surrounded setting."
+        },
+        "43223": {
+          "rel": 3,
+          "why": "The listing describes outdoor living space with a bright patio surrounded by lush tropical landscaping and greenbelt views, indicating a peaceful, tree-surrounded setting with outdoor amenities."
+        },
+        "61470": {
+          "rel": 2,
+          "why": "The listing mentions a private deck ideal for relaxing and abundant natural light but does not explicitly describe indoor-outdoor flow or a secluded, tree-surrounded setting."
+        },
+        "113262": {
+          "rel": 2,
+          "why": "The listing describes floor-to-ceiling windows and a private terrace with stunning views, suggesting indoor-outdoor connection but does not mention a tree-surrounded or secluded setting."
+        },
+        "81998": {
+          "rel": 2,
+          "why": "The listing mentions a balcony with exquisite garden views, suggesting some outdoor connection but does not describe indoor-outdoor flow or a secluded setting."
+        },
+        "114640": {
+          "rel": 3,
+          "why": "The listing describes a home that flows seamlessly into a well-appointed living area and a private balcony overlooking peace, indicating indoor-outdoor flow and a quiet setting."
+        },
+        "104750": {
+          "rel": 2,
+          "why": "The listing highlights a light and bright interior with an open-concept living space and a quiet, safe neighborhood, supporting a peaceful setting but not explicitly indoor-outdoor flow or trees."
+        },
+        "84044": {
+          "rel": 3,
+          "why": "The listing mentions a private patio just off the living room and a bright, modern atmosphere, indicating indoor-outdoor flow but does not mention a secluded, tree-surrounded setting."
+        }
+      },
+      "sql_rels": [
+        1,
+        1,
+        2,
+        1,
+        2,
+        3,
+        2,
+        3,
+        0,
+        2
+      ],
+      "raw_rels": [
+        1,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        2,
+        1,
+        1
+      ],
+      "llm_rels": [
+        3,
+        3,
+        2,
+        3,
+        2,
+        2,
+        3,
+        2,
+        1,
+        3
+      ],
+      "ndcg_sql": 0.6494,
+      "ndcg_raw": 0.7863,
+      "ndcg_llm": 0.9565,
+      "ndcg_union_sql": 0.4205,
+      "ndcg_union_raw": 0.4968,
+      "ndcg_union_llm": 0.8851,
+      "mrr_sql": 0.3333,
+      "mrr_raw": 0.5,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.4,
+      "p5_raw": 0.4,
+      "p5_llm": 1.0,
+      "p10_sql": 0.6,
+      "p10_raw": 0.5,
+      "p10_llm": 0.9,
+      "coverage_raw": 0.1231,
+      "coverage_llm": 0.1615,
+      "mean_shared_rank_delta": -0.5,
+      "extract_s": 0.834
+    },
+    {
+      "id": 26,
+      "kind": "A+B",
+      "query": "Looking for a 2-bedroom house in Pasadena under $1.2 million, with a shaded place for outdoor meals and a calm, established neighborhood atmosphere.",
+      "llm_text": "shaded place for outdoor meals, calm, established neighborhood atmosphere",
+      "search_text": "shaded place for outdoor meals, calm, established neighborhood atmosphere",
+      "leftover_fallback": false,
+      "n_candidates": 39,
+      "overlap_n": 4,
+      "sql_leftover_overlap_n": 5,
+      "grades": {
+        "122805": {
+          "rel": 1,
+          "why": "The listing mentions large windows providing natural light and serene views but does not mention any shaded outdoor dining area or calm neighborhood atmosphere."
+        },
+        "122343": {
+          "rel": 1,
+          "why": "The listing highlights a private balcony and a calm, bright atmosphere but does not specifically mention shaded outdoor dining or an established neighborhood feel."
+        },
+        "120473": {
+          "rel": 3,
+          "why": "This listing clearly supports the leftover with a large courtyard for al fresco dining and a calm setting implied by the low HOA and practical features."
+        },
+        "117231": {
+          "rel": 3,
+          "why": "The listing describes a spacious deck for outdoor dining and a natural setting, supporting the shaded outdoor meals and calm atmosphere aspects."
+        },
+        "115740": {
+          "rel": 0,
+          "why": "The listing focuses on urban living and panoramic views but does not mention shaded outdoor dining or a calm, established neighborhood atmosphere."
+        },
+        "115563": {
+          "rel": 0,
+          "why": "The listing mentions natural light and an open floor plan but does not describe any outdoor shaded dining area or calm neighborhood setting."
+        },
+        "115293": {
+          "rel": 2,
+          "why": "The listing explicitly mentions a covered patio ideal for al fresco dining, supporting the shaded outdoor meals aspect, but does not mention calm or neighborhood atmosphere."
+        },
+        "114695": {
+          "rel": 1,
+          "why": "The listing emphasizes privacy and a tucked-away feel but does not mention outdoor dining or a calm, established neighborhood atmosphere."
+        },
+        "113843": {
+          "rel": 1,
+          "why": "The listing highlights a rooftop deck for cooking and socializing but does not mention shaded outdoor dining or a calm neighborhood atmosphere."
+        },
+        "113580": {
+          "rel": 3,
+          "why": "The listing describes a large balcony providing a serene setting for outdoor dining and relaxation, supporting shaded outdoor meals and calm atmosphere."
+        },
+        "96959": {
+          "rel": 3,
+          "why": "The listing mentions a generously sized private balcony perfect for outdoor dining and a peaceful retreat, supporting shaded outdoor meals and calm atmosphere."
+        },
+        "86153": {
+          "rel": 0,
+          "why": "The listing does not mention any outdoor dining space or calm neighborhood atmosphere, focusing instead on bedroom count and location."
+        },
+        "104819": {
+          "rel": 0,
+          "why": "The listing mentions natural light and a functional kitchen but does not describe any outdoor shaded dining area or calm neighborhood atmosphere."
+        },
+        "103103": {
+          "rel": 2,
+          "why": "The listing highlights a large private patio ideal for relaxation but does not specify shaded outdoor dining or calm neighborhood atmosphere."
+        },
+        "77597": {
+          "rel": 1,
+          "why": "The listing mentions a courtyard and rooftop patio but does not specify shaded outdoor dining or calm neighborhood atmosphere."
+        },
+        "51984": {
+          "rel": 1,
+          "why": "The listing mentions a patio with a fountain view but does not specify shaded outdoor dining or calm neighborhood atmosphere."
+        },
+        "39553": {
+          "rel": 0,
+          "why": "The listing focuses on indoor features and parking with no mention of outdoor dining or calm neighborhood atmosphere."
+        },
+        "70280": {
+          "rel": 1,
+          "why": "The listing mentions mountain views perfect for relaxation but does not mention shaded outdoor dining or neighborhood atmosphere."
+        },
+        "77520": {
+          "rel": 0,
+          "why": "The listing describes a vibrant neighborhood with nightlife and dining but does not support a calm, established neighborhood atmosphere or shaded outdoor dining."
+        },
+        "87802": {
+          "rel": 0,
+          "why": "The listing mentions bright natural light and comfort but does not mention outdoor dining or calm neighborhood atmosphere."
+        }
+      },
+      "sql_rels": [
+        1,
+        1,
+        3,
+        3,
+        0,
+        0,
+        2,
+        1,
+        1,
+        3
+      ],
+      "raw_rels": [
+        3,
+        3,
+        0,
+        0,
+        2,
+        1,
+        3,
+        1,
+        0,
+        1
+      ],
+      "llm_rels": [
+        3,
+        3,
+        2,
+        0,
+        0,
+        3,
+        1,
+        1,
+        2,
+        1
+      ],
+      "ndcg_sql": 0.6696,
+      "ndcg_raw": 0.9182,
+      "ndcg_llm": 0.9389,
+      "ndcg_union_sql": 0.5507,
+      "ndcg_union_raw": 0.7417,
+      "ndcg_union_llm": 0.8061,
+      "mrr_sql": 0.3333,
+      "mrr_raw": 1.0,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.4,
+      "p5_raw": 0.6,
+      "p5_llm": 0.6,
+      "p10_sql": 0.4,
+      "p10_raw": 0.4,
+      "p10_llm": 0.5,
+      "coverage_raw": 0.0375,
+      "coverage_llm": 0.125,
+      "mean_shared_rank_delta": 1.25,
+      "extract_s": 0.884
+    },
+    {
+      "id": 27,
+      "kind": "A+B",
+      "query": "Find me a 2-bedroom home in Sacramento with at least 1000 sqft, with a fenced outdoor area where children can play safely, in a friendly residential setting near schools.",
+      "llm_text": "fenced outdoor area where children can play safely, friendly residential setting near schools",
+      "search_text": "fenced outdoor area where children can play safely, friendly residential setting near schools",
+      "leftover_fallback": false,
+      "n_candidates": 10,
+      "overlap_n": 10,
+      "sql_leftover_overlap_n": 10,
+      "grades": {
+        "116896": {
+          "rel": 1,
+          "why": "The listing mentions a low-maintenance outdoor space but does not specify a fenced area for children or a friendly residential setting near schools."
+        },
+        "107266": {
+          "rel": 2,
+          "why": "The listing highlights an established community and proximity to parks, which suggests a friendly residential setting near schools, but does not mention a fenced outdoor area for children."
+        },
+        "103698": {
+          "rel": 1,
+          "why": "The listing mentions a private courtyard entrance and patio area but does not specify a fenced outdoor area for children or a friendly residential setting near schools."
+        },
+        "99182": {
+          "rel": 1,
+          "why": "The listing describes a private, low-maintenance retreat with a turf lawn and tranquil features but does not mention a fenced outdoor area for children or proximity to schools."
+        },
+        "85131": {
+          "rel": 1,
+          "why": "The listing emphasizes community amenities and parks but does not mention a fenced outdoor area for children or a specifically friendly residential setting near schools."
+        },
+        "79618": {
+          "rel": 1,
+          "why": "The listing mentions a large outdoor patio and location near community courtyards and pools but does not specify a fenced outdoor area for children or proximity to schools."
+        },
+        "79147": {
+          "rel": 2,
+          "why": "The listing notes a resort-style community near schools and parks, supporting a friendly residential setting near schools, but does not mention a fenced outdoor area for children."
+        },
+        "62030": {
+          "rel": 3,
+          "why": "The listing describes a backyard oasis suitable for family enjoyment and proximity to schools, supporting a fenced outdoor area for children and a friendly residential setting near schools."
+        },
+        "51701": {
+          "rel": 1,
+          "why": "The listing mentions a corner lot with potential but does not specify a fenced outdoor area for children or a friendly residential setting near schools."
+        },
+        "26114": {
+          "rel": 0,
+          "why": "The listing focuses on garage, storage, and security features but does not mention a fenced outdoor area for children or a friendly residential setting near schools."
+        }
+      },
+      "sql_rels": [
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        2,
+        3,
+        1,
+        0
+      ],
+      "raw_rels": [
+        0,
+        2,
+        1,
+        2,
+        1,
+        3,
+        1,
+        1,
+        1,
+        1
+      ],
+      "llm_rels": [
+        1,
+        3,
+        1,
+        1,
+        2,
+        1,
+        2,
+        0,
+        1,
+        1
+      ],
+      "ndcg_sql": 0.6452,
+      "ndcg_raw": 0.6235,
+      "ndcg_llm": 0.7553,
+      "ndcg_union_sql": 0.6452,
+      "ndcg_union_raw": 0.6235,
+      "ndcg_union_llm": 0.7553,
+      "mrr_sql": 0.5,
+      "mrr_raw": 0.5,
+      "mrr_llm": 0.5,
+      "p5_sql": 0.2,
+      "p5_raw": 0.4,
+      "p5_llm": 0.4,
+      "p10_sql": 0.3,
+      "p10_raw": 0.3,
+      "p10_llm": 0.3,
+      "coverage_raw": 0.075,
+      "coverage_llm": 0.1083,
+      "mean_shared_rank_delta": 0.0,
+      "extract_s": 1.124
+    },
+    {
+      "id": 28,
+      "kind": "A+B",
+      "query": "I'm looking for a 2-bedroom, 2-bathroom condo in San Francisco under $1.5 million with at least 1,000 sqft, with windows overlooking the surrounding skyline and an energetic urban atmosphere close to shops and restaurants.",
+      "llm_text": "windows overlooking the surrounding skyline and an energetic urban atmosphere close to shops and restaurants",
+      "search_text": "windows overlooking the surrounding skyline and an energetic urban atmosphere close to shops and restaurants",
+      "leftover_fallback": false,
+      "n_candidates": 9,
+      "overlap_n": 9,
+      "sql_leftover_overlap_n": 9,
+      "grades": {
+        "124718": {
+          "rel": 0,
+          "why": "The chunk does not mention windows, skyline views, or proximity to shops and restaurants, only eligibility and income details."
+        },
+        "123902": {
+          "rel": 2,
+          "why": "The chunk mentions proximity to waterfront walking paths, transit, and downtown hotspots, suggesting an energetic urban atmosphere close to amenities, but does not mention windows or skyline views."
+        },
+        "106074": {
+          "rel": 2,
+          "why": "The chunk clearly describes large windows with scenic views and a bright living area, supporting the skyline view aspect, but does not mention urban atmosphere or proximity to shops and restaurants."
+        },
+        "103863": {
+          "rel": 2,
+          "why": "The chunk mentions a vibrant neighborhood close to shops and restaurants, supporting the urban atmosphere and proximity aspect, but does not mention windows or skyline views."
+        },
+        "74697": {
+          "rel": 2,
+          "why": "The chunk highlights an urban lifestyle location within walking distance to waterfront parks, Chase Center, and transit, supporting the energetic urban atmosphere and proximity to amenities, but does not mention windows or skyline views."
+        },
+        "71530": {
+          "rel": 2,
+          "why": "The chunk emphasizes unbeatable convenience to cafes, restaurants, boutiques, and parks, supporting the urban atmosphere and proximity to amenities, but does not mention windows or skyline views."
+        },
+        "59322": {
+          "rel": 2,
+          "why": "The chunk mentions proximity to a wide variety of restaurants, cafes, boutiques, and public transportation, supporting the urban atmosphere and proximity to amenities, but does not mention windows or skyline views."
+        },
+        "17755": {
+          "rel": 2,
+          "why": "The chunk describes soaring ceilings and expansive windows creating a warm ambiance, supporting the window aspect, but does not mention skyline views or proximity to shops and restaurants."
+        },
+        "14042": {
+          "rel": 3,
+          "why": "The chunk clearly describes two walls of oversized windows with dramatic cityscape views, strongly supporting the skyline view aspect, but does not mention proximity to shops and restaurants or urban atmosphere explicitly."
+        }
+      },
+      "sql_rels": [
+        0,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        3
+      ],
+      "raw_rels": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        3,
+        2,
+        0
+      ],
+      "llm_rels": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        3,
+        0
+      ],
+      "ndcg_sql": 0.6915,
+      "ndcg_raw": 0.8319,
+      "ndcg_llm": 0.8274,
+      "ndcg_union_sql": 0.6915,
+      "ndcg_union_raw": 0.8319,
+      "ndcg_union_llm": 0.8274,
+      "mrr_sql": 0.5,
+      "mrr_raw": 1.0,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.8,
+      "p5_raw": 1.0,
+      "p5_llm": 1.0,
+      "p10_sql": 0.8889,
+      "p10_raw": 0.8889,
+      "p10_llm": 0.8889,
+      "coverage_raw": 0.0778,
+      "coverage_llm": 0.1111,
+      "mean_shared_rank_delta": 0.0,
+      "extract_s": 0.975
+    },
+    {
+      "id": 29,
+      "kind": "A+B",
+      "query": "Show me 3-bedroom houses in Encinitas under $1.7 million, with space to store surfboards and bicycles, within easy reach of the beach in a laid-back neighborhood.",
+      "llm_text": "space to store surfboards and bicycles, within easy reach of the beach, laid-back neighborhood",
+      "search_text": "space to store surfboards and bicycles, within easy reach of the beach, laid-back neighborhood",
+      "leftover_fallback": false,
+      "n_candidates": 9,
+      "overlap_n": 9,
+      "sql_leftover_overlap_n": 9,
+      "grades": {
+        "124535": {
+          "rel": 1,
+          "why": "The listing mentions a backyard and a laid-back community feel but does not specifically mention storage for surfboards or bicycles or proximity to the beach."
+        },
+        "124272": {
+          "rel": 2,
+          "why": "This listing clearly states it is steps from world-class beaches and located in a vibrant, charming neighborhood, supporting the beach proximity and laid-back neighborhood aspects well, though it does not mention storage space for surfboards or bicycles."
+        },
+        "118344": {
+          "rel": 1,
+          "why": "The listing highlights a spacious private deck and a sought-after community but does not mention storage for surfboards or bicycles or proximity to the beach or a laid-back neighborhood."
+        },
+        "118211": {
+          "rel": 2,
+          "why": "The listing mentions access to parks and community amenities and being just minutes to beaches, supporting proximity to the beach and a relaxed community feel, but does not mention storage for surfboards or bicycles."
+        },
+        "115116": {
+          "rel": 3,
+          "why": "This listing specifically mentions two large outdoor locking storage units, which could be used for surfboards and bicycles, and is located in a desirable beach town, supporting storage and laid-back neighborhood aspects, though beach proximity is implied but not explicit."
+        },
+        "112958": {
+          "rel": 3,
+          "why": "The listing explicitly mentions a private garage offering extra storage for boards and bikes and community amenities including a pool and playground, supporting storage and a relaxed community feel, though beach proximity is not directly stated."
+        },
+        "112282": {
+          "rel": 2,
+          "why": "This listing is in a quaint coastal community and is just a stroll to a beautiful beach, supporting beach proximity and laid-back neighborhood, but does not mention storage space for surfboards or bicycles."
+        },
+        "107387": {
+          "rel": 2,
+          "why": "The listing mentions resort-style amenities and proximity to Moonlight Beach, supporting beach proximity and a relaxed community feel, but does not mention storage for surfboards or bicycles."
+        },
+        "88294": {
+          "rel": 1,
+          "why": "The listing mentions a two-car garage and a private yard with natural light and a relaxed setting but does not specifically mention storage for surfboards or bicycles or proximity to the beach."
+        }
+      },
+      "sql_rels": [
+        1,
+        2,
+        1,
+        2,
+        3,
+        3,
+        2,
+        2,
+        1
+      ],
+      "raw_rels": [
+        1,
+        2,
+        1,
+        2,
+        3,
+        2,
+        2,
+        3,
+        1
+      ],
+      "llm_rels": [
+        2,
+        1,
+        1,
+        3,
+        2,
+        2,
+        3,
+        2,
+        1
+      ],
+      "ndcg_sql": 0.6978,
+      "ndcg_raw": 0.6885,
+      "ndcg_llm": 0.7451,
+      "ndcg_union_sql": 0.6978,
+      "ndcg_union_raw": 0.6885,
+      "ndcg_union_llm": 0.7451,
+      "mrr_sql": 0.5,
+      "mrr_raw": 0.5,
+      "mrr_llm": 1.0,
+      "p5_sql": 0.6,
+      "p5_raw": 0.6,
+      "p5_llm": 0.6,
+      "p10_sql": 0.6667,
+      "p10_raw": 0.6667,
+      "p10_llm": 0.6667,
+      "coverage_raw": 0.101,
+      "coverage_llm": 0.1212,
+      "mean_shared_rank_delta": 0.0,
+      "extract_s": 0.92
+    },
+    {
+      "id": 30,
+      "kind": "A+B",
+      "query": "Find a 2-bedroom home in San Jose under $2 million, with a warm central gathering area for cold evenings and a secluded setting with beautiful mountain scenery.",
+      "llm_text": "warm central gathering area for cold evenings and a secluded setting with beautiful mountain scenery",
+      "search_text": "warm central gathering area for cold evenings and a secluded setting with beautiful mountain scenery",
+      "leftover_fallback": false,
+      "n_candidates": 154,
+      "overlap_n": 0,
+      "sql_leftover_overlap_n": 1,
+      "grades": {
+        "124764": {
+          "rel": 1,
+          "why": "The listing mentions a spacious living room and private balcony but does not describe a warm central gathering area or mountain scenery, nor a secluded setting."
+        },
+        "123904": {
+          "rel": 1,
+          "why": "The listing highlights peaceful, quiet surroundings and a friendly neighborhood atmosphere, suggesting some seclusion, but no mention of a warm gathering area or mountain views."
+        },
+        "123753": {
+          "rel": 1,
+          "why": "This listing emphasizes privacy and a light-filled open-concept space good for entertaining and relaxing, but does not mention warmth for cold evenings or mountain scenery."
+        },
+        "123614": {
+          "rel": 0,
+          "why": "The listing describes a loft-style residence with vaulted ceilings and urban living features but no mention of a warm gathering area or mountain scenery or seclusion."
+        },
+        "123603": {
+          "rel": 2,
+          "why": "The home features a light-filled living room with fireplace and refinished hardwood floors, which supports a warm gathering area for cold evenings, but no mention of seclusion or mountain scenery."
+        },
+        "123434": {
+          "rel": 1,
+          "why": "The listing describes a vibrant residence with open-concept flow and comfort but does not mention warmth for cold evenings or mountain scenery or seclusion."
+        },
+        "123346": {
+          "rel": 1,
+          "why": "The listing mentions a sunny, bright condo with open floor plan and indoor-outdoor relaxation but no mention of warmth for cold evenings or mountain scenery or seclusion."
+        },
+        "123328": {
+          "rel": 2,
+          "why": "This listing highlights a lake-view home in a peaceful, resort-style community with scenic trails and open green space, suggesting seclusion and beautiful natural scenery, but no explicit mention of a warm central gathering area for cold evenings."
+        },
+        "123263": {
+          "rel": 0,
+          "why": "The listing describes a charming bungalow with classic layout and original character but no mention of a warm gathering area or mountain scenery or seclusion."
+        },
+        "123107": {
+          "rel": 2,
+          "why": "The listing mentions a warm ambiance with natural light filling the interior and a gourmet kitchen with central island, supporting a warm central gathering area, but no mention of seclusion or mountain scenery."
+        },
+        "80641": {
+          "rel": 1,
+          "why": "The listing notes central forced air heating for comfort during cooler months, supporting warmth for cold evenings, but no mention of seclusion or mountain scenery."
+        },
+        "123090": {
+          "rel": 2,
+          "why": "The listing highlights a fireplace and a thoughtfully designed layout with separate living and dining rooms, supporting a warm central gathering area for cold evenings, but no mention of seclusion or mountain scenery."
+        },
+        "91669": {
+          "rel": 1,
+          "why": "The listing describes a spacious living room connected to dining area and a bonus room, but no mention of warmth for cold evenings or mountain scenery or seclusion."
+        },
+        "109243": {
+          "rel": 0,
+          "why": "The listing mentions an open, inviting floor plan and desirable features but no mention of warmth for cold evenings or mountain scenery or seclusion."
+        },
+        "44616": {
+          "rel": 2,
+          "why": "The listing mentions a cozy living room with a fireplace, perfect for relaxing evenings, supporting a warm central gathering area, but no mention of seclusion or mountain scenery."
+        },
+        "74022": {
+          "rel": 0,
+          "why": "The listing describes a well-equipped kitchen and combined living space but no mention of warmth for cold evenings or mountain scenery or seclusion."
+        },
+        "100269": {
+          "rel": 0,
+          "why": "The listing mentions a vibrant community with pool, hot tub, and gym but no mention of warmth for cold evenings or mountain scenery or seclusion."
+        },
+        "73498": {
+          "rel": 0,
+          "why": "The listing highlights a comfortable and inviting atmosphere with access to amenities but no mention of warmth for cold evenings or mountain scenery or seclusion."
+        },
+        "109595": {
+          "rel": 0,
+          "why": "The listing describes an inviting floor plan with spacious living room and remodeled kitchen but no mention of warmth for cold evenings or mountain scenery or seclusion."
+        },
+        "60935": {
+          "rel": 1,
+          "why": "The listing mentions a warm and welcoming atmosphere and energy-efficient windows but no mention of mountain scenery or seclusion."
+        },
+        "108805": {
+          "rel": 0,
+          "why": "The listing highlights community amenities and gathering areas but no mention of warmth for cold evenings or mountain scenery or seclusion."
+        },
+        "113697": {
+          "rel": 1,
+          "why": "The listing describes a living area bathed in natural light with soaring ceilings and resort-style amenities but no mention of warmth for cold evenings or mountain scenery or seclusion."
+        },
+        "102649": {
+          "rel": 2,
+          "why": "The listing mentions a large, secluded patio overlooking lush greenery and access to scenic hiking trails, supporting seclusion and beautiful natural scenery, but no mention of a warm central gathering area for cold evenings."
+        },
+        "103776": {
+          "rel": 1,
+          "why": "The listing highlights outdoor gathering space perfect for entertaining but no mention of warmth for cold evenings or mountain scenery or seclusion."
+        },
+        "89931": {
+          "rel": 1,
+          "why": "The listing mentions a cozy living room ideal for relaxing and a private retreat but no mention of mountain scenery or seclusion."
+        },
+        "54892": {
+          "rel": 1,
+          "why": "The listing describes a private back patio ideal for unwinding in the evening but no mention of warmth for cold evenings or mountain scenery or seclusion."
+        },
+        "104466": {
+          "rel": 1,
+          "why": "The listing mentions a charming balcony overlooking a lush greenbelt and a warm living space but no mention of mountain scenery or seclusion."
+        },
+        "107652": {
+          "rel": 1,
+          "why": "The listing describes a private patio providing a peaceful outdoor retreat and a spacious primary suite but no mention of warmth for cold evenings or mountain scenery."
+        },
+        "113110": {
+          "rel": 2,
+          "why": "The listing highlights a bright and inviting living area creating a warm and functional space and a peaceful court setting, supporting a warm gathering area and some seclusion, but no mention of mountain scenery."
+        }
+      },
+      "sql_rels": [
+        1,
+        1,
+        1,
+        0,
+        2,
+        1,
+        1,
+        2,
+        0,
+        2
+      ],
+      "raw_rels": [
+        1,
+        2,
+        1,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "llm_rels": [
+        0,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2
+      ],
+      "ndcg_sql": 0.7053,
+      "ndcg_raw": 0.7797,
+      "ndcg_llm": 0.6814,
+      "ndcg_union_sql": 0.4903,
+      "ndcg_union_raw": 0.4097,
+      "ndcg_union_llm": 0.4333,
+      "mrr_sql": 0.2,
+      "mrr_raw": 0.5,
+      "mrr_llm": 0.3333,
+      "p5_sql": 0.2,
+      "p5_raw": 0.4,
+      "p5_llm": 0.2,
+      "p10_sql": 0.3,
+      "p10_raw": 0.2,
+      "p10_llm": 0.2,
+      "coverage_raw": 0.1091,
+      "coverage_llm": 0.1545,
+      "mean_shared_rank_delta": 0.0,
+      "extract_s": 1.183
+    }
+  ]
+}

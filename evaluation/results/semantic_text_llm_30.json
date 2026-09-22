@@ -1,0 +1,478 @@
+{
+  "n_queries": 30,
+  "cases_path": "D:\\nlp-internship\\evaluation\\queries\\ndcg_queries_30.json",
+  "elapsed_s": 38.5,
+  "note": "Leftover extract only. No pass/fail. Review leftover against the query; it should keep A/B paraphrase/setting and drop beds/city/price/catalog names.",
+  "rows": [
+    {
+      "id": 1,
+      "kind": "A",
+      "query": "Looking for a 2-bedroom, 2-bathroom home in Irvine under $900000, with living spaces bright throughout the day.",
+      "leftover": "living spaces bright throughout the day",
+      "rank_text": "living spaces bright throughout the day",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Irvine",
+        "bedrooms": 2,
+        "bathrooms": 2,
+        "price_max": 900000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 2,
+      "kind": "A",
+      "query": "Find me a 3-bedroom, 2-bathroom house in Sacramento under $750,000, with a private outdoor place where I can grow vegetables and herbs.",
+      "leftover": "private outdoor place where I can grow vegetables and herbs",
+      "rank_text": "private outdoor place where I can grow vegetables and herbs",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Sacramento",
+        "bedrooms": 3,
+        "bathrooms": 2,
+        "price_max": 750000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 3,
+      "kind": "A",
+      "query": "I'm looking for a 2-bedroom, 2-bathroom condo in San Diego under $1.1 million, with enough area to keep clothes, luggage, and household items out of sight.",
+      "leftover": "enough area to keep clothes, luggage, and household items out of sight",
+      "rank_text": "enough area to keep clothes, luggage, and household items out of sight",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "San Diego",
+        "bedrooms": 2,
+        "bathrooms": 2,
+        "price_max": 1100000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 4,
+      "kind": "A",
+      "query": "Show me 4-bedroom, 3-bathroom homes in Irvine with at least 2200 sqft, with a kitchen that opens directly into the main living area for entertaining guests.",
+      "leftover": "kitchen that opens directly into the main living area for entertaining guests",
+      "rank_text": "kitchen that opens directly into the main living area for entertaining guests",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Irvine",
+        "bedrooms": 4,
+        "bathrooms": 3,
+        "sqft_min": 2200
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 5,
+      "kind": "A",
+      "query": "Find a 3-bedroom, 2-bathroom house in Oakland with at least 1,500 sqft, with a sheltered area outside where I can sit or dine even when the weather is not ideal.",
+      "leftover": "sheltered area outside where I can sit or dine even when the weather is not ideal",
+      "rank_text": "sheltered area outside where I can sit or dine even when the weather is not ideal",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Oakland",
+        "bedrooms": 3,
+        "bathrooms": 2,
+        "sqft_min": 1500
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 6,
+      "kind": "A",
+      "query": "Looking for a 3-bedroom, 2-bathroom house in Fresno under $650000, with a separate space that could be used for remote work without taking over a bedroom.",
+      "leftover": "separate space that could be used for remote work without taking over a bedroom",
+      "rank_text": "separate space that could be used for remote work without taking over a bedroom",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Fresno",
+        "bedrooms": 3,
+        "bathrooms": 2,
+        "price_max": 650000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 7,
+      "kind": "A",
+      "query": "Find me a 2-bedroom, 2-bathroom condo in San Francisco under $1.4 million, where I can securely leave my car.",
+      "leftover": "securely leave my car",
+      "rank_text": "securely leave my car",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "San Francisco",
+        "bedrooms": 2,
+        "bathrooms": 2,
+        "price_max": 1400000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 8,
+      "kind": "A",
+      "query": "I'm looking for a 4-bedroom, 3-bathroom home in Riverside under $900,000, with a comfortable place to gather around a real fire during colder evenings.",
+      "leftover": "comfortable place to gather around a real fire during colder evenings",
+      "rank_text": "comfortable place to gather around a real fire during colder evenings",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Riverside",
+        "bedrooms": 4,
+        "bathrooms": 3,
+        "price_max": 900000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 9,
+      "kind": "A",
+      "query": "Show me 3-bedroom, 2-bathroom houses in Anaheim under $1 million, with a dedicated area for washing and drying clothes rather than having the machines in the kitchen.",
+      "leftover": "dedicated area for washing and drying clothes rather than having the machines in the kitchen",
+      "rank_text": "dedicated area for washing and drying clothes rather than having the machines in the kitchen",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Anaheim",
+        "bedrooms": 3,
+        "bathrooms": 2,
+        "price_max": 1000000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 10,
+      "kind": "A",
+      "query": "Find a 2-bedroom, 2-bathroom home in Palm Springs under $850,000, with a private place to cool off and swim during hot afternoons.",
+      "leftover": "private place to cool off and swim during hot afternoons",
+      "rank_text": "private place to cool off and swim during hot afternoons",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Palm Springs",
+        "bedrooms": 2,
+        "bathrooms": 2,
+        "price_max": 850000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 11,
+      "kind": "B",
+      "query": "Looking for a 2-bedroom, 2-bathroom condo in Santa Monica under $1.5 million, somewhere I can easily walk to the beach and enjoy the ocean atmosphere.",
+      "leftover": "easily walk to the beach and enjoy the ocean atmosphere",
+      "rank_text": "easily walk to the beach and enjoy the ocean atmosphere",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Santa Monica",
+        "bedrooms": 2,
+        "bathrooms": 2,
+        "price_max": 1500000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 12,
+      "kind": "B",
+      "query": "Find me a 3-bedroom house in Berkeley with at least 1,500 sqft, in a peaceful setting that still feels warm and inviting rather than isolated.",
+      "leftover": "peaceful setting that still feels warm and inviting rather than isolated",
+      "rank_text": "peaceful setting that still feels warm and inviting rather than isolated",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Berkeley",
+        "bedrooms": 3,
+        "sqft_min": 1500
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 13,
+      "kind": "B",
+      "query": "I'm looking for a 2-bedroom home in Riverside, with an open outlook and beautiful scenery from the property.",
+      "leftover": "open outlook and beautiful scenery from the property",
+      "rank_text": "open outlook and beautiful scenery from the property",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Riverside",
+        "bedrooms": 2
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 14,
+      "kind": "B",
+      "query": "Show me 4-bedroom, 3-bathroom homes in San Jose with at least 2,000 sqft, in a calm residential area suitable for raising young children.",
+      "leftover": "calm residential area suitable for raising young children",
+      "rank_text": "calm residential area suitable for raising young children",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "San Jose",
+        "bedrooms": 4,
+        "bathrooms": 3,
+        "sqft_min": 2000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 15,
+      "kind": "B",
+      "query": "Find a 2-bedroom house in Monterey under $1.4 million, surrounded by greenery and offering a relaxing retreat from city life.",
+      "leftover": "surrounded by greenery and offering a relaxing retreat from city life",
+      "rank_text": "surrounded by greenery and offering a relaxing retreat from city life",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Monterey",
+        "bedrooms": 2,
+        "price_max": 1400000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 16,
+      "kind": "B",
+      "query": "Looking for a 3-bedroom, 2-bathroom house in Malibu with at least 1,600 sqft, close enough to the coast to hear and feel the ocean.",
+      "leftover": "close enough to the coast to hear and feel the ocean",
+      "rank_text": "close enough to the coast to hear and feel the ocean",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Malibu",
+        "bedrooms": 3,
+        "bathrooms": 2,
+        "sqft_min": 1600
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 17,
+      "kind": "B",
+      "query": "Find me a 2-bedroom, 2-bathroom condo in San Diego under $1 million, in a lively area where restaurants, cafés, and everyday essentials are easy to reach on foot.",
+      "leftover": "lively area where restaurants, cafés, and everyday essentials are easy to reach on foot",
+      "rank_text": "lively area where restaurants, cafés, and everyday essentials are easy to reach on foot",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "San Diego",
+        "bedrooms": 2,
+        "bathrooms": 2,
+        "price_max": 1000000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 18,
+      "kind": "B",
+      "query": "I'm looking for a 4-bedroom, 3-bathroom home in Thousand Oaks with at least 2,300 sqft, in a quiet, spacious setting away from heavy traffic and dense development.",
+      "leftover": "quiet, spacious setting away from heavy traffic and dense development",
+      "rank_text": "quiet, spacious setting away from heavy traffic and dense development",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Thousand Oaks",
+        "bedrooms": 4,
+        "bathrooms": 3,
+        "sqft_min": 2300
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 19,
+      "kind": "B",
+      "query": "Show me 2-bedroom houses in San Jose under $1.3 million, with a peaceful countryside feel and attractive surroundings.",
+      "leftover": "peaceful countryside feel and attractive surroundings",
+      "rank_text": "peaceful countryside feel and attractive surroundings",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "San Jose",
+        "bedrooms": 2,
+        "price_max": 1300000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 20,
+      "kind": "B",
+      "query": "Find a 2-bedroom home in Los Angeles with at least 900 sqft, in a charming area with character and a relaxed coastal lifestyle.",
+      "leftover": "charming area with character and a relaxed coastal lifestyle",
+      "rank_text": "charming area with character and a relaxed coastal lifestyle",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Los Angeles",
+        "bedrooms": 2,
+        "sqft_min": 900
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 21,
+      "kind": "A+B",
+      "query": "Looking for a 3-bedroom, 2-bathroom house in Long Beach under $1.1 million, with a private outdoor area where my pets can move around safely, in a quiet neighborhood close to the coast.",
+      "leftover": "private outdoor area where my pets can move around safely, quiet neighborhood close to the coast",
+      "rank_text": "private outdoor area where my pets can move around safely, quiet neighborhood close to the coast",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Long Beach",
+        "bedrooms": 3,
+        "bathrooms": 2,
+        "price_max": 1100000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 22,
+      "kind": "A+B",
+      "query": "Find me a 2-bedroom, 2-bathroom condo in Los Angeles with at least 1,100 sqft, with plenty of daylight in the main living spaces and a peaceful, cozy atmosphere.",
+      "leftover": "plenty of daylight in the main living spaces and a peaceful, cozy atmosphere",
+      "rank_text": "plenty of daylight in the main living spaces and a peaceful, cozy atmosphere",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Los Angeles",
+        "bedrooms": 2,
+        "bathrooms": 2,
+        "sqft_min": 1100
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 23,
+      "kind": "A+B",
+      "query": "I'm looking for a 4-bedroom, 3-bathroom home in San Diego under $1.8 million, with enough room outside for hosting dinners and a setting that feels connected to the beach.",
+      "leftover": "enough room outside for hosting dinners and a setting that feels connected to the beach",
+      "rank_text": "enough room outside for hosting dinners and a setting that feels connected to the beach",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "San Diego",
+        "bedrooms": 4,
+        "bathrooms": 3,
+        "price_max": 1800000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 24,
+      "kind": "A+B",
+      "query": "Show me 3-bedroom houses in Santa Cruz with at least 1000 sqft, with a flexible extra room for working from home and views that make the property feel open and relaxing.",
+      "leftover": "flexible extra room for working from home and views that make the property feel open and relaxing",
+      "rank_text": "flexible extra room for working from home and views that make the property feel open and relaxing",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Santa Cruz",
+        "bedrooms": 3,
+        "sqft_min": 1000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 25,
+      "kind": "A+B",
+      "query": "Find a 2-bedroom, 2-bathroom home in Irvine under $1.6 million, with indoor living areas that flow naturally into the outdoors, surrounded by trees in a quiet and secluded setting.",
+      "leftover": "indoor living areas that flow naturally into the outdoors, surrounded by trees in a quiet and secluded setting",
+      "rank_text": "indoor living areas that flow naturally into the outdoors, surrounded by trees in a quiet and secluded setting",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Irvine",
+        "bedrooms": 2,
+        "bathrooms": 2,
+        "price_max": 1600000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 26,
+      "kind": "A+B",
+      "query": "Looking for a 2-bedroom house in Pasadena under $1.2 million, with a shaded place for outdoor meals and a calm, established neighborhood atmosphere.",
+      "leftover": "shaded place for outdoor meals, calm, established neighborhood atmosphere",
+      "rank_text": "shaded place for outdoor meals, calm, established neighborhood atmosphere",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Pasadena",
+        "bedrooms": 2,
+        "price_max": 1200000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 27,
+      "kind": "A+B",
+      "query": "Find me a 2-bedroom home in Sacramento with at least 1000 sqft, with a fenced outdoor area where children can play safely, in a friendly residential setting near schools.",
+      "leftover": "fenced outdoor area where children can play safely, friendly residential setting near schools",
+      "rank_text": "fenced outdoor area where children can play safely, friendly residential setting near schools",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Sacramento",
+        "bedrooms": 2,
+        "sqft_min": 1000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 28,
+      "kind": "A+B",
+      "query": "I'm looking for a 2-bedroom, 2-bathroom condo in San Francisco under $1.5 million with at least 1,000 sqft, with windows overlooking the surrounding skyline and an energetic urban atmosphere close to shops and restaurants.",
+      "leftover": "windows overlooking the surrounding skyline and an energetic urban atmosphere close to shops and restaurants",
+      "rank_text": "windows overlooking the surrounding skyline and an energetic urban atmosphere close to shops and restaurants",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "San Francisco",
+        "bedrooms": 2,
+        "bathrooms": 2,
+        "price_max": 1500000,
+        "sqft_min": 1000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 29,
+      "kind": "A+B",
+      "query": "Show me 3-bedroom houses in Encinitas under $1.7 million, with space to store surfboards and bicycles, within easy reach of the beach in a laid-back neighborhood.",
+      "leftover": "space to store surfboards and bicycles, within easy reach of the beach, laid-back neighborhood",
+      "rank_text": "space to store surfboards and bicycles, within easy reach of the beach, laid-back neighborhood",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "Encinitas",
+        "bedrooms": 3,
+        "price_max": 1700000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    },
+    {
+      "id": 30,
+      "kind": "A+B",
+      "query": "Find a 2-bedroom home in San Jose under $2 million, with a warm central gathering area for cold evenings and a secluded setting with beautiful mountain scenery.",
+      "leftover": "warm central gathering area for cold evenings and a secluded setting with beautiful mountain scenery",
+      "rank_text": "warm central gathering area for cold evenings and a secluded setting with beautiful mountain scenery",
+      "leftover_fallback": false,
+      "structured": {
+        "city": "San Jose",
+        "bedrooms": 2,
+        "price_max": 2000000
+      },
+      "catalog": {},
+      "rule_has_catalog": false
+    }
+  ]
+}

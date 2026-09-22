@@ -1,0 +1,412 @@
+{
+  "dataset": "california_home_search_parser_stress_test",
+  "description": "100 distinct English home-search queries. Every query has a unique structured-field combination containing bedroom, bathroom, California city, square-footage, and price constraints. Structured wording covers min, max, range, approximate, exact, abbreviations, digits, and number words; each query also includes amenities, interior features, setting preferences, or financing terms.",
+  "count": 100,
+  "uniqueness": {
+    "unique_queries": 100,
+    "unique_cities": 100,
+    "note": "No structured-field tuple is reused."
+  },
+  "queries": [
+    {
+      "id": "Q001",
+      "query": "Find me a 1-bedroom home in Pasadena with at least 650 sqft for no more than $425k, with lots of natural light, a fenced backyard, and no HOA."
+    },
+    {
+      "id": "Q002",
+      "query": "Looking for two bedrooms and 1.5 bathrooms in Sacramento, minimum 681 square feet, under $452k, with a covered patio, an updated kitchen, and seller-paid closing costs."
+    },
+    {
+      "id": "Q003",
+      "query": "Show me a 3 bd property in San Diego between 712 and 1,162 sq ft, priced from $479k to $704k, with in-unit laundry, secure parking, and HOA dues below $500 a month."
+    },
+    {
+      "id": "Q004",
+      "query": "I need exactly four bedrooms in Irvine, exactly 743 sqft, at a price of exactly $506k, with an open-concept kitchen, a walk-in pantry, and owned solar panels."
+    },
+    {
+      "id": "Q005",
+      "query": "Search for about 5 bedrooms in Oakland, around 774 square feet with a quiet yard suitable for dogs, a fireplace, and a home-office nook."
+    },
+    {
+      "id": "Q006",
+      "query": "Find me at least one br and no fewer than 3.5 ba in Berkeley, over 805 sf with hardwood floors, built-in storage, and completed seismic retrofitting."
+    },
+    {
+      "id": "Q007",
+      "query": "Looking for 2–3 bedrooms in Los Angeles, 836–1,286 sqft with a guest suite, a two-car garage, and an assumable mortgage."
+    },
+    {
+      "id": "Q008",
+      "query": "Show me three or four bedrooms in Fresno, between 867 and 1,367 square feet with central air, low-maintenance landscaping, and FHA eligibility."
+    },
+    {
+      "id": "Q009",
+      "query": "I need a four-bed, 1.5-bath property in San Jose with an ADU, EV charging, and no Mello-Roos."
+    },
+    {
+      "id": "Q010",
+      "query": "Search for 5 beds and 2 baths in Santa Monica, approximately 0.93k sqft with ocean or mountain views, a balcony, and a fixed-rate mortgage option."
+    },
+    {
+      "id": "Q011",
+      "query": "Find me a 1 BR / 2.5 BA place in Long Beach with deeded parking, pet-friendly rules, and healthy HOA reserves."
+    },
+    {
+      "id": "Q012",
+      "query": "Looking for two bed / three bath homes in Anaheim with a pool-sized yard, remodeled bathrooms, and a repair credit."
+    },
+    {
+      "id": "Q013",
+      "query": "Show me precisely 3 bd and precisely 3.5 ba in Riverside with RV parking, a downstairs bedroom, and a 2-1 rate buydown."
+    },
+    {
+      "id": "Q014",
+      "query": "I need a 4-bedroom, somewhere between 4 and 5 bathrooms house in San Francisco with an elevator, a roof deck, and no pending special assessment."
+    },
+    {
+      "id": "Q015",
+      "query": "Search for five bedrooms, one bathrooms with mature trees, a detached workspace, and no land lease."
+    },
+    {
+      "id": "Q016",
+      "query": "Find me 1+ bedrooms, 1.5+ bathrooms house in Monterey, with a wood-burning stove, garden space, and conventional financing."
+    },
+    {
+      "id": "Q017",
+      "query": "Looking for no less than two bedrooms and no less than two bathrooms in Palm Springs, with a private place to swim, shaded outdoor dining, and owned solar."
+    },
+    {
+      "id": "Q018",
+      "query": "Show me somewhere in Malibu with 3 bdrms, 2.5 bthrms, with direct beach access, panoramic views, and affordable fire insurance."
+    },
+    {
+      "id": "Q019",
+      "query": "I need 4 beds, 3 baths house in Napa, with a wine-storage room, a chef’s kitchen, and seller financing."
+    },
+    {
+      "id": "Q020",
+      "query": "Search for a 5-bed and 3.5-bath home in Thousand Oaks, with a cul-de-sac setting, a three-car garage, and no special tax district."
+    },
+    {
+      "id": "Q021",
+      "query": "Find me a 1-bd, 4-ba home in Encinitas with more than 1,270 sqft for no more than $965k, with lots of natural light, a fenced backyard, and no HOA."
+    },
+    {
+      "id": "Q022",
+      "query": "Looking for two bedrooms and one bathrooms in Santa Cruz, minimum 1,301 sqft, <$992k, with a covered patio, an updated kitchen, and seller-paid closing costs."
+    },
+    {
+      "id": "Q023",
+      "query": "Show me a 3 bd / 1.5 ba property in Mill Valley between 1,332 and 1,782 sq ft, with price range $1.02M to $1.24M, with in-unit laundry, secure parking, and HOA dues below $500 a month."
+    },
+    {
+      "id": "Q024",
+      "query": "I need >4 bedrooms in Laguna Beach, exactly 1,363 sqft, at a price of exactly $1.05M, with an open-concept kitchen, a walk-in pantry, and owned solar panels."
+    },
+    {
+      "id": "Q025",
+      "query": "Search for about 5 bedrooms and roughly 2 baths in Glendale with a budget near $1.07M, with a quiet yard suitable for dogs, a fireplace, and a home-office nook."
+    },
+    {
+      "id": "Q026",
+      "query": "Find me at least one br and no fewer than three ba in Burbank, over 1,425 sf but below 1,825 sf with hardwood floors, built-in storage, and completed seismic retrofitting."
+    },
+    {
+      "id": "Q027",
+      "query": "Looking for 2–3 bedrooms and 3.5–4.5 bathrooms in Ventura, 1,456–1,906 sqft with a guest suite, a two-car garage, and an assumable mortgage."
+    },
+    {
+      "id": "Q028",
+      "query": "Show me 3 or 4 bedrooms and four baths in Carlsbad with central air, low-maintenance landscaping, and FHA eligibility."
+    },
+    {
+      "id": "Q029",
+      "query": "I need a four-bed, one-bath property in Davis with an ADU, EV charging, and no Mello-Roos."
+    },
+    {
+      "id": "Q030",
+      "query": "Search for 5 beds and 1.5 baths in Culver City, approximately 1.55k sqft, costing around $1.21M, with ocean or mountain views, a balcony, and a fixed-rate mortgage option."
+    },
+    {
+      "id": "Q031",
+      "query": "Find me a 1 BR / 2 BA place in Temecula, no smaller than 1,580 sq. ft. with deeded parking, pet-friendly rules, and healthy HOA reserves."
+    },
+    {
+      "id": "Q032",
+      "query": "Looking for two bed / 2.5 bath homes in Torrance, ideally 1,611 sqft with a pool-sized yard, remodeled bathrooms, and a repair credit."
+    },
+    {
+      "id": "Q033",
+      "query": "Show me precisely 3 bd and precisely 3 ba in Palo Alto, from 1,642 to 1,992 sf with RV parking, a downstairs bedroom, and a 2-1 rate buydown."
+    },
+    {
+      "id": "Q034",
+      "query": "I need a 4-bedroom, 3.5 bathroom house in Bakersfield with more than 1,673 sqft but not over 2,073 sqft with an elevator, a roof deck, and no pending special assessment."
+    },
+    {
+      "id": "Q035",
+      "query": "Search for five bedrooms, four bathrooms, roughly 1,704–2,154 square feet in Redwood City with mature trees, a detached workspace, and no land lease."
+    },
+    {
+      "id": "Q036",
+      "query": "Find me 1+ bedrooms, 1+ bathrooms, and at least 1,735 square feet in Huntington Beach, with a wood-burning stove, garden space, and conventional financing."
+    },
+    {
+      "id": "Q037",
+      "query": "Looking for no less than two bedrooms and no less than 1.5 bathrooms in Calabasas, minimum of 1,766 sqft, with a private place to swim, shaded outdoor dining, and owned solar."
+    },
+    {
+      "id": "Q038",
+      "query": "Show me somewhere in San Mateo with around 3 bdrms, 2.5 bthrms, close to 1,797 sq ft, with direct beach access, panoramic views, and affordable fire insurance."
+    },
+    {
+      "id": "Q039",
+      "query": "I need 4 beds, 2.5 baths, and 1,828 to 2,278 square feet in Sonoma, with a wine-storage room, a chef’s kitchen, and seller financing."
+    },
+    {
+      "id": "Q040",
+      "query": "Search for a 5-bed and 3-bath home in San Luis Obispo, measuring about 1,859 sf with a cul-de-sac setting, a three-car garage, and no special tax district."
+    },
+    {
+      "id": "Q041",
+      "query": "Find me a 3.5-bathroom home in Chula Vista with greater than 1,890 sqft for less than $1.5M, with lots of natural light, a fenced backyard, and no HOA."
+    },
+    {
+      "id": "Q042",
+      "query": "Looking for two bedrooms and four bathrooms in Oxnard, minimum 1,921 sq. ft., cheaper than $1.53M, with a covered patio, an updated kitchen, and seller-paid closing costs."
+    },
+    {
+      "id": "Q043",
+      "query": "Show me a 3 bd / 1 ba property in Costa Mesa with minimum 1,952 and maximum 2,402 sq ft, priced from $1.56M to $1.78M, with in-unit laundry, secure parking, and HOA dues below $500 a month."
+    },
+    {
+      "id": "Q044",
+      "query": "I need around four bedrooms and 1.5 bathrooms in Claremont, exactly 1,983 sq. ft., at a price of exactly $1.59M, with an open-concept kitchen, a walk-in pantry, and owned solar panels."
+    },
+    {
+      "id": "Q045",
+      "query": "Search for about 5 bds and roughly 2 baths in West Hollywood, around 2,014 square feet, with a budget near $1.61M, with a quiet yard suitable for dogs, a fireplace, and a home-office nook."
+    },
+    {
+      "id": "Q046",
+      "query": "Find me at least one br and no fewer than 2.5 ba in Beverly Hills, over 2,045 sf but below 2,445 sf, capped at $1.64M, with hardwood floors, built-in storage, and completed seismic retrofitting."
+    },
+    {
+      "id": "Q047",
+      "query": "Looking for 2–3 bedrooms and 3 to 4 bathrooms in El Segundo, 2,076–2,526 sq.ft., in the $1.67M to $1.87M range, with a guest suite, a two-car garage, and an assumable mortgage."
+    },
+    {
+      "id": "Q048",
+      "query": "Show me 3-4 bedrooms and 3.5 baths in Eureka, between 2,107 and 2,607 square feet, for $1.69M to $1.92M, with central air, low-maintenance landscaping, and FHA eligibility."
+    },
+    {
+      "id": "Q049",
+      "query": "I need a four-bed, four-bath property in Redding with 2,138+ sq ft with an ADU, EV charging, and no Mello-Roos."
+    },
+    {
+      "id": "Q050",
+      "query": "Search for 5 beds and 1 baths in Folsom, around 2.17k sqft, costing roughly $1.75M, with ocean or mountain views, a balcony, and a fixed-rate mortgage option."
+    },
+    {
+      "id": "Q051",
+      "query": "Find me a 1 BR / 1.5 BA place in Modesto, no smaller than 2,200 sq. ft. and no pricier than $1.77M, with deeded parking, pet-friendly rules, and healthy HOA reserves."
+    },
+    {
+      "id": "Q052",
+      "query": "Looking for two bed / two bath homes in Santa Rosa, roughly 2,231 sqft and roughly $18020, with a pool-sized yard, remodeled bathrooms, and a repair credit."
+    },
+    {
+      "id": "Q053",
+      "query": "Show me precisely 3 bd and precisely 2.5 ba in Pomona, 2,262 - 2,612 sf, listed between $1.83M and $2.05M, with RV parking, a downstairs bedroom, and a 2-1 rate buydown."
+    },
+    {
+      "id": "Q054",
+      "query": "I need <4 bedroom, >3 bathroom house in Alameda with more than 2,293 sqft but not over 2,693 sqft, below $1.86M, with an elevator, a roof deck, and no pending special assessment."
+    },
+    {
+      "id": "Q055",
+      "query": "Search for five bedrooms, 3.5 bathrooms, roughly 2,324–2,774 square feet in Fremont, with a target price of $1.88M give or take $50k, with mature trees, a detached workspace, and no land lease."
+    },
+    {
+      "id": "Q056",
+      "query": "Find me 1+ bedrooms, 4+ bathrooms, and greater than 2,355 square feet in Joshua Tree, with a price ceiling of $1.91M, with a wood-burning stove, garden space, and conventional financing."
+    },
+    {
+      "id": "Q057",
+      "query": "Looking for no less than two bedrooms and no less than one bathrooms in La Jolla, upwards of 2,386 sqft, with a private place to swim, shaded outdoor dining, and owned solar."
+    },
+    {
+      "id": "Q058",
+      "query": "Show me somewhere in Cupertino with around 3 bdrms, exactly 1.5 bthrms, near 2,417 sq ft, and a purchase budget around $1.96M, with direct beach access, panoramic views, and affordable fire insurance."
+    },
+    {
+      "id": "Q059",
+      "query": "I need at most 4 beds, 2.5 baths, and 2,448 - 2,898 square feet in Oceanside, with prices ranging from $1.99M through $2.24M, with a wine-storage room, a chef’s kitchen, and seller financing."
+    },
+    {
+      "id": "Q060",
+      "query": "Search for a 5-bed and 2.5-bath home in Walnut Creek, measuring around 2,479 sf, with a hard spending ceiling of $2.02M, with a cul-de-sac setting, a three-car garage, and no special tax district."
+    },
+    {
+      "id": "Q061",
+      "query": "Find me a 1 bd 3 ba home in Rancho Cucamonga with >2,510 sqft for no more than $2.04M, with lots of natural light, a fenced backyard, and no HOA."
+    },
+    {
+      "id": "Q062",
+      "query": "Looking for two bedrooms and 3.5 bathrooms in South Pasadena, more than 2,541 square feet, <$2.07M, with a covered patio, an updated kitchen, and seller-paid closing costs."
+    },
+    {
+      "id": "Q063",
+      "query": "Show me a 3 bd / 4 ba property in Newport Beach 2,572-3,022 sq ft, anywhere from $2.1M to $2.32M, with in-unit laundry, secure parking, and HOA dues below $500 a month."
+    },
+    {
+      "id": "Q064",
+      "query": "I need exactly four bedrooms and exactly 2.5 bathrooms in Pleasanton, exactly 2,603 sqft, at a price of exactly $2.13M, with an open-concept kitchen, a walk-in pantry, and owned solar panels."
+    },
+    {
+      "id": "Q065",
+      "query": "Search for about 5 bedrooms and 1.5 baths in Chico, roughly 2,634 square feet, with a budget approximately $2.15M, with a quiet yard suitable for dogs, a fireplace, and a home-office nook."
+    },
+    {
+      "id": "Q066",
+      "query": "Find me at least one br and no fewer than two ba in Marina del Rey, over 2,665 sf but below 3,065 sf, maximum $2.18M, with hardwood floors, built-in storage, and completed seismic retrofitting."
+    },
+    {
+      "id": "Q067",
+      "query": "Looking for 2 to 3 bedrooms and 2.5–3.5 bathrooms in Elk Grove, 2,696 to 3,146 square feet, in the $2.21M–$2.41M range, with a guest suite, a two-car garage, and an assumable mortgage."
+    },
+    {
+      "id": "Q068",
+      "query": "Show me 3/4 bds and 2.5 bths in Arcadia, between 2,727 and 3,227 square feet, for $2.23M to $2.46M, with central air, low-maintenance landscaping, and FHA eligibility."
+    },
+    {
+      "id": "Q069",
+      "query": "I need a four-bed, 3.5-bath property in Daly City with 2,758+ sq ft and a maximum price of $2.26M, with an ADU, EV charging, and no Mello-Roos."
+    },
+    {
+      "id": "Q070",
+      "query": "Search for 5 beds and 4 baths in Escondido, ~2.79k sqft, costing around $2.29M, with ocean or mountain views, a balcony, and a fixed-rate mortgage option."
+    },
+    {
+      "id": "Q071",
+      "query": "Find me a 1 BR / 1 BA place in Manhattan Beach, larger than 2,820 sq. ft. and cheaper than $2.31M, with deeded parking, pet-friendly rules, and healthy HOA reserves."
+    },
+    {
+      "id": "Q072",
+      "query": "Looking for two bed / 1.5 bath homes in Vacaville, ideally at most 2,851 sqft and ~23420 dollar, with a pool-sized yard, remodeled bathrooms, and a repair credit."
+    },
+    {
+      "id": "Q073",
+      "query": "Show me precisely 3 bd and precisely 2 ba in San Rafael, from 2,882 to 3,232 sf, listed $2.37M to $2.59M, with RV parking, a downstairs bedroom, and a 2-1 rate buydown."
+    },
+    {
+      "id": "Q074",
+      "query": "I need a 4-bedroom, at least 2.5 bathroom house in Redlands with more than 2,913 sqft but not over 3,313 sqft, below $2.4M, with an elevator, a roof deck, and no pending special assessment."
+    },
+    {
+      "id": "Q075",
+      "query": "Search for five bedrooms, three bathrooms, approximately 2,944 to 3,394 square feet in Mission Viejo, with a target price of $2.42M, with mature trees, a detached workspace, and no land lease."
+    },
+    {
+      "id": "Q076",
+      "query": "Find me 1+ bedrooms, 3.5+ bathrooms, and larger than 2,975 square feet in Palm Desert, with a price maximum of $2.45M, with a wood-burning stove, garden space, and conventional financing."
+    },
+    {
+      "id": "Q077",
+      "query": "Looking for no less than two bedrooms and no less than four bathrooms in San Ramon, at most of 3,006 sqft, costing no more than $2.48M, with a private place to swim, shaded outdoor dining, and owned solar."
+    },
+    {
+      "id": "Q078",
+      "query": "Show me somewhere in Santa Clara with no greater than 3 bdrms, 1.5 bthrms, ~3,037 sq ft, and a purchase budget approximately $2.5M, with direct beach access, panoramic views, and affordable fire insurance."
+    },
+    {
+      "id": "Q079",
+      "query": "I need 4 beds, 1.5 baths, and 3,068 to 3,518 square feet in Simi Valley, with prices ranging from $2.53M through $2.78M, with a wine-storage room, a chef’s kitchen, and seller financing."
+    },
+    {
+      "id": "Q080",
+      "query": "Search for a 5-bed and 2-bath home in Half Moon Bay, measuring about 3,099 sf, with a hard spending limit of $2.56M, with a cul-de-sac setting, a three-car garage, and no special tax district."
+    },
+    {
+      "id": "Q081",
+      "query": "Find me a 1-bedroom, 2.5-bathroom home in Livermore, somewhere above 3,130 sqft for cheaper than $2.58M, with lots of natural light, a fenced backyard, and no HOA."
+    },
+    {
+      "id": "Q082",
+      "query": "Looking for two bedrooms and three bathrooms in Big Bear Lake, should be larger than 3,161 square feet, but not over $2.61M, with a covered patio, an updated kitchen, and seller-paid closing costs."
+    },
+    {
+      "id": "Q083",
+      "query": "Show me a 3 bd / 3.5 ba property in San Leandro between 3,192 and 3,642 sq ft, priced from $2.64M to $2.86M, with in-unit laundry, secure parking, and HOA dues below $500 a month."
+    },
+    {
+      "id": "Q084",
+      "query": "I need exactly four bedrooms and exactly four bathrooms in Camarillo, precisely 3,223 sqft, at a price of exactly $2.67M, with an open-concept kitchen, a walk-in pantry, and owned solar panels."
+    },
+    {
+      "id": "Q085",
+      "query": "Search for about 5 bedrooms and roughly 1 baths in Corona, ~3,254 square feet, with a budget around $2.69M, with a quiet yard suitable for dogs, a fireplace, and a home-office nook."
+    },
+    {
+      "id": "Q086",
+      "query": "Find me at least one br and no fewer than 1.5 ba in Sausalito, >3,285 sf but <3,685 sf, capped at $2.72M, with hardwood floors, built-in storage, and completed seismic retrofitting."
+    },
+    {
+      "id": "Q087",
+      "query": "Looking for 2–3 bedrooms and 2–3 bathrooms in Stockton, 3,316–3,766 sqft, in the $2.75M–$2.95M range, with a guest suite, a two-car garage, and an assumable mortgage."
+    },
+    {
+      "id": "Q088",
+      "query": "Show me 4 to 5 bedrooms and 2.5 baths in Danville, between 3,347 and 3,847 square feet, for $2.77M to $3M, with central air, low-maintenance landscaping, and FHA eligibility."
+    },
+    {
+      "id": "Q089",
+      "query": "I need a four-bed, three-bath property in Petaluma with 3,378+ sq ft and less than $2.8M, with an ADU, EV charging, and no Mello-Roos."
+    },
+    {
+      "id": "Q090",
+      "query": "Search for 5 bds and 3.5 bths in Goleta, approximately 3.41k sqft, costing ~$2.83M, with ocean or mountain views, a balcony, and a fixed-rate mortgage option."
+    },
+    {
+      "id": "Q091",
+      "query": "Find me a 1 BR / 4 BA place in Visalia, area >3,440 sq. ft. and not pricier than $2.85M, with deeded parking, pet-friendly rules, and healthy HOA reserves."
+    },
+    {
+      "id": "Q092",
+      "query": "Looking for two bed / one bath homes in Los Gatos, ideally 3,471-ish sqft and roughly 2882 grand, with a pool-sized yard, remodeled bathrooms, and a repair credit."
+    },
+    {
+      "id": "Q093",
+      "query": "Show me precisely 3 bd and precisely 1.5 ba in La Mesa, range from 3,502 to 3,852 sf, listed between $2.91M and $3.13M, with RV parking, a downstairs bedroom, and a 2-1 rate buydown."
+    },
+    {
+      "id": "Q094",
+      "query": "I need at most 4-bedroom, at least 2 bathroom house in Fullerton with more than 3,533 sqft but not over 3,933 sqft, cheaper than $2.94M, with an elevator, a roof deck, and no pending special assessment."
+    },
+    {
+      "id": "Q095",
+      "query": "Search for five bedrooms, 2.5 bathrooms, roughly 3,564 square feet in Roseville, with a target price of around $2.96M, with mature trees, a detached workspace, and no land lease."
+    },
+    {
+      "id": "Q096",
+      "query": "Find me 1+ bedrooms, 3+ bathrooms, and must be larger than 3,595 square feet in Vallejo, with a price below $2.99M, with a wood-burning stove, garden space, and conventional financing."
+    },
+    {
+      "id": "Q097",
+      "query": "Looking for no less than two bedrooms and no less than 3.5 bathrooms in Yorba Linda, maximum 3,626 sqft, costing under $3.02M, with a private place to swim, shaded outdoor dining, and owned solar."
+    },
+    {
+      "id": "Q098",
+      "query": "Show me somewhere in Mountain View with at least 3 bdrms, less than 4 bthrms, ~3,657 sq ft, and a purchase budget below $3.04M, with direct beach access, panoramic views, and affordable fire insurance."
+    },
+    {
+      "id": "Q099",
+      "query": "I need 4 beds, 1 baths, and between 3,688 and 4,138 square feet in Orange, with prices ranging from $3.07M to $3.32M, with a wine-storage room, a chef’s kitchen, and seller financing."
+    },
+    {
+      "id": "Q100",
+      "query": "Search for a 5-bed and 1.5-bath home in Pismo Beach, measuring ~3,719 sf, with less than $3.1M, with a cul-de-sac setting, a three-car garage, and no special tax district."
+    }
+  ]
+}

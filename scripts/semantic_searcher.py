@@ -62,14 +62,13 @@ class SemanticSearcher:
                 )
             )
         split_docs = self.splitter.split_documents(base_docs)
-        self.chunk_docs = split_docs
         self.chunk_texts = [d.page_content for d in split_docs]
         self.chunk_listing_ids = np.asarray(
             [int(d.metadata["listing_id"]) for d in split_docs], dtype=np.int64
         )
         self._n_chunks = len(self.chunk_texts)
 
-    def embed_chunks(self, batch_size=64):
+    def _embed_chunks(self, batch_size=64):
         print(f"Encoding {self._n_chunks} chunks from {len(self.remarks)} listings...")
 
         embeddings = self.model.encode(
@@ -92,7 +91,7 @@ class SemanticSearcher:
                 return
             print("FAISS size mismatch with current chunks. Rebuilding index...")
         print("Building FAISS index from scratch...")
-        embeddings = self.embed_chunks()
+        embeddings = self._embed_chunks()
         dim = embeddings.shape[1]
 
         self.index = faiss.IndexFlatIP(dim)
@@ -166,7 +165,7 @@ class SemanticSearcher:
                 continue
             cidx = int(cidx)
             s = float(chunk_scores[i])
-            li = int(self.chunk_docs[cidx].metadata["listing_id"])
+            li = int(self.chunk_listing_ids[cidx])
             if li not in best_score or s > best_score[li]:
                 best_score[li] = s # listing id to best score
                 best_chunk_idx[li] = cidx # listing id to best chunk idx

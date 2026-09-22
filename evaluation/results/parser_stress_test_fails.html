@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8">
+<title>Stress-test parser misses</title>
+<style>
+body { font-family: Segoe UI, sans-serif; margin: 24px; background: #f6f7f9; color: #1b1f24; }
+h1 { font-size: 20px; margin: 0 0 8px; }
+h2 { font-size: 16px; margin: 28px 0 12px; }
+.note { color: #555; max-width: 960px; line-height: 1.45; }
+.stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+.stat { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 10px 14px; min-width: 140px; }
+.k { font-size: 12px; color: #666; margin-bottom: 4px; }
+.toc a { margin-right: 8px; font-size: 13px; }
+.card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 14px 16px; margin: 0 0 12px; }
+.meta { font-size: 12px; color: #666; margin-bottom: 6px; }
+.query { font-size: 15px; line-height: 1.45; margin: 0 0 12px; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { border: 1px solid #e3e6ea; padding: 5px 8px; text-align: left; }
+th { background: #eef2f6; }
+tr.ok td { color: #2d6a4f; }
+tr.miss td { background: #fde2e1; }
+tr.extra td { background: #fff3cd; }
+tr.wrong td { background: #fde2e1; }
+.catalog { margin-top: 10px; font-size: 13px; color: #333; }
+.cat { display: inline-block; background: #eef2f6; border-radius: 4px; padding: 2px 8px; margin: 2px 6px 2px 0; }
+.muted { color: #888; }
+</style></head><body>
+<h1>GPT stress-test misses</h1>
+<p class="note">Only queries whose intended structured slots do not exactly match
+<code>QueryParser.parse()</code>. Red = missing or wrong value. Yellow = extra slot
+the gold did not want. Catalog is shown for context and is not in the exact-match score.</p>
+<div class="stats">
+<div class="stat"><div class="k">exact match</div><div>96/100 (96.0%)</div></div>
+<div class="stat"><div class="k">shown here</div><div>4 misses · 2 families</div></div>
+<div class="stat"><div class="k">city / beds / baths</div><div>100.0% / 97.0% / 100.0%</div></div>
+<div class="stat"><div class="k">sqft / price</div><div>100.0% / 99.0%</div></div>
+</div>
+<p class="toc"><a href="#f7">F7</a> <a href="#f14">F14</a></p>
+<h2 id="f7">Family 7 · 3 misses</h2>
+<article class="card">
+  <div class="meta">Q008 · F7</div>
+  <p class="query">Show me three or four bedrooms in Fresno, between 867 and 1,367 square feet with central air, low-maintenance landscaping, and FHA eligibility.</p>
+  <table>
+    <thead><tr><th>slot</th><th>expect</th><th>extracted</th><th></th></tr></thead>
+    <tbody><tr class='ok'><td>city</td><td>Fresno</td><td>Fresno</td><td>match</td></tr><tr class='extra'><td>bedrooms</td><td>—</td><td>4</td><td>extra</td></tr><tr class='miss'><td>bedrooms_min</td><td>3</td><td>—</td><td>missing</td></tr><tr class='miss'><td>bedrooms_max</td><td>4</td><td>—</td><td>missing</td></tr><tr class='ok'><td>sqft_min</td><td>867</td><td>867</td><td>match</td></tr><tr class='ok'><td>sqft_max</td><td>1367</td><td>1367</td><td>match</td></tr></tbody>
+  </table>
+  <div class="catalog">catalog: <span class='cat'><b>amenities</b> central air</span> <span class='cat'><b>features</b> central air</span> <span class='cat'><b>finance</b> fha</span></div>
+</article>
+
+<article class="card">
+  <div class="meta">Q028 · F7</div>
+  <p class="query">Show me 3 or 4 bedrooms and four baths in Carlsbad with central air, low-maintenance landscaping, and FHA eligibility.</p>
+  <table>
+    <thead><tr><th>slot</th><th>expect</th><th>extracted</th><th></th></tr></thead>
+    <tbody><tr class='ok'><td>city</td><td>Carlsbad</td><td>Carlsbad</td><td>match</td></tr><tr class='extra'><td>bedrooms</td><td>—</td><td>4</td><td>extra</td></tr><tr class='miss'><td>bedrooms_min</td><td>3</td><td>—</td><td>missing</td></tr><tr class='miss'><td>bedrooms_max</td><td>4</td><td>—</td><td>missing</td></tr><tr class='ok'><td>bathrooms</td><td>4</td><td>4</td><td>match</td></tr></tbody>
+  </table>
+  <div class="catalog">catalog: <span class='cat'><b>amenities</b> central air</span> <span class='cat'><b>features</b> central air</span> <span class='cat'><b>finance</b> fha</span></div>
+</article>
+
+<article class="card">
+  <div class="meta">Q068 · F7</div>
+  <p class="query">Show me 3/4 bds and 2.5 bths in Arcadia, between 2,727 and 3,227 square feet, for $2.23M to $2.46M, with central air, low-maintenance landscaping, and FHA eligibility.</p>
+  <table>
+    <thead><tr><th>slot</th><th>expect</th><th>extracted</th><th></th></tr></thead>
+    <tbody><tr class='ok'><td>city</td><td>Arcadia</td><td>Arcadia</td><td>match</td></tr><tr class='extra'><td>bedrooms</td><td>—</td><td>4</td><td>extra</td></tr><tr class='miss'><td>bedrooms_min</td><td>3</td><td>—</td><td>missing</td></tr><tr class='miss'><td>bedrooms_max</td><td>4</td><td>—</td><td>missing</td></tr><tr class='ok'><td>bathrooms</td><td>2</td><td>2</td><td>match</td></tr><tr class='ok'><td>bathroom_half</td><td>1</td><td>1</td><td>match</td></tr><tr class='ok'><td>price_min</td><td>2230000</td><td>2230000</td><td>match</td></tr><tr class='ok'><td>price_max</td><td>2460000</td><td>2460000</td><td>match</td></tr><tr class='ok'><td>sqft_min</td><td>2727</td><td>2727</td><td>match</td></tr><tr class='ok'><td>sqft_max</td><td>3227</td><td>3227</td><td>match</td></tr></tbody>
+  </table>
+  <div class="catalog">catalog: <span class='cat'><b>amenities</b> central air</span> <span class='cat'><b>features</b> central air</span> <span class='cat'><b>finance</b> fha</span></div>
+</article>
+<h2 id="f14">Family 14 · 1 misses</h2>
+<article class="card">
+  <div class="meta">Q055 · F14</div>
+  <p class="query">Search for five bedrooms, 3.5 bathrooms, roughly 2,324–2,774 square feet in Fremont, with a target price of $1.88M give or take $50k, with mature trees, a detached workspace, and no land lease.</p>
+  <table>
+    <thead><tr><th>slot</th><th>expect</th><th>extracted</th><th></th></tr></thead>
+    <tbody><tr class='ok'><td>city</td><td>Fremont</td><td>Fremont</td><td>match</td></tr><tr class='ok'><td>bedrooms</td><td>5</td><td>5</td><td>match</td></tr><tr class='ok'><td>bathrooms</td><td>3</td><td>3</td><td>match</td></tr><tr class='ok'><td>bathroom_half</td><td>1</td><td>1</td><td>match</td></tr><tr class='extra'><td>price</td><td>—</td><td>1880000</td><td>extra</td></tr><tr class='miss'><td>price_min</td><td>1830000</td><td>—</td><td>missing</td></tr><tr class='miss'><td>price_max</td><td>1930000</td><td>—</td><td>missing</td></tr><tr class='ok'><td>sqft_min</td><td>2324</td><td>2324</td><td>match</td></tr><tr class='ok'><td>sqft_max</td><td>2774</td><td>2774</td><td>match</td></tr></tbody>
+  </table>
+  <div class="catalog">catalog: <span class='muted'>none</span></div>
+</article>
+
+</body></html>

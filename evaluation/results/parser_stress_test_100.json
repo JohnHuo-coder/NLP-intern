@@ -1,0 +1,3874 @@
+{
+  "summary": {
+    "n": 100,
+    "uniqueness": {
+      "unique_queries": 100,
+      "unique_cities": 100,
+      "unique_structured_tuples": 100,
+      "dup_cities": [],
+      "ok": true
+    },
+    "structured_exact": 96,
+    "structured_exact_pct": 96.0,
+    "families_exact": 18,
+    "families_exact_pct": 90.0,
+    "field_bundle_pct": {
+      "city": 100.0,
+      "beds": 97.0,
+      "baths": 100.0,
+      "sqft": 100.0,
+      "price": 99.0
+    },
+    "failed_families": [
+      7,
+      14
+    ],
+    "passed_families": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      15,
+      16,
+      17,
+      18,
+      19
+    ]
+  },
+  "queries": [
+    {
+      "id": "Q001",
+      "family": 0,
+      "query": "Find me a 1-bedroom home in Pasadena with at least 650 sqft for no more than $425k, with lots of natural light, a fenced backyard, and no HOA.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Pasadena",
+        "bedrooms": 1,
+        "sqft_min": 650,
+        "price_max": 425000
+      },
+      "got_structured": {
+        "city": "Pasadena",
+        "bedrooms": 1,
+        "price_max": 425000,
+        "sqft_min": 650
+      },
+      "got_catalog": {
+        "amenities": [
+          "backyard"
+        ],
+        "amenity_groups": [
+          [
+            "backyard"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q002",
+      "family": 1,
+      "query": "Looking for two bedrooms and 1.5 bathrooms in Sacramento, minimum 681 square feet, under $452k, with a covered patio, an updated kitchen, and seller-paid closing costs.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Sacramento",
+        "bedrooms": 2,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "sqft_min": 681,
+        "price_max": 452000
+      },
+      "got_structured": {
+        "city": "Sacramento",
+        "bedrooms": 2,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "price_max": 452000,
+        "sqft_min": 681
+      },
+      "got_catalog": {
+        "amenities": [
+          "covered patio"
+        ],
+        "amenity_groups": [
+          [
+            "covered patio"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q003",
+      "family": 2,
+      "query": "Show me a 3 bd property in San Diego between 712 and 1,162 sq ft, priced from $479k to $704k, with in-unit laundry, secure parking, and HOA dues below $500 a month.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "San Diego",
+        "bedrooms": 3,
+        "sqft_min": 712,
+        "sqft_max": 1162,
+        "price_min": 479000,
+        "price_max": 704000
+      },
+      "got_structured": {
+        "city": "San Diego",
+        "bedrooms": 3,
+        "price_min": 479000,
+        "price_max": 704000,
+        "sqft_min": 712,
+        "sqft_max": 1162
+      },
+      "got_catalog": {
+        "amenities": [
+          "secure parking"
+        ],
+        "features": [
+          "laundry"
+        ],
+        "amenity_groups": [
+          [
+            "secure parking"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "laundry"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q004",
+      "family": 3,
+      "query": "I need exactly four bedrooms in Irvine, exactly 743 sqft, at a price of exactly $506k, with an open-concept kitchen, a walk-in pantry, and owned solar panels.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Irvine",
+        "bedrooms": 4,
+        "sqft": 743,
+        "price": 506000
+      },
+      "got_structured": {
+        "city": "Irvine",
+        "bedrooms": 4,
+        "price": 506000,
+        "sqft": 743
+      },
+      "got_catalog": {
+        "amenities": [
+          "solar panel"
+        ],
+        "features": [
+          "solar panel",
+          "pantry"
+        ],
+        "amenity_groups": [
+          [
+            "solar panel"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "pantry"
+          ],
+          [
+            "solar panel"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q005",
+      "family": 4,
+      "query": "Search for about 5 bedrooms in Oakland, around 774 square feet with a quiet yard suitable for dogs, a fireplace, and a home-office nook.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Oakland",
+        "bedrooms_min": 4,
+        "bedrooms_max": 6,
+        "sqft_min": 619.2,
+        "sqft_max": 928.8
+      },
+      "got_structured": {
+        "city": "Oakland",
+        "bedrooms_min": 4,
+        "bedrooms_max": 6,
+        "sqft_min": 619.2,
+        "sqft_max": 928.8
+      },
+      "got_catalog": {
+        "amenities": [
+          "yard",
+          "dog"
+        ],
+        "features": [
+          "fireplace"
+        ],
+        "amenity_groups": [
+          [
+            "yard"
+          ],
+          [
+            "dog"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "fireplace"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q006",
+      "family": 5,
+      "query": "Find me at least one br and no fewer than 3.5 ba in Berkeley, over 805 sf with hardwood floors, built-in storage, and completed seismic retrofitting.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Berkeley",
+        "bedrooms_min": 1,
+        "bathrooms_min": 3,
+        "sqft_min": 805
+      },
+      "got_structured": {
+        "city": "Berkeley",
+        "bedrooms_min": 1,
+        "bathrooms_min": 3,
+        "sqft_min": 805
+      },
+      "got_catalog": {
+        "features": [
+          "hardwood floor",
+          "storage"
+        ],
+        "feature_groups": [
+          [
+            "hardwood floor"
+          ],
+          [
+            "storage"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q007",
+      "family": 6,
+      "query": "Looking for 2–3 bedrooms in Los Angeles, 836–1,286 sqft with a guest suite, a two-car garage, and an assumable mortgage.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Los Angeles",
+        "bedrooms_min": 2,
+        "bedrooms_max": 3,
+        "sqft_min": 836,
+        "sqft_max": 1286
+      },
+      "got_structured": {
+        "city": "Los Angeles",
+        "bedrooms_min": 2,
+        "bedrooms_max": 3,
+        "sqft_min": 836,
+        "sqft_max": 1286
+      },
+      "got_catalog": {
+        "amenities": [
+          "car garage"
+        ],
+        "features": [
+          "guest suite"
+        ],
+        "finance": [
+          "assumable mortgage"
+        ],
+        "amenity_groups": [
+          [
+            "car garage"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "guest suite"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "assumable mortgage"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q008",
+      "family": 7,
+      "query": "Show me three or four bedrooms in Fresno, between 867 and 1,367 square feet with central air, low-maintenance landscaping, and FHA eligibility.",
+      "structured_pass": false,
+      "diffs": [
+        "bedrooms: expect None got 4",
+        "bedrooms_min: expect 3 got None",
+        "bedrooms_max: expect 4 got None"
+      ],
+      "expect": {
+        "city": "Fresno",
+        "bedrooms_min": 3,
+        "bedrooms_max": 4,
+        "sqft_min": 867,
+        "sqft_max": 1367
+      },
+      "got_structured": {
+        "city": "Fresno",
+        "bedrooms": 4,
+        "sqft_min": 867,
+        "sqft_max": 1367
+      },
+      "got_catalog": {
+        "amenities": [
+          "central air"
+        ],
+        "features": [
+          "central air"
+        ],
+        "finance": [
+          "fha"
+        ],
+        "amenity_groups": [
+          [
+            "central air"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "central air"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "fha"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q009",
+      "family": 8,
+      "query": "I need a four-bed, 1.5-bath property in San Jose with an ADU, EV charging, and no Mello-Roos.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "San Jose",
+        "bedrooms": 4,
+        "bathrooms": 1,
+        "bathroom_half": 1
+      },
+      "got_structured": {
+        "city": "San Jose",
+        "bedrooms": 4,
+        "bathrooms": 1,
+        "bathroom_half": 1
+      },
+      "got_catalog": {
+        "amenities": [
+          "ev charging"
+        ],
+        "amenity_groups": [
+          [
+            "ev charging"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q010",
+      "family": 9,
+      "query": "Search for 5 beds and 2 baths in Santa Monica, approximately 0.93k sqft with ocean or mountain views, a balcony, and a fixed-rate mortgage option.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Santa Monica",
+        "bedrooms": 5,
+        "bathrooms": 2,
+        "sqft_min": 744.0,
+        "sqft_max": 1116.0
+      },
+      "got_structured": {
+        "city": "Santa Monica",
+        "bedrooms": 5,
+        "bathrooms": 2,
+        "sqft_min": 744.0,
+        "sqft_max": 1116.0
+      },
+      "got_catalog": {
+        "amenities": [
+          "mountain view"
+        ],
+        "features": [
+          "balcony"
+        ],
+        "amenity_groups": [
+          [
+            "mountain view"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "balcony"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q011",
+      "family": 10,
+      "query": "Find me a 1 BR / 2.5 BA place in Long Beach with deeded parking, pet-friendly rules, and healthy HOA reserves.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Long Beach",
+        "bedrooms": 1,
+        "bathrooms": 2,
+        "bathroom_half": 1
+      },
+      "got_structured": {
+        "city": "Long Beach",
+        "bedrooms": 1,
+        "bathrooms": 2,
+        "bathroom_half": 1
+      },
+      "got_catalog": {
+        "amenities": [
+          "parking"
+        ],
+        "amenity_groups": [
+          [
+            "parking"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q012",
+      "family": 11,
+      "query": "Looking for two bed / three bath homes in Anaheim with a pool-sized yard, remodeled bathrooms, and a repair credit.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Anaheim",
+        "bedrooms": 2,
+        "bathrooms": 3
+      },
+      "got_structured": {
+        "city": "Anaheim",
+        "bedrooms": 2,
+        "bathrooms": 3
+      },
+      "got_catalog": {
+        "amenities": [
+          "yard",
+          "pool"
+        ],
+        "amenity_groups": [
+          [
+            "pool"
+          ],
+          [
+            "yard"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q013",
+      "family": 12,
+      "query": "Show me precisely 3 bd and precisely 3.5 ba in Riverside with RV parking, a downstairs bedroom, and a 2-1 rate buydown.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Riverside",
+        "bedrooms": 3,
+        "bathrooms": 3,
+        "bathroom_half": 1
+      },
+      "got_structured": {
+        "city": "Riverside",
+        "bedrooms": 3,
+        "bathrooms": 3,
+        "bathroom_half": 1
+      },
+      "got_catalog": {
+        "amenities": [
+          "rv parking"
+        ],
+        "amenity_groups": [
+          [
+            "rv parking"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q014",
+      "family": 13,
+      "query": "I need a 4-bedroom, somewhere between 4 and 5 bathrooms house in San Francisco with an elevator, a roof deck, and no pending special assessment.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "San Francisco",
+        "bedrooms": 4,
+        "bathrooms_min": 4,
+        "bathrooms_max": 5
+      },
+      "got_structured": {
+        "city": "San Francisco",
+        "bedrooms": 4,
+        "bathrooms_min": 4,
+        "bathrooms_max": 5
+      },
+      "got_catalog": {
+        "amenities": [
+          "deck",
+          "elevator"
+        ],
+        "features": [
+          "elevator"
+        ],
+        "amenity_groups": [
+          [
+            "elevator"
+          ],
+          [
+            "deck"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "elevator"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q015",
+      "family": 14,
+      "query": "Search for five bedrooms, one bathrooms with mature trees, a detached workspace, and no land lease.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "bedrooms": 5,
+        "bathrooms": 1
+      },
+      "got_structured": {
+        "bedrooms": 5,
+        "bathrooms": 1
+      },
+      "got_catalog": {}
+    },
+    {
+      "id": "Q016",
+      "family": 15,
+      "query": "Find me 1+ bedrooms, 1.5+ bathrooms house in Monterey, with a wood-burning stove, garden space, and conventional financing.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Monterey",
+        "bedrooms_min": 1,
+        "bathrooms_min": 1
+      },
+      "got_structured": {
+        "city": "Monterey",
+        "bedrooms_min": 1,
+        "bathrooms_min": 1
+      },
+      "got_catalog": {
+        "amenities": [
+          "garden"
+        ],
+        "finance": [
+          "conventional financing"
+        ],
+        "amenity_groups": [
+          [
+            "garden"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "conventional financing"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q017",
+      "family": 16,
+      "query": "Looking for no less than two bedrooms and no less than two bathrooms in Palm Springs, with a private place to swim, shaded outdoor dining, and owned solar.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Palm Springs",
+        "bedrooms_min": 2,
+        "bathrooms_min": 2
+      },
+      "got_structured": {
+        "city": "Palm Springs",
+        "bedrooms_min": 2,
+        "bathrooms_min": 2
+      },
+      "got_catalog": {
+        "amenities": [
+          "outdoor dining"
+        ],
+        "amenity_groups": [
+          [
+            "outdoor dining"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q018",
+      "family": 17,
+      "query": "Show me somewhere in Malibu with 3 bdrms, 2.5 bthrms, with direct beach access, panoramic views, and affordable fire insurance.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Malibu",
+        "bedrooms": 3,
+        "bathrooms": 2,
+        "bathroom_half": 1
+      },
+      "got_structured": {
+        "city": "Malibu",
+        "bedrooms": 3,
+        "bathrooms": 2,
+        "bathroom_half": 1
+      },
+      "got_catalog": {
+        "amenities": [
+          "panoramic view"
+        ],
+        "amenity_groups": [
+          [
+            "panoramic view"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q019",
+      "family": 18,
+      "query": "I need 4 beds, 3 baths house in Napa, with a wine-storage room, a chef’s kitchen, and seller financing.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Napa",
+        "bedrooms": 4,
+        "bathrooms": 3
+      },
+      "got_structured": {
+        "city": "Napa",
+        "bedrooms": 4,
+        "bathrooms": 3
+      },
+      "got_catalog": {
+        "features": [
+          "storage"
+        ],
+        "finance": [
+          "seller financing"
+        ],
+        "feature_groups": [
+          [
+            "storage"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "seller financing"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q020",
+      "family": 19,
+      "query": "Search for a 5-bed and 3.5-bath home in Thousand Oaks, with a cul-de-sac setting, a three-car garage, and no special tax district.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Thousand Oaks",
+        "bedrooms": 5,
+        "bathrooms": 3,
+        "bathroom_half": 1
+      },
+      "got_structured": {
+        "city": "Thousand Oaks",
+        "bedrooms": 5,
+        "bathrooms": 3,
+        "bathroom_half": 1
+      },
+      "got_catalog": {
+        "amenities": [
+          "car garage"
+        ],
+        "amenity_groups": [
+          [
+            "car garage"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q021",
+      "family": 0,
+      "query": "Find me a 1-bd, 4-ba home in Encinitas with more than 1,270 sqft for no more than $965k, with lots of natural light, a fenced backyard, and no HOA.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Encinitas",
+        "bedrooms": 1,
+        "bathrooms": 4,
+        "sqft_min": 1270,
+        "price_max": 965000
+      },
+      "got_structured": {
+        "city": "Encinitas",
+        "bedrooms": 1,
+        "bathrooms": 4,
+        "price_max": 965000,
+        "sqft_min": 1270
+      },
+      "got_catalog": {
+        "amenities": [
+          "backyard"
+        ],
+        "amenity_groups": [
+          [
+            "backyard"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q022",
+      "family": 1,
+      "query": "Looking for two bedrooms and one bathrooms in Santa Cruz, minimum 1,301 sqft, <$992k, with a covered patio, an updated kitchen, and seller-paid closing costs.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Santa Cruz",
+        "bedrooms": 2,
+        "bathrooms": 1,
+        "sqft_min": 1301,
+        "price_max": 992000
+      },
+      "got_structured": {
+        "city": "Santa Cruz",
+        "bedrooms": 2,
+        "bathrooms": 1,
+        "price_max": 992000,
+        "sqft_min": 1301
+      },
+      "got_catalog": {
+        "amenities": [
+          "covered patio"
+        ],
+        "amenity_groups": [
+          [
+            "covered patio"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q023",
+      "family": 2,
+      "query": "Show me a 3 bd / 1.5 ba property in Mill Valley between 1,332 and 1,782 sq ft, with price range $1.02M to $1.24M, with in-unit laundry, secure parking, and HOA dues below $500 a month.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Mill Valley",
+        "bedrooms": 3,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "sqft_min": 1332,
+        "sqft_max": 1782,
+        "price_min": 1020000,
+        "price_max": 1240000
+      },
+      "got_structured": {
+        "city": "Mill Valley",
+        "bedrooms": 3,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "price_min": 1020000,
+        "price_max": 1240000,
+        "sqft_min": 1332,
+        "sqft_max": 1782
+      },
+      "got_catalog": {
+        "amenities": [
+          "secure parking"
+        ],
+        "features": [
+          "range",
+          "laundry"
+        ],
+        "amenity_groups": [
+          [
+            "secure parking"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "range"
+          ],
+          [
+            "laundry"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q024",
+      "family": 3,
+      "query": "I need >4 bedrooms in Laguna Beach, exactly 1,363 sqft, at a price of exactly $1.05M, with an open-concept kitchen, a walk-in pantry, and owned solar panels.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Laguna Beach",
+        "bedrooms_min": 4,
+        "sqft": 1363,
+        "price": 1050000
+      },
+      "got_structured": {
+        "city": "Laguna Beach",
+        "bedrooms_min": 4,
+        "price": 1050000,
+        "sqft": 1363
+      },
+      "got_catalog": {
+        "amenities": [
+          "solar panel"
+        ],
+        "features": [
+          "solar panel",
+          "pantry"
+        ],
+        "amenity_groups": [
+          [
+            "solar panel"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "pantry"
+          ],
+          [
+            "solar panel"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q025",
+      "family": 4,
+      "query": "Search for about 5 bedrooms and roughly 2 baths in Glendale with a budget near $1.07M, with a quiet yard suitable for dogs, a fireplace, and a home-office nook.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Glendale",
+        "bedrooms_min": 4,
+        "bedrooms_max": 6,
+        "bathrooms_min": 1,
+        "bathrooms_max": 3,
+        "price_min": 856000.0,
+        "price_max": 1284000.0
+      },
+      "got_structured": {
+        "city": "Glendale",
+        "bedrooms_min": 4,
+        "bedrooms_max": 6,
+        "bathrooms_min": 1,
+        "bathrooms_max": 3,
+        "price_min": 856000.0,
+        "price_max": 1284000.0
+      },
+      "got_catalog": {
+        "amenities": [
+          "yard",
+          "dog"
+        ],
+        "features": [
+          "fireplace"
+        ],
+        "amenity_groups": [
+          [
+            "yard"
+          ],
+          [
+            "dog"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "fireplace"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q026",
+      "family": 5,
+      "query": "Find me at least one br and no fewer than three ba in Burbank, over 1,425 sf but below 1,825 sf with hardwood floors, built-in storage, and completed seismic retrofitting.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Burbank",
+        "bedrooms_min": 1,
+        "bathrooms_min": 3,
+        "sqft_min": 1425,
+        "sqft_max": 1825
+      },
+      "got_structured": {
+        "city": "Burbank",
+        "bedrooms_min": 1,
+        "bathrooms_min": 3,
+        "sqft_min": 1425,
+        "sqft_max": 1825
+      },
+      "got_catalog": {
+        "features": [
+          "hardwood floor",
+          "storage"
+        ],
+        "feature_groups": [
+          [
+            "hardwood floor"
+          ],
+          [
+            "storage"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q027",
+      "family": 6,
+      "query": "Looking for 2–3 bedrooms and 3.5–4.5 bathrooms in Ventura, 1,456–1,906 sqft with a guest suite, a two-car garage, and an assumable mortgage.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Ventura",
+        "bedrooms_min": 2,
+        "bedrooms_max": 3,
+        "bathrooms_min": 3,
+        "bathrooms_max": 4,
+        "sqft_min": 1456,
+        "sqft_max": 1906
+      },
+      "got_structured": {
+        "city": "Ventura",
+        "bedrooms_min": 2,
+        "bedrooms_max": 3,
+        "bathrooms_min": 3,
+        "bathrooms_max": 4,
+        "sqft_min": 1456,
+        "sqft_max": 1906
+      },
+      "got_catalog": {
+        "amenities": [
+          "car garage"
+        ],
+        "features": [
+          "guest suite"
+        ],
+        "finance": [
+          "assumable mortgage"
+        ],
+        "amenity_groups": [
+          [
+            "car garage"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "guest suite"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "assumable mortgage"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q028",
+      "family": 7,
+      "query": "Show me 3 or 4 bedrooms and four baths in Carlsbad with central air, low-maintenance landscaping, and FHA eligibility.",
+      "structured_pass": false,
+      "diffs": [
+        "bedrooms: expect None got 4",
+        "bedrooms_min: expect 3 got None",
+        "bedrooms_max: expect 4 got None"
+      ],
+      "expect": {
+        "city": "Carlsbad",
+        "bedrooms_min": 3,
+        "bedrooms_max": 4,
+        "bathrooms": 4
+      },
+      "got_structured": {
+        "city": "Carlsbad",
+        "bedrooms": 4,
+        "bathrooms": 4
+      },
+      "got_catalog": {
+        "amenities": [
+          "central air"
+        ],
+        "features": [
+          "central air"
+        ],
+        "finance": [
+          "fha"
+        ],
+        "amenity_groups": [
+          [
+            "central air"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "central air"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "fha"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q029",
+      "family": 8,
+      "query": "I need a four-bed, one-bath property in Davis with an ADU, EV charging, and no Mello-Roos.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Davis",
+        "bedrooms": 4,
+        "bathrooms": 1
+      },
+      "got_structured": {
+        "city": "Davis",
+        "bedrooms": 4,
+        "bathrooms": 1
+      },
+      "got_catalog": {
+        "amenities": [
+          "ev charging"
+        ],
+        "amenity_groups": [
+          [
+            "ev charging"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q030",
+      "family": 9,
+      "query": "Search for 5 beds and 1.5 baths in Culver City, approximately 1.55k sqft, costing around $1.21M, with ocean or mountain views, a balcony, and a fixed-rate mortgage option.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Culver City",
+        "bedrooms": 5,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "sqft_min": 1240.0,
+        "sqft_max": 1860.0,
+        "price_min": 968000.0,
+        "price_max": 1452000.0
+      },
+      "got_structured": {
+        "city": "Culver City",
+        "bedrooms": 5,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "price_min": 968000.0,
+        "price_max": 1452000.0,
+        "sqft_min": 1240.0,
+        "sqft_max": 1860.0
+      },
+      "got_catalog": {
+        "amenities": [
+          "mountain view"
+        ],
+        "features": [
+          "balcony"
+        ],
+        "amenity_groups": [
+          [
+            "mountain view"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "balcony"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q031",
+      "family": 10,
+      "query": "Find me a 1 BR / 2 BA place in Temecula, no smaller than 1,580 sq. ft. with deeded parking, pet-friendly rules, and healthy HOA reserves.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Temecula",
+        "bedrooms": 1,
+        "bathrooms": 2,
+        "sqft_min": 1580
+      },
+      "got_structured": {
+        "city": "Temecula",
+        "bedrooms": 1,
+        "bathrooms": 2,
+        "sqft_min": 1580
+      },
+      "got_catalog": {
+        "amenities": [
+          "parking"
+        ],
+        "amenity_groups": [
+          [
+            "parking"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q032",
+      "family": 11,
+      "query": "Looking for two bed / 2.5 bath homes in Torrance, ideally 1,611 sqft with a pool-sized yard, remodeled bathrooms, and a repair credit.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Torrance",
+        "bedrooms": 2,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "sqft": 1611
+      },
+      "got_structured": {
+        "city": "Torrance",
+        "bedrooms": 2,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "sqft": 1611
+      },
+      "got_catalog": {
+        "amenities": [
+          "yard",
+          "pool"
+        ],
+        "amenity_groups": [
+          [
+            "pool"
+          ],
+          [
+            "yard"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q033",
+      "family": 12,
+      "query": "Show me precisely 3 bd and precisely 3 ba in Palo Alto, from 1,642 to 1,992 sf with RV parking, a downstairs bedroom, and a 2-1 rate buydown.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Palo Alto",
+        "bedrooms": 3,
+        "bathrooms": 3,
+        "sqft_min": 1642,
+        "sqft_max": 1992
+      },
+      "got_structured": {
+        "city": "Palo Alto",
+        "bedrooms": 3,
+        "bathrooms": 3,
+        "sqft_min": 1642,
+        "sqft_max": 1992
+      },
+      "got_catalog": {
+        "amenities": [
+          "rv parking"
+        ],
+        "amenity_groups": [
+          [
+            "rv parking"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q034",
+      "family": 13,
+      "query": "I need a 4-bedroom, 3.5 bathroom house in Bakersfield with more than 1,673 sqft but not over 2,073 sqft with an elevator, a roof deck, and no pending special assessment.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Bakersfield",
+        "bedrooms": 4,
+        "bathrooms": 3,
+        "bathroom_half": 1,
+        "sqft_min": 1673,
+        "sqft_max": 2073
+      },
+      "got_structured": {
+        "city": "Bakersfield",
+        "bedrooms": 4,
+        "bathrooms": 3,
+        "bathroom_half": 1,
+        "sqft_min": 1673,
+        "sqft_max": 2073
+      },
+      "got_catalog": {
+        "amenities": [
+          "deck",
+          "elevator"
+        ],
+        "features": [
+          "elevator"
+        ],
+        "amenity_groups": [
+          [
+            "elevator"
+          ],
+          [
+            "deck"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "elevator"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q035",
+      "family": 14,
+      "query": "Search for five bedrooms, four bathrooms, roughly 1,704–2,154 square feet in Redwood City with mature trees, a detached workspace, and no land lease.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Redwood City",
+        "bedrooms": 5,
+        "bathrooms": 4,
+        "sqft_min": 1704,
+        "sqft_max": 2154
+      },
+      "got_structured": {
+        "city": "Redwood City",
+        "bedrooms": 5,
+        "bathrooms": 4,
+        "sqft_min": 1704,
+        "sqft_max": 2154
+      },
+      "got_catalog": {}
+    },
+    {
+      "id": "Q036",
+      "family": 15,
+      "query": "Find me 1+ bedrooms, 1+ bathrooms, and at least 1,735 square feet in Huntington Beach, with a wood-burning stove, garden space, and conventional financing.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Huntington Beach",
+        "bedrooms_min": 1,
+        "bathrooms_min": 1,
+        "sqft_min": 1735
+      },
+      "got_structured": {
+        "city": "Huntington Beach",
+        "bedrooms_min": 1,
+        "bathrooms_min": 1,
+        "sqft_min": 1735
+      },
+      "got_catalog": {
+        "amenities": [
+          "garden"
+        ],
+        "finance": [
+          "conventional financing"
+        ],
+        "amenity_groups": [
+          [
+            "garden"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "conventional financing"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q037",
+      "family": 16,
+      "query": "Looking for no less than two bedrooms and no less than 1.5 bathrooms in Calabasas, minimum of 1,766 sqft, with a private place to swim, shaded outdoor dining, and owned solar.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Calabasas",
+        "bedrooms_min": 2,
+        "bathrooms_min": 1,
+        "sqft_min": 1766
+      },
+      "got_structured": {
+        "city": "Calabasas",
+        "bedrooms_min": 2,
+        "bathrooms_min": 1,
+        "sqft_min": 1766
+      },
+      "got_catalog": {
+        "amenities": [
+          "outdoor dining"
+        ],
+        "amenity_groups": [
+          [
+            "outdoor dining"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q038",
+      "family": 17,
+      "query": "Show me somewhere in San Mateo with around 3 bdrms, 2.5 bthrms, close to 1,797 sq ft, with direct beach access, panoramic views, and affordable fire insurance.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "San Mateo",
+        "bedrooms_min": 2,
+        "bedrooms_max": 4,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "sqft_min": 1437.6000000000001,
+        "sqft_max": 2156.4
+      },
+      "got_structured": {
+        "city": "San Mateo",
+        "bedrooms_min": 2,
+        "bedrooms_max": 4,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "sqft_min": 1437.6000000000001,
+        "sqft_max": 2156.4
+      },
+      "got_catalog": {
+        "amenities": [
+          "panoramic view"
+        ],
+        "amenity_groups": [
+          [
+            "panoramic view"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q039",
+      "family": 18,
+      "query": "I need 4 beds, 2.5 baths, and 1,828 to 2,278 square feet in Sonoma, with a wine-storage room, a chef’s kitchen, and seller financing.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Sonoma",
+        "bedrooms": 4,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "sqft_min": 1828,
+        "sqft_max": 2278
+      },
+      "got_structured": {
+        "city": "Sonoma",
+        "bedrooms": 4,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "sqft_min": 1828,
+        "sqft_max": 2278
+      },
+      "got_catalog": {
+        "features": [
+          "storage"
+        ],
+        "finance": [
+          "seller financing"
+        ],
+        "feature_groups": [
+          [
+            "storage"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "seller financing"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q040",
+      "family": 19,
+      "query": "Search for a 5-bed and 3-bath home in San Luis Obispo, measuring about 1,859 sf with a cul-de-sac setting, a three-car garage, and no special tax district.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "San Luis Obispo",
+        "bedrooms": 5,
+        "bathrooms": 3,
+        "sqft_min": 1487.2,
+        "sqft_max": 2230.7999999999997
+      },
+      "got_structured": {
+        "city": "San Luis Obispo",
+        "bedrooms": 5,
+        "bathrooms": 3,
+        "sqft_min": 1487.2,
+        "sqft_max": 2230.7999999999997
+      },
+      "got_catalog": {
+        "amenities": [
+          "car garage"
+        ],
+        "amenity_groups": [
+          [
+            "car garage"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q041",
+      "family": 0,
+      "query": "Find me a 3.5-bathroom home in Chula Vista with greater than 1,890 sqft for less than $1.5M, with lots of natural light, a fenced backyard, and no HOA.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Chula Vista",
+        "bathrooms": 3,
+        "bathroom_half": 1,
+        "sqft_min": 1890,
+        "price_max": 1500000
+      },
+      "got_structured": {
+        "city": "Chula Vista",
+        "bathrooms": 3,
+        "bathroom_half": 1,
+        "price_max": 1500000,
+        "sqft_min": 1890
+      },
+      "got_catalog": {
+        "amenities": [
+          "backyard"
+        ],
+        "amenity_groups": [
+          [
+            "backyard"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q042",
+      "family": 1,
+      "query": "Looking for two bedrooms and four bathrooms in Oxnard, minimum 1,921 sq. ft., cheaper than $1.53M, with a covered patio, an updated kitchen, and seller-paid closing costs.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Oxnard",
+        "bedrooms": 2,
+        "bathrooms": 4,
+        "sqft_min": 1921,
+        "price_max": 1530000
+      },
+      "got_structured": {
+        "city": "Oxnard",
+        "bedrooms": 2,
+        "bathrooms": 4,
+        "price_max": 1530000,
+        "sqft_min": 1921
+      },
+      "got_catalog": {
+        "amenities": [
+          "covered patio"
+        ],
+        "amenity_groups": [
+          [
+            "covered patio"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q043",
+      "family": 2,
+      "query": "Show me a 3 bd / 1 ba property in Costa Mesa with minimum 1,952 and maximum 2,402 sq ft, priced from $1.56M to $1.78M, with in-unit laundry, secure parking, and HOA dues below $500 a month.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Costa Mesa",
+        "bedrooms": 3,
+        "bathrooms": 1,
+        "sqft_max": 2402,
+        "price_min": 1560000,
+        "price_max": 1780000
+      },
+      "got_structured": {
+        "city": "Costa Mesa",
+        "bedrooms": 3,
+        "bathrooms": 1,
+        "price_min": 1560000,
+        "price_max": 1780000,
+        "sqft_max": 2402
+      },
+      "got_catalog": {
+        "amenities": [
+          "secure parking"
+        ],
+        "features": [
+          "laundry"
+        ],
+        "amenity_groups": [
+          [
+            "secure parking"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "laundry"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q044",
+      "family": 3,
+      "query": "I need around four bedrooms and 1.5 bathrooms in Claremont, exactly 1,983 sq. ft., at a price of exactly $1.59M, with an open-concept kitchen, a walk-in pantry, and owned solar panels.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Claremont",
+        "bedrooms_min": 3,
+        "bedrooms_max": 5,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "sqft": 1983,
+        "price": 1590000
+      },
+      "got_structured": {
+        "city": "Claremont",
+        "bedrooms_min": 3,
+        "bedrooms_max": 5,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "price": 1590000,
+        "sqft": 1983
+      },
+      "got_catalog": {
+        "amenities": [
+          "solar panel"
+        ],
+        "features": [
+          "solar panel",
+          "pantry"
+        ],
+        "amenity_groups": [
+          [
+            "solar panel"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "pantry"
+          ],
+          [
+            "solar panel"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q045",
+      "family": 4,
+      "query": "Search for about 5 bds and roughly 2 baths in West Hollywood, around 2,014 square feet, with a budget near $1.61M, with a quiet yard suitable for dogs, a fireplace, and a home-office nook.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "West Hollywood",
+        "bedrooms_min": 4,
+        "bedrooms_max": 6,
+        "bathrooms_min": 1,
+        "bathrooms_max": 3,
+        "sqft_min": 1611.2,
+        "sqft_max": 2416.7999999999997,
+        "price_min": 1288000.0,
+        "price_max": 1932000.0
+      },
+      "got_structured": {
+        "city": "West Hollywood",
+        "bedrooms_min": 4,
+        "bedrooms_max": 6,
+        "bathrooms_min": 1,
+        "bathrooms_max": 3,
+        "price_min": 1288000.0,
+        "price_max": 1932000.0,
+        "sqft_min": 1611.2,
+        "sqft_max": 2416.7999999999997
+      },
+      "got_catalog": {
+        "amenities": [
+          "yard",
+          "dog"
+        ],
+        "features": [
+          "fireplace"
+        ],
+        "amenity_groups": [
+          [
+            "yard"
+          ],
+          [
+            "dog"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "fireplace"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q046",
+      "family": 5,
+      "query": "Find me at least one br and no fewer than 2.5 ba in Beverly Hills, over 2,045 sf but below 2,445 sf, capped at $1.64M, with hardwood floors, built-in storage, and completed seismic retrofitting.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Beverly Hills",
+        "bedrooms_min": 1,
+        "bathrooms_min": 2,
+        "sqft_min": 2045,
+        "sqft_max": 2445,
+        "price_max": 1640000
+      },
+      "got_structured": {
+        "city": "Beverly Hills",
+        "bedrooms_min": 1,
+        "bathrooms_min": 2,
+        "price_max": 1640000,
+        "sqft_min": 2045,
+        "sqft_max": 2445
+      },
+      "got_catalog": {
+        "features": [
+          "hardwood floor",
+          "storage"
+        ],
+        "feature_groups": [
+          [
+            "hardwood floor"
+          ],
+          [
+            "storage"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q047",
+      "family": 6,
+      "query": "Looking for 2–3 bedrooms and 3 to 4 bathrooms in El Segundo, 2,076–2,526 sq.ft., in the $1.67M to $1.87M range, with a guest suite, a two-car garage, and an assumable mortgage.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "El Segundo",
+        "bedrooms_min": 2,
+        "bedrooms_max": 3,
+        "bathrooms_min": 3,
+        "bathrooms_max": 4,
+        "sqft_min": 2076,
+        "sqft_max": 2526,
+        "price_min": 1670000,
+        "price_max": 1870000
+      },
+      "got_structured": {
+        "city": "El Segundo",
+        "bedrooms_min": 2,
+        "bedrooms_max": 3,
+        "bathrooms_min": 3,
+        "bathrooms_max": 4,
+        "price_min": 1670000,
+        "price_max": 1870000,
+        "sqft_min": 2076,
+        "sqft_max": 2526
+      },
+      "got_catalog": {
+        "amenities": [
+          "car garage"
+        ],
+        "features": [
+          "guest suite",
+          "range"
+        ],
+        "finance": [
+          "assumable mortgage"
+        ],
+        "amenity_groups": [
+          [
+            "car garage"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "range"
+          ],
+          [
+            "guest suite"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "assumable mortgage"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q048",
+      "family": 7,
+      "query": "Show me 3-4 bedrooms and 3.5 baths in Eureka, between 2,107 and 2,607 square feet, for $1.69M to $1.92M, with central air, low-maintenance landscaping, and FHA eligibility.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Eureka",
+        "bedrooms_min": 3,
+        "bedrooms_max": 4,
+        "bathrooms": 3,
+        "bathroom_half": 1,
+        "sqft_min": 2107,
+        "sqft_max": 2607,
+        "price_min": 1690000,
+        "price_max": 1920000
+      },
+      "got_structured": {
+        "city": "Eureka",
+        "bedrooms_min": 3,
+        "bedrooms_max": 4,
+        "bathrooms": 3,
+        "bathroom_half": 1,
+        "price_min": 1690000,
+        "price_max": 1920000,
+        "sqft_min": 2107,
+        "sqft_max": 2607
+      },
+      "got_catalog": {
+        "amenities": [
+          "central air"
+        ],
+        "features": [
+          "central air"
+        ],
+        "finance": [
+          "fha"
+        ],
+        "amenity_groups": [
+          [
+            "central air"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "central air"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "fha"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q049",
+      "family": 8,
+      "query": "I need a four-bed, four-bath property in Redding with 2,138+ sq ft with an ADU, EV charging, and no Mello-Roos.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Redding",
+        "bedrooms": 4,
+        "bathrooms": 4,
+        "sqft_min": 2138
+      },
+      "got_structured": {
+        "city": "Redding",
+        "bedrooms": 4,
+        "bathrooms": 4,
+        "sqft_min": 2138
+      },
+      "got_catalog": {
+        "amenities": [
+          "ev charging"
+        ],
+        "amenity_groups": [
+          [
+            "ev charging"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q050",
+      "family": 9,
+      "query": "Search for 5 beds and 1 baths in Folsom, around 2.17k sqft, costing roughly $1.75M, with ocean or mountain views, a balcony, and a fixed-rate mortgage option.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Folsom",
+        "bedrooms": 5,
+        "bathrooms": 1,
+        "sqft_min": 1736.0,
+        "sqft_max": 2604.0,
+        "price_min": 1400000.0,
+        "price_max": 2100000.0
+      },
+      "got_structured": {
+        "city": "Folsom",
+        "bedrooms": 5,
+        "bathrooms": 1,
+        "price_min": 1400000.0,
+        "price_max": 2100000.0,
+        "sqft_min": 1736.0,
+        "sqft_max": 2604.0
+      },
+      "got_catalog": {
+        "amenities": [
+          "mountain view"
+        ],
+        "features": [
+          "balcony"
+        ],
+        "amenity_groups": [
+          [
+            "mountain view"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "balcony"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q051",
+      "family": 10,
+      "query": "Find me a 1 BR / 1.5 BA place in Modesto, no smaller than 2,200 sq. ft. and no pricier than $1.77M, with deeded parking, pet-friendly rules, and healthy HOA reserves.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Modesto",
+        "bedrooms": 1,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "sqft_min": 2200,
+        "price_max": 1770000
+      },
+      "got_structured": {
+        "city": "Modesto",
+        "bedrooms": 1,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "price_max": 1770000,
+        "sqft_min": 2200
+      },
+      "got_catalog": {
+        "amenities": [
+          "parking"
+        ],
+        "amenity_groups": [
+          [
+            "parking"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q052",
+      "family": 11,
+      "query": "Looking for two bed / two bath homes in Santa Rosa, roughly 2,231 sqft and roughly $18020, with a pool-sized yard, remodeled bathrooms, and a repair credit.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Santa Rosa",
+        "bedrooms": 2,
+        "bathrooms": 2,
+        "sqft_min": 1784.8000000000002,
+        "sqft_max": 2677.2,
+        "price_min": 14416.0,
+        "price_max": 21624.0
+      },
+      "got_structured": {
+        "city": "Santa Rosa",
+        "bedrooms": 2,
+        "bathrooms": 2,
+        "price_min": 14416.0,
+        "price_max": 21624.0,
+        "sqft_min": 1784.8000000000002,
+        "sqft_max": 2677.2
+      },
+      "got_catalog": {
+        "amenities": [
+          "yard",
+          "pool"
+        ],
+        "amenity_groups": [
+          [
+            "pool"
+          ],
+          [
+            "yard"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q053",
+      "family": 12,
+      "query": "Show me precisely 3 bd and precisely 2.5 ba in Pomona, 2,262 - 2,612 sf, listed between $1.83M and $2.05M, with RV parking, a downstairs bedroom, and a 2-1 rate buydown.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Pomona",
+        "bedrooms": 3,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "sqft_min": 2262,
+        "sqft_max": 2612,
+        "price_min": 1830000,
+        "price_max": 2050000
+      },
+      "got_structured": {
+        "city": "Pomona",
+        "bedrooms": 3,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "price_min": 1830000,
+        "price_max": 2050000,
+        "sqft_min": 2262,
+        "sqft_max": 2612
+      },
+      "got_catalog": {
+        "amenities": [
+          "rv parking"
+        ],
+        "amenity_groups": [
+          [
+            "rv parking"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q054",
+      "family": 13,
+      "query": "I need <4 bedroom, >3 bathroom house in Alameda with more than 2,293 sqft but not over 2,693 sqft, below $1.86M, with an elevator, a roof deck, and no pending special assessment.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Alameda",
+        "bedrooms_max": 4,
+        "bathrooms_min": 3,
+        "sqft_min": 2293,
+        "sqft_max": 2693,
+        "price_max": 1860000
+      },
+      "got_structured": {
+        "city": "Alameda",
+        "bedrooms_max": 4,
+        "bathrooms_min": 3,
+        "price_max": 1860000,
+        "sqft_min": 2293,
+        "sqft_max": 2693
+      },
+      "got_catalog": {
+        "amenities": [
+          "deck",
+          "elevator"
+        ],
+        "features": [
+          "elevator"
+        ],
+        "amenity_groups": [
+          [
+            "elevator"
+          ],
+          [
+            "deck"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "elevator"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q055",
+      "family": 14,
+      "query": "Search for five bedrooms, 3.5 bathrooms, roughly 2,324–2,774 square feet in Fremont, with a target price of $1.88M give or take $50k, with mature trees, a detached workspace, and no land lease.",
+      "structured_pass": false,
+      "diffs": [
+        "price: expect None got 1880000",
+        "price_min: expect 1830000 got None",
+        "price_max: expect 1930000 got None"
+      ],
+      "expect": {
+        "city": "Fremont",
+        "bedrooms": 5,
+        "bathrooms": 3,
+        "bathroom_half": 1,
+        "sqft_min": 2324,
+        "sqft_max": 2774,
+        "price_min": 1830000,
+        "price_max": 1930000
+      },
+      "got_structured": {
+        "city": "Fremont",
+        "bedrooms": 5,
+        "bathrooms": 3,
+        "bathroom_half": 1,
+        "price": 1880000,
+        "sqft_min": 2324,
+        "sqft_max": 2774
+      },
+      "got_catalog": {}
+    },
+    {
+      "id": "Q056",
+      "family": 15,
+      "query": "Find me 1+ bedrooms, 4+ bathrooms, and greater than 2,355 square feet in Joshua Tree, with a price ceiling of $1.91M, with a wood-burning stove, garden space, and conventional financing.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Joshua Tree",
+        "bedrooms_min": 1,
+        "bathrooms_min": 4,
+        "sqft_min": 2355,
+        "price_max": 1910000
+      },
+      "got_structured": {
+        "city": "Joshua Tree",
+        "bedrooms_min": 1,
+        "bathrooms_min": 4,
+        "price_max": 1910000,
+        "sqft_min": 2355
+      },
+      "got_catalog": {
+        "amenities": [
+          "garden"
+        ],
+        "finance": [
+          "conventional financing"
+        ],
+        "amenity_groups": [
+          [
+            "garden"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "conventional financing"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q057",
+      "family": 16,
+      "query": "Looking for no less than two bedrooms and no less than one bathrooms in La Jolla, upwards of 2,386 sqft, with a private place to swim, shaded outdoor dining, and owned solar.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "La Jolla",
+        "bedrooms_min": 2,
+        "bathrooms_min": 1,
+        "sqft_min": 2386
+      },
+      "got_structured": {
+        "city": "La Jolla",
+        "bedrooms_min": 2,
+        "bathrooms_min": 1,
+        "sqft_min": 2386
+      },
+      "got_catalog": {
+        "amenities": [
+          "outdoor dining"
+        ],
+        "amenity_groups": [
+          [
+            "outdoor dining"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q058",
+      "family": 17,
+      "query": "Show me somewhere in Cupertino with around 3 bdrms, exactly 1.5 bthrms, near 2,417 sq ft, and a purchase budget around $1.96M, with direct beach access, panoramic views, and affordable fire insurance.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Cupertino",
+        "bedrooms_min": 2,
+        "bedrooms_max": 4,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "sqft_min": 1933.6000000000001,
+        "sqft_max": 2900.4,
+        "price_min": 1568000.0,
+        "price_max": 2352000.0
+      },
+      "got_structured": {
+        "city": "Cupertino",
+        "bedrooms_min": 2,
+        "bedrooms_max": 4,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "price_min": 1568000.0,
+        "price_max": 2352000.0,
+        "sqft_min": 1933.6000000000001,
+        "sqft_max": 2900.4
+      },
+      "got_catalog": {
+        "amenities": [
+          "panoramic view"
+        ],
+        "amenity_groups": [
+          [
+            "panoramic view"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q059",
+      "family": 18,
+      "query": "I need at most 4 beds, 2.5 baths, and 2,448 - 2,898 square feet in Oceanside, with prices ranging from $1.99M through $2.24M, with a wine-storage room, a chef’s kitchen, and seller financing.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Oceanside",
+        "bedrooms_max": 4,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "sqft_min": 2448,
+        "sqft_max": 2898,
+        "price_min": 1990000,
+        "price_max": 2240000
+      },
+      "got_structured": {
+        "city": "Oceanside",
+        "bedrooms_max": 4,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "price_min": 1990000,
+        "price_max": 2240000,
+        "sqft_min": 2448,
+        "sqft_max": 2898
+      },
+      "got_catalog": {
+        "features": [
+          "storage"
+        ],
+        "finance": [
+          "seller financing"
+        ],
+        "feature_groups": [
+          [
+            "storage"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "seller financing"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q060",
+      "family": 19,
+      "query": "Search for a 5-bed and 2.5-bath home in Walnut Creek, measuring around 2,479 sf, with a hard spending ceiling of $2.02M, with a cul-de-sac setting, a three-car garage, and no special tax district.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Walnut Creek",
+        "bedrooms": 5,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "sqft_min": 1983.2,
+        "sqft_max": 2974.7999999999997,
+        "price_max": 2020000
+      },
+      "got_structured": {
+        "city": "Walnut Creek",
+        "bedrooms": 5,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "price_max": 2020000,
+        "sqft_min": 1983.2,
+        "sqft_max": 2974.7999999999997
+      },
+      "got_catalog": {
+        "amenities": [
+          "car garage"
+        ],
+        "amenity_groups": [
+          [
+            "car garage"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q061",
+      "family": 0,
+      "query": "Find me a 1 bd 3 ba home in Rancho Cucamonga with >2,510 sqft for no more than $2.04M, with lots of natural light, a fenced backyard, and no HOA.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Rancho Cucamonga",
+        "bedrooms": 1,
+        "bathrooms": 3,
+        "sqft_min": 2510,
+        "price_max": 2040000
+      },
+      "got_structured": {
+        "city": "Rancho Cucamonga",
+        "bedrooms": 1,
+        "bathrooms": 3,
+        "price_max": 2040000,
+        "sqft_min": 2510
+      },
+      "got_catalog": {
+        "amenities": [
+          "backyard"
+        ],
+        "amenity_groups": [
+          [
+            "backyard"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q062",
+      "family": 1,
+      "query": "Looking for two bedrooms and 3.5 bathrooms in South Pasadena, more than 2,541 square feet, <$2.07M, with a covered patio, an updated kitchen, and seller-paid closing costs.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "South Pasadena",
+        "bedrooms": 2,
+        "bathrooms": 3,
+        "bathroom_half": 1,
+        "sqft_min": 2541,
+        "price_max": 2070000
+      },
+      "got_structured": {
+        "city": "South Pasadena",
+        "bedrooms": 2,
+        "bathrooms": 3,
+        "bathroom_half": 1,
+        "price_max": 2070000,
+        "sqft_min": 2541
+      },
+      "got_catalog": {
+        "amenities": [
+          "covered patio"
+        ],
+        "amenity_groups": [
+          [
+            "covered patio"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q063",
+      "family": 2,
+      "query": "Show me a 3 bd / 4 ba property in Newport Beach 2,572-3,022 sq ft, anywhere from $2.1M to $2.32M, with in-unit laundry, secure parking, and HOA dues below $500 a month.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Newport Beach",
+        "bedrooms": 3,
+        "bathrooms": 4,
+        "sqft_min": 2572,
+        "sqft_max": 3022,
+        "price_min": 2100000,
+        "price_max": 2320000
+      },
+      "got_structured": {
+        "city": "Newport Beach",
+        "bedrooms": 3,
+        "bathrooms": 4,
+        "price_min": 2100000,
+        "price_max": 2320000,
+        "sqft_min": 2572,
+        "sqft_max": 3022
+      },
+      "got_catalog": {
+        "amenities": [
+          "secure parking"
+        ],
+        "features": [
+          "laundry"
+        ],
+        "amenity_groups": [
+          [
+            "secure parking"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "laundry"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q064",
+      "family": 3,
+      "query": "I need exactly four bedrooms and exactly 2.5 bathrooms in Pleasanton, exactly 2,603 sqft, at a price of exactly $2.13M, with an open-concept kitchen, a walk-in pantry, and owned solar panels.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Pleasanton",
+        "bedrooms": 4,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "sqft": 2603,
+        "price": 2130000
+      },
+      "got_structured": {
+        "city": "Pleasanton",
+        "bedrooms": 4,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "price": 2130000,
+        "sqft": 2603
+      },
+      "got_catalog": {
+        "amenities": [
+          "solar panel"
+        ],
+        "features": [
+          "solar panel",
+          "pantry"
+        ],
+        "amenity_groups": [
+          [
+            "solar panel"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "pantry"
+          ],
+          [
+            "solar panel"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q065",
+      "family": 4,
+      "query": "Search for about 5 bedrooms and 1.5 baths in Chico, roughly 2,634 square feet, with a budget approximately $2.15M, with a quiet yard suitable for dogs, a fireplace, and a home-office nook.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Chico",
+        "bedrooms_min": 4,
+        "bedrooms_max": 6,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "sqft_min": 2107.2000000000003,
+        "sqft_max": 3160.7999999999997,
+        "price_min": 1720000.0,
+        "price_max": 2580000.0
+      },
+      "got_structured": {
+        "city": "Chico",
+        "bedrooms_min": 4,
+        "bedrooms_max": 6,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "price_min": 1720000.0,
+        "price_max": 2580000.0,
+        "sqft_min": 2107.2000000000003,
+        "sqft_max": 3160.7999999999997
+      },
+      "got_catalog": {
+        "amenities": [
+          "yard",
+          "dog"
+        ],
+        "features": [
+          "fireplace"
+        ],
+        "amenity_groups": [
+          [
+            "yard"
+          ],
+          [
+            "dog"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "fireplace"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q066",
+      "family": 5,
+      "query": "Find me at least one br and no fewer than two ba in Marina del Rey, over 2,665 sf but below 3,065 sf, maximum $2.18M, with hardwood floors, built-in storage, and completed seismic retrofitting.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Marina Del Rey",
+        "bedrooms_min": 1,
+        "bathrooms_min": 2,
+        "sqft_min": 2665,
+        "sqft_max": 3065,
+        "price_max": 2180000
+      },
+      "got_structured": {
+        "city": "Marina Del Rey",
+        "bedrooms_min": 1,
+        "bathrooms_min": 2,
+        "price_max": 2180000,
+        "sqft_min": 2665,
+        "sqft_max": 3065
+      },
+      "got_catalog": {
+        "amenities": [
+          "marina"
+        ],
+        "features": [
+          "hardwood floor",
+          "storage"
+        ],
+        "amenity_groups": [
+          [
+            "marina"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "hardwood floor"
+          ],
+          [
+            "storage"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q067",
+      "family": 6,
+      "query": "Looking for 2 to 3 bedrooms and 2.5–3.5 bathrooms in Elk Grove, 2,696 to 3,146 square feet, in the $2.21M–$2.41M range, with a guest suite, a two-car garage, and an assumable mortgage.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Elk Grove",
+        "bedrooms_min": 2,
+        "bedrooms_max": 3,
+        "bathrooms_min": 2,
+        "bathrooms_max": 3,
+        "sqft_min": 2696,
+        "sqft_max": 3146,
+        "price_min": 2210000,
+        "price_max": 2410000
+      },
+      "got_structured": {
+        "city": "Elk Grove",
+        "bedrooms_min": 2,
+        "bedrooms_max": 3,
+        "bathrooms_min": 2,
+        "bathrooms_max": 3,
+        "price_min": 2210000,
+        "price_max": 2410000,
+        "sqft_min": 2696,
+        "sqft_max": 3146
+      },
+      "got_catalog": {
+        "amenities": [
+          "car garage"
+        ],
+        "features": [
+          "guest suite",
+          "range"
+        ],
+        "finance": [
+          "assumable mortgage"
+        ],
+        "amenity_groups": [
+          [
+            "car garage"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "range"
+          ],
+          [
+            "guest suite"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "assumable mortgage"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q068",
+      "family": 7,
+      "query": "Show me 3/4 bds and 2.5 bths in Arcadia, between 2,727 and 3,227 square feet, for $2.23M to $2.46M, with central air, low-maintenance landscaping, and FHA eligibility.",
+      "structured_pass": false,
+      "diffs": [
+        "bedrooms: expect None got 4",
+        "bedrooms_min: expect 3 got None",
+        "bedrooms_max: expect 4 got None"
+      ],
+      "expect": {
+        "city": "Arcadia",
+        "bedrooms_min": 3,
+        "bedrooms_max": 4,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "sqft_min": 2727,
+        "sqft_max": 3227,
+        "price_min": 2230000,
+        "price_max": 2460000
+      },
+      "got_structured": {
+        "city": "Arcadia",
+        "bedrooms": 4,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "price_min": 2230000,
+        "price_max": 2460000,
+        "sqft_min": 2727,
+        "sqft_max": 3227
+      },
+      "got_catalog": {
+        "amenities": [
+          "central air"
+        ],
+        "features": [
+          "central air"
+        ],
+        "finance": [
+          "fha"
+        ],
+        "amenity_groups": [
+          [
+            "central air"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "central air"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "fha"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q069",
+      "family": 8,
+      "query": "I need a four-bed, 3.5-bath property in Daly City with 2,758+ sq ft and a maximum price of $2.26M, with an ADU, EV charging, and no Mello-Roos.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Daly City",
+        "bedrooms": 4,
+        "bathrooms": 3,
+        "bathroom_half": 1,
+        "sqft_min": 2758,
+        "price_max": 2260000
+      },
+      "got_structured": {
+        "city": "Daly City",
+        "bedrooms": 4,
+        "bathrooms": 3,
+        "bathroom_half": 1,
+        "price_max": 2260000,
+        "sqft_min": 2758
+      },
+      "got_catalog": {
+        "amenities": [
+          "ev charging"
+        ],
+        "amenity_groups": [
+          [
+            "ev charging"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q070",
+      "family": 9,
+      "query": "Search for 5 beds and 4 baths in Escondido, ~2.79k sqft, costing around $2.29M, with ocean or mountain views, a balcony, and a fixed-rate mortgage option.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Escondido",
+        "bedrooms": 5,
+        "bathrooms": 4,
+        "sqft_min": 2232.0,
+        "sqft_max": 3348.0,
+        "price_min": 1832000.0,
+        "price_max": 2748000.0
+      },
+      "got_structured": {
+        "city": "Escondido",
+        "bedrooms": 5,
+        "bathrooms": 4,
+        "price_min": 1832000.0,
+        "price_max": 2748000.0,
+        "sqft_min": 2232.0,
+        "sqft_max": 3348.0
+      },
+      "got_catalog": {
+        "amenities": [
+          "mountain view"
+        ],
+        "features": [
+          "balcony"
+        ],
+        "amenity_groups": [
+          [
+            "mountain view"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "balcony"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q071",
+      "family": 10,
+      "query": "Find me a 1 BR / 1 BA place in Manhattan Beach, larger than 2,820 sq. ft. and cheaper than $2.31M, with deeded parking, pet-friendly rules, and healthy HOA reserves.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Manhattan Beach",
+        "bedrooms": 1,
+        "bathrooms": 1,
+        "sqft_min": 2820,
+        "price_max": 2310000
+      },
+      "got_structured": {
+        "city": "Manhattan Beach",
+        "bedrooms": 1,
+        "bathrooms": 1,
+        "price_max": 2310000,
+        "sqft_min": 2820
+      },
+      "got_catalog": {
+        "amenities": [
+          "parking"
+        ],
+        "amenity_groups": [
+          [
+            "parking"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q072",
+      "family": 11,
+      "query": "Looking for two bed / 1.5 bath homes in Vacaville, ideally at most 2,851 sqft and ~23420 dollar, with a pool-sized yard, remodeled bathrooms, and a repair credit.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Vacaville",
+        "bedrooms": 2,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "sqft_max": 2851,
+        "price_min": 18736.0,
+        "price_max": 28104.0
+      },
+      "got_structured": {
+        "city": "Vacaville",
+        "bedrooms": 2,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "price_min": 18736.0,
+        "price_max": 28104.0,
+        "sqft_max": 2851
+      },
+      "got_catalog": {
+        "amenities": [
+          "yard",
+          "pool"
+        ],
+        "amenity_groups": [
+          [
+            "pool"
+          ],
+          [
+            "yard"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q073",
+      "family": 12,
+      "query": "Show me precisely 3 bd and precisely 2 ba in San Rafael, from 2,882 to 3,232 sf, listed $2.37M to $2.59M, with RV parking, a downstairs bedroom, and a 2-1 rate buydown.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "San Rafael",
+        "bedrooms": 3,
+        "bathrooms": 2,
+        "sqft_min": 2882,
+        "sqft_max": 3232,
+        "price_min": 2370000,
+        "price_max": 2590000
+      },
+      "got_structured": {
+        "city": "San Rafael",
+        "bedrooms": 3,
+        "bathrooms": 2,
+        "price_min": 2370000,
+        "price_max": 2590000,
+        "sqft_min": 2882,
+        "sqft_max": 3232
+      },
+      "got_catalog": {
+        "amenities": [
+          "rv parking"
+        ],
+        "amenity_groups": [
+          [
+            "rv parking"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q074",
+      "family": 13,
+      "query": "I need a 4-bedroom, at least 2.5 bathroom house in Redlands with more than 2,913 sqft but not over 3,313 sqft, below $2.4M, with an elevator, a roof deck, and no pending special assessment.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Redlands",
+        "bedrooms": 4,
+        "bathrooms_min": 2,
+        "sqft_min": 2913,
+        "sqft_max": 3313,
+        "price_max": 2400000
+      },
+      "got_structured": {
+        "city": "Redlands",
+        "bedrooms": 4,
+        "bathrooms_min": 2,
+        "price_max": 2400000,
+        "sqft_min": 2913,
+        "sqft_max": 3313
+      },
+      "got_catalog": {
+        "amenities": [
+          "deck",
+          "elevator"
+        ],
+        "features": [
+          "elevator"
+        ],
+        "amenity_groups": [
+          [
+            "elevator"
+          ],
+          [
+            "deck"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "elevator"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q075",
+      "family": 14,
+      "query": "Search for five bedrooms, three bathrooms, approximately 2,944 to 3,394 square feet in Mission Viejo, with a target price of $2.42M, with mature trees, a detached workspace, and no land lease.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Mission Viejo",
+        "bedrooms": 5,
+        "bathrooms": 3,
+        "sqft_min": 2944,
+        "sqft_max": 3394,
+        "price": 2420000
+      },
+      "got_structured": {
+        "city": "Mission Viejo",
+        "bedrooms": 5,
+        "bathrooms": 3,
+        "price": 2420000,
+        "sqft_min": 2944,
+        "sqft_max": 3394
+      },
+      "got_catalog": {}
+    },
+    {
+      "id": "Q076",
+      "family": 15,
+      "query": "Find me 1+ bedrooms, 3.5+ bathrooms, and larger than 2,975 square feet in Palm Desert, with a price maximum of $2.45M, with a wood-burning stove, garden space, and conventional financing.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Palm Desert",
+        "bedrooms_min": 1,
+        "bathrooms_min": 3,
+        "sqft_min": 2975,
+        "price_max": 2450000
+      },
+      "got_structured": {
+        "city": "Palm Desert",
+        "bedrooms_min": 1,
+        "bathrooms_min": 3,
+        "price_max": 2450000,
+        "sqft_min": 2975
+      },
+      "got_catalog": {
+        "amenities": [
+          "garden"
+        ],
+        "finance": [
+          "conventional financing"
+        ],
+        "amenity_groups": [
+          [
+            "garden"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "conventional financing"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q077",
+      "family": 16,
+      "query": "Looking for no less than two bedrooms and no less than four bathrooms in San Ramon, at most of 3,006 sqft, costing no more than $2.48M, with a private place to swim, shaded outdoor dining, and owned solar.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "San Ramon",
+        "bedrooms_min": 2,
+        "bathrooms_min": 4,
+        "sqft_max": 3006,
+        "price_max": 2480000
+      },
+      "got_structured": {
+        "city": "San Ramon",
+        "bedrooms_min": 2,
+        "bathrooms_min": 4,
+        "price_max": 2480000,
+        "sqft_max": 3006
+      },
+      "got_catalog": {
+        "amenities": [
+          "outdoor dining"
+        ],
+        "amenity_groups": [
+          [
+            "outdoor dining"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q078",
+      "family": 17,
+      "query": "Show me somewhere in Santa Clara with no greater than 3 bdrms, 1.5 bthrms, ~3,037 sq ft, and a purchase budget approximately $2.5M, with direct beach access, panoramic views, and affordable fire insurance.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Santa Clara",
+        "bedrooms_max": 3,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "sqft_min": 2429.6,
+        "sqft_max": 3644.4,
+        "price_min": 2000000.0,
+        "price_max": 3000000.0
+      },
+      "got_structured": {
+        "city": "Santa Clara",
+        "bedrooms_max": 3,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "price_min": 2000000.0,
+        "price_max": 3000000.0,
+        "sqft_min": 2429.6,
+        "sqft_max": 3644.4
+      },
+      "got_catalog": {
+        "amenities": [
+          "panoramic view"
+        ],
+        "amenity_groups": [
+          [
+            "panoramic view"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q079",
+      "family": 18,
+      "query": "I need 4 beds, 1.5 baths, and 3,068 to 3,518 square feet in Simi Valley, with prices ranging from $2.53M through $2.78M, with a wine-storage room, a chef’s kitchen, and seller financing.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Simi Valley",
+        "bedrooms": 4,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "sqft_min": 3068,
+        "sqft_max": 3518,
+        "price_min": 2530000,
+        "price_max": 2780000
+      },
+      "got_structured": {
+        "city": "Simi Valley",
+        "bedrooms": 4,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "price_min": 2530000,
+        "price_max": 2780000,
+        "sqft_min": 3068,
+        "sqft_max": 3518
+      },
+      "got_catalog": {
+        "features": [
+          "storage"
+        ],
+        "finance": [
+          "seller financing"
+        ],
+        "feature_groups": [
+          [
+            "storage"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "seller financing"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q080",
+      "family": 19,
+      "query": "Search for a 5-bed and 2-bath home in Half Moon Bay, measuring about 3,099 sf, with a hard spending limit of $2.56M, with a cul-de-sac setting, a three-car garage, and no special tax district.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Half Moon Bay",
+        "bedrooms": 5,
+        "bathrooms": 2,
+        "sqft_min": 2479.2000000000003,
+        "sqft_max": 3718.7999999999997,
+        "price_max": 2560000
+      },
+      "got_structured": {
+        "city": "Half Moon Bay",
+        "bedrooms": 5,
+        "bathrooms": 2,
+        "price_max": 2560000,
+        "sqft_min": 2479.2000000000003,
+        "sqft_max": 3718.7999999999997
+      },
+      "got_catalog": {
+        "amenities": [
+          "car garage"
+        ],
+        "amenity_groups": [
+          [
+            "car garage"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q081",
+      "family": 0,
+      "query": "Find me a 1-bedroom, 2.5-bathroom home in Livermore, somewhere above 3,130 sqft for cheaper than $2.58M, with lots of natural light, a fenced backyard, and no HOA.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Livermore",
+        "bedrooms": 1,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "sqft_min": 3130,
+        "price_max": 2580000
+      },
+      "got_structured": {
+        "city": "Livermore",
+        "bedrooms": 1,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "price_max": 2580000,
+        "sqft_min": 3130
+      },
+      "got_catalog": {
+        "amenities": [
+          "backyard"
+        ],
+        "amenity_groups": [
+          [
+            "backyard"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q082",
+      "family": 1,
+      "query": "Looking for two bedrooms and three bathrooms in Big Bear Lake, should be larger than 3,161 square feet, but not over $2.61M, with a covered patio, an updated kitchen, and seller-paid closing costs.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Big Bear Lake",
+        "bedrooms": 2,
+        "bathrooms": 3,
+        "sqft_min": 3161,
+        "price_max": 2610000
+      },
+      "got_structured": {
+        "city": "Big Bear Lake",
+        "bedrooms": 2,
+        "bathrooms": 3,
+        "price_max": 2610000,
+        "sqft_min": 3161
+      },
+      "got_catalog": {
+        "amenities": [
+          "covered patio"
+        ],
+        "amenity_groups": [
+          [
+            "covered patio"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q083",
+      "family": 2,
+      "query": "Show me a 3 bd / 3.5 ba property in San Leandro between 3,192 and 3,642 sq ft, priced from $2.64M to $2.86M, with in-unit laundry, secure parking, and HOA dues below $500 a month.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "San Leandro",
+        "bedrooms": 3,
+        "bathrooms": 3,
+        "bathroom_half": 1,
+        "sqft_min": 3192,
+        "sqft_max": 3642,
+        "price_min": 2640000,
+        "price_max": 2860000
+      },
+      "got_structured": {
+        "city": "San Leandro",
+        "bedrooms": 3,
+        "bathrooms": 3,
+        "bathroom_half": 1,
+        "price_min": 2640000,
+        "price_max": 2860000,
+        "sqft_min": 3192,
+        "sqft_max": 3642
+      },
+      "got_catalog": {
+        "amenities": [
+          "secure parking"
+        ],
+        "features": [
+          "laundry"
+        ],
+        "amenity_groups": [
+          [
+            "secure parking"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "laundry"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q084",
+      "family": 3,
+      "query": "I need exactly four bedrooms and exactly four bathrooms in Camarillo, precisely 3,223 sqft, at a price of exactly $2.67M, with an open-concept kitchen, a walk-in pantry, and owned solar panels.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Camarillo",
+        "bedrooms": 4,
+        "bathrooms": 4,
+        "sqft": 3223,
+        "price": 2670000
+      },
+      "got_structured": {
+        "city": "Camarillo",
+        "bedrooms": 4,
+        "bathrooms": 4,
+        "price": 2670000,
+        "sqft": 3223
+      },
+      "got_catalog": {
+        "amenities": [
+          "solar panel"
+        ],
+        "features": [
+          "solar panel",
+          "pantry"
+        ],
+        "amenity_groups": [
+          [
+            "solar panel"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "pantry"
+          ],
+          [
+            "solar panel"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q085",
+      "family": 4,
+      "query": "Search for about 5 bedrooms and roughly 1 baths in Corona, ~3,254 square feet, with a budget around $2.69M, with a quiet yard suitable for dogs, a fireplace, and a home-office nook.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Corona",
+        "bedrooms_min": 4,
+        "bedrooms_max": 6,
+        "bathrooms_min": 1,
+        "bathrooms_max": 2,
+        "sqft_min": 2603.2000000000003,
+        "sqft_max": 3904.7999999999997,
+        "price_min": 2152000.0,
+        "price_max": 3228000.0
+      },
+      "got_structured": {
+        "city": "Corona",
+        "bedrooms_min": 4,
+        "bedrooms_max": 6,
+        "bathrooms_min": 1,
+        "bathrooms_max": 2,
+        "price_min": 2152000.0,
+        "price_max": 3228000.0,
+        "sqft_min": 2603.2000000000003,
+        "sqft_max": 3904.7999999999997
+      },
+      "got_catalog": {
+        "amenities": [
+          "yard",
+          "dog"
+        ],
+        "features": [
+          "fireplace"
+        ],
+        "amenity_groups": [
+          [
+            "yard"
+          ],
+          [
+            "dog"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "fireplace"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q086",
+      "family": 5,
+      "query": "Find me at least one br and no fewer than 1.5 ba in Sausalito, >3,285 sf but <3,685 sf, capped at $2.72M, with hardwood floors, built-in storage, and completed seismic retrofitting.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Sausalito",
+        "bedrooms_min": 1,
+        "bathrooms_min": 1,
+        "sqft_min": 3285,
+        "sqft_max": 3685,
+        "price_max": 2720000
+      },
+      "got_structured": {
+        "city": "Sausalito",
+        "bedrooms_min": 1,
+        "bathrooms_min": 1,
+        "price_max": 2720000,
+        "sqft_min": 3285,
+        "sqft_max": 3685
+      },
+      "got_catalog": {
+        "features": [
+          "hardwood floor",
+          "storage"
+        ],
+        "feature_groups": [
+          [
+            "hardwood floor"
+          ],
+          [
+            "storage"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q087",
+      "family": 6,
+      "query": "Looking for 2–3 bedrooms and 2–3 bathrooms in Stockton, 3,316–3,766 sqft, in the $2.75M–$2.95M range, with a guest suite, a two-car garage, and an assumable mortgage.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Stockton",
+        "bedrooms_min": 2,
+        "bedrooms_max": 3,
+        "bathrooms_min": 2,
+        "bathrooms_max": 3,
+        "sqft_min": 3316,
+        "sqft_max": 3766,
+        "price_min": 2750000,
+        "price_max": 2950000
+      },
+      "got_structured": {
+        "city": "Stockton",
+        "bedrooms_min": 2,
+        "bedrooms_max": 3,
+        "bathrooms_min": 2,
+        "bathrooms_max": 3,
+        "price_min": 2750000,
+        "price_max": 2950000,
+        "sqft_min": 3316,
+        "sqft_max": 3766
+      },
+      "got_catalog": {
+        "amenities": [
+          "car garage"
+        ],
+        "features": [
+          "guest suite",
+          "range"
+        ],
+        "finance": [
+          "assumable mortgage"
+        ],
+        "amenity_groups": [
+          [
+            "car garage"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "range"
+          ],
+          [
+            "guest suite"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "assumable mortgage"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q088",
+      "family": 7,
+      "query": "Show me 4 to 5 bedrooms and 2.5 baths in Danville, between 3,347 and 3,847 square feet, for $2.77M to $3M, with central air, low-maintenance landscaping, and FHA eligibility.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Danville",
+        "bedrooms_min": 4,
+        "bedrooms_max": 5,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "sqft_min": 3347,
+        "sqft_max": 3847,
+        "price_min": 2770000,
+        "price_max": 3000000
+      },
+      "got_structured": {
+        "city": "Danville",
+        "bedrooms_min": 4,
+        "bedrooms_max": 5,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "price_min": 2770000,
+        "price_max": 3000000,
+        "sqft_min": 3347,
+        "sqft_max": 3847
+      },
+      "got_catalog": {
+        "amenities": [
+          "central air"
+        ],
+        "features": [
+          "central air"
+        ],
+        "finance": [
+          "fha"
+        ],
+        "amenity_groups": [
+          [
+            "central air"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "central air"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "fha"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q089",
+      "family": 8,
+      "query": "I need a four-bed, three-bath property in Petaluma with 3,378+ sq ft and less than $2.8M, with an ADU, EV charging, and no Mello-Roos.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Petaluma",
+        "bedrooms": 4,
+        "bathrooms": 3,
+        "sqft_min": 3378,
+        "price_max": 2800000
+      },
+      "got_structured": {
+        "city": "Petaluma",
+        "bedrooms": 4,
+        "bathrooms": 3,
+        "price_max": 2800000,
+        "sqft_min": 3378
+      },
+      "got_catalog": {
+        "amenities": [
+          "ev charging"
+        ],
+        "amenity_groups": [
+          [
+            "ev charging"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q090",
+      "family": 9,
+      "query": "Search for 5 bds and 3.5 bths in Goleta, approximately 3.41k sqft, costing ~$2.83M, with ocean or mountain views, a balcony, and a fixed-rate mortgage option.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Goleta",
+        "bedrooms": 5,
+        "bathrooms": 3,
+        "bathroom_half": 1,
+        "sqft_min": 2728.0,
+        "sqft_max": 4092.0,
+        "price_min": 2264000.0,
+        "price_max": 3396000.0
+      },
+      "got_structured": {
+        "city": "Goleta",
+        "bedrooms": 5,
+        "bathrooms": 3,
+        "bathroom_half": 1,
+        "price_min": 2264000.0,
+        "price_max": 3396000.0,
+        "sqft_min": 2728.0,
+        "sqft_max": 4092.0
+      },
+      "got_catalog": {
+        "amenities": [
+          "mountain view"
+        ],
+        "features": [
+          "balcony"
+        ],
+        "amenity_groups": [
+          [
+            "mountain view"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "balcony"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q091",
+      "family": 10,
+      "query": "Find me a 1 BR / 4 BA place in Visalia, area >3,440 sq. ft. and not pricier than $2.85M, with deeded parking, pet-friendly rules, and healthy HOA reserves.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Visalia",
+        "bedrooms": 1,
+        "bathrooms": 4,
+        "sqft_min": 3440,
+        "price_max": 2850000
+      },
+      "got_structured": {
+        "city": "Visalia",
+        "bedrooms": 1,
+        "bathrooms": 4,
+        "price_max": 2850000,
+        "sqft_min": 3440
+      },
+      "got_catalog": {
+        "amenities": [
+          "parking"
+        ],
+        "amenity_groups": [
+          [
+            "parking"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q092",
+      "family": 11,
+      "query": "Looking for two bed / one bath homes in Los Gatos, ideally 3,471-ish sqft and roughly 2882 grand, with a pool-sized yard, remodeled bathrooms, and a repair credit.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Los Gatos",
+        "bedrooms": 2,
+        "bathrooms": 1,
+        "sqft_min": 2776.8,
+        "sqft_max": 4165.2,
+        "price_min": 2305600.0,
+        "price_max": 3458400.0
+      },
+      "got_structured": {
+        "city": "Los Gatos",
+        "bedrooms": 2,
+        "bathrooms": 1,
+        "price_min": 2305600.0,
+        "price_max": 3458400.0,
+        "sqft_min": 2776.8,
+        "sqft_max": 4165.2
+      },
+      "got_catalog": {
+        "amenities": [
+          "yard",
+          "pool"
+        ],
+        "amenity_groups": [
+          [
+            "pool"
+          ],
+          [
+            "yard"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q093",
+      "family": 12,
+      "query": "Show me precisely 3 bd and precisely 1.5 ba in La Mesa, range from 3,502 to 3,852 sf, listed between $2.91M and $3.13M, with RV parking, a downstairs bedroom, and a 2-1 rate buydown.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "La Mesa",
+        "bedrooms": 3,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "sqft_min": 3502,
+        "sqft_max": 3852,
+        "price_min": 2910000,
+        "price_max": 3130000
+      },
+      "got_structured": {
+        "city": "La Mesa",
+        "bedrooms": 3,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "price_min": 2910000,
+        "price_max": 3130000,
+        "sqft_min": 3502,
+        "sqft_max": 3852
+      },
+      "got_catalog": {
+        "amenities": [
+          "rv parking"
+        ],
+        "features": [
+          "range"
+        ],
+        "amenity_groups": [
+          [
+            "rv parking"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "range"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q094",
+      "family": 13,
+      "query": "I need at most 4-bedroom, at least 2 bathroom house in Fullerton with more than 3,533 sqft but not over 3,933 sqft, cheaper than $2.94M, with an elevator, a roof deck, and no pending special assessment.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Fullerton",
+        "bedrooms_max": 4,
+        "bathrooms_min": 2,
+        "sqft_min": 3533,
+        "sqft_max": 3933,
+        "price_max": 2940000
+      },
+      "got_structured": {
+        "city": "Fullerton",
+        "bedrooms_max": 4,
+        "bathrooms_min": 2,
+        "price_max": 2940000,
+        "sqft_min": 3533,
+        "sqft_max": 3933
+      },
+      "got_catalog": {
+        "amenities": [
+          "deck",
+          "elevator"
+        ],
+        "features": [
+          "elevator"
+        ],
+        "amenity_groups": [
+          [
+            "elevator"
+          ],
+          [
+            "deck"
+          ]
+        ],
+        "feature_groups": [
+          [
+            "elevator"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q095",
+      "family": 14,
+      "query": "Search for five bedrooms, 2.5 bathrooms, roughly 3,564 square feet in Roseville, with a target price of around $2.96M, with mature trees, a detached workspace, and no land lease.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Roseville",
+        "bedrooms": 5,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "sqft_min": 2851.2000000000003,
+        "sqft_max": 4276.8,
+        "price_min": 2368000.0,
+        "price_max": 3552000.0
+      },
+      "got_structured": {
+        "city": "Roseville",
+        "bedrooms": 5,
+        "bathrooms": 2,
+        "bathroom_half": 1,
+        "price_min": 2368000.0,
+        "price_max": 3552000.0,
+        "sqft_min": 2851.2000000000003,
+        "sqft_max": 4276.8
+      },
+      "got_catalog": {}
+    },
+    {
+      "id": "Q096",
+      "family": 15,
+      "query": "Find me 1+ bedrooms, 3+ bathrooms, and must be larger than 3,595 square feet in Vallejo, with a price below $2.99M, with a wood-burning stove, garden space, and conventional financing.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Vallejo",
+        "bedrooms_min": 1,
+        "bathrooms_min": 3,
+        "sqft_min": 3595,
+        "price_max": 2990000
+      },
+      "got_structured": {
+        "city": "Vallejo",
+        "bedrooms_min": 1,
+        "bathrooms_min": 3,
+        "price_max": 2990000,
+        "sqft_min": 3595
+      },
+      "got_catalog": {
+        "amenities": [
+          "garden"
+        ],
+        "finance": [
+          "conventional financing"
+        ],
+        "amenity_groups": [
+          [
+            "garden"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "conventional financing"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q097",
+      "family": 16,
+      "query": "Looking for no less than two bedrooms and no less than 3.5 bathrooms in Yorba Linda, maximum 3,626 sqft, costing under $3.02M, with a private place to swim, shaded outdoor dining, and owned solar.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Yorba Linda",
+        "bedrooms_min": 2,
+        "bathrooms_min": 3,
+        "sqft_max": 3626,
+        "price_max": 3020000
+      },
+      "got_structured": {
+        "city": "Yorba Linda",
+        "bedrooms_min": 2,
+        "bathrooms_min": 3,
+        "price_max": 3020000,
+        "sqft_max": 3626
+      },
+      "got_catalog": {
+        "amenities": [
+          "outdoor dining"
+        ],
+        "amenity_groups": [
+          [
+            "outdoor dining"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q098",
+      "family": 17,
+      "query": "Show me somewhere in Mountain View with at least 3 bdrms, less than 4 bthrms, ~3,657 sq ft, and a purchase budget below $3.04M, with direct beach access, panoramic views, and affordable fire insurance.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Mountain View",
+        "bedrooms_min": 3,
+        "bathrooms_max": 4,
+        "sqft_min": 2925.6000000000004,
+        "sqft_max": 4388.4,
+        "price_max": 3040000
+      },
+      "got_structured": {
+        "city": "Mountain View",
+        "bedrooms_min": 3,
+        "bathrooms_max": 4,
+        "price_max": 3040000,
+        "sqft_min": 2925.6000000000004,
+        "sqft_max": 4388.4
+      },
+      "got_catalog": {
+        "amenities": [
+          "panoramic view",
+          "mountain view"
+        ],
+        "amenity_groups": [
+          [
+            "mountain view"
+          ],
+          [
+            "panoramic view"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q099",
+      "family": 18,
+      "query": "I need 4 beds, 1 baths, and between 3,688 and 4,138 square feet in Orange, with prices ranging from $3.07M to $3.32M, with a wine-storage room, a chef’s kitchen, and seller financing.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Orange",
+        "bedrooms": 4,
+        "bathrooms": 1,
+        "sqft_min": 3688,
+        "sqft_max": 4138,
+        "price_min": 3070000,
+        "price_max": 3320000
+      },
+      "got_structured": {
+        "city": "Orange",
+        "bedrooms": 4,
+        "bathrooms": 1,
+        "price_min": 3070000,
+        "price_max": 3320000,
+        "sqft_min": 3688,
+        "sqft_max": 4138
+      },
+      "got_catalog": {
+        "features": [
+          "storage"
+        ],
+        "finance": [
+          "seller financing"
+        ],
+        "feature_groups": [
+          [
+            "storage"
+          ]
+        ],
+        "finance_groups": [
+          [
+            "seller financing"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "Q100",
+      "family": 19,
+      "query": "Search for a 5-bed and 1.5-bath home in Pismo Beach, measuring ~3,719 sf, with less than $3.1M, with a cul-de-sac setting, a three-car garage, and no special tax district.",
+      "structured_pass": true,
+      "diffs": [],
+      "expect": {
+        "city": "Pismo Beach",
+        "bedrooms": 5,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "sqft_min": 2975.2000000000003,
+        "sqft_max": 4462.8,
+        "price_max": 3100000
+      },
+      "got_structured": {
+        "city": "Pismo Beach",
+        "bedrooms": 5,
+        "bathrooms": 1,
+        "bathroom_half": 1,
+        "price_max": 3100000,
+        "sqft_min": 2975.2000000000003,
+        "sqft_max": 4462.8
+      },
+      "got_catalog": {
+        "amenities": [
+          "car garage"
+        ],
+        "amenity_groups": [
+          [
+            "car garage"
+          ]
+        ]
+      }
+    }
+  ]
+}

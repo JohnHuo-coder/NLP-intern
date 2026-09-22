@@ -22,36 +22,32 @@ It parses user queries into structured filters, validates them, and retrieves li
 - rank-bm25
 - pytest
 
-## Project Structure
+## Project Structure (Runtime)
 
 ```text
 .
 ├── main.py                         # FastAPI app entrypoint
 ├── requirements.txt
+├── Dockerfile                      # Runtime image for ECS Fargate
 ├── docker-compose.yml
-├── scripts/
-│   ├── semantic_searcher.py        # Embedding/BM25/FAISS hybrid search
-│   ├── query_parser.py             # NL query -> structured filters
-│   ├── schema_validator.py         # Filter validation
-│   ├── entity_extractor.py
-│   ├── text_cleaning.py
-│   ├── prepare_property_detail.py
-│   ├── categorize_taxonomy.py
-│   ├── generators/
-│   │   ├── user_query_generator.py
-│   │   └── generate_synthetic_remarks.py
-│   └── builders/
-│       ├── house_features_builder.py
-│       ├── amenities_builder.py
-│       ├── finance_opt_builder.py
-│       ├── taxonomy_builder.py
-│       └── build_from_text_col.py
-├── tests/
-│   ├── test_setup.py
-│   ├── test_week1.py
-│   └── test_week2.py
-└── notebooks/
+├── infra/cdk/                      # RDS + optional Fargate CDK stacks
+├── scripts/                        # Runtime parser / search
+├── evaluation/                     # Offline eval (not on the API path)
+│   ├── queries/                    # Held-out nDCG queries
+│   ├── results/                    # HTML/JSON reports
+│   ├── compare_llm_vs_raw_semantic.py
+│   ├── eval_llm_vs_raw_ndcg.py
+│   └── check_ndcg_queries.py
+├── docs/
+│   ├── runtime_scope.md
+│   └── offline_assets_migration.md
+└── data/processed/
 ```
+
+Offline ETL / notebook assets are tracked separately from runtime scope. See:
+
+- `docs/runtime_scope.md`
+- `docs/offline_assets_migration.md`
 
 ## Prerequisites
 
@@ -72,13 +68,7 @@ It parses user queries into structured filters, validates them, and retrieves li
 pip install -r requirements.txt
 ```
 
-3. Install additional packages used by the current code (if not already installed):
-
-```bash
-pip install fastapi uvicorn sentence-transformers rank-bm25 faiss-cpu
-```
-
-4. Start MySQL with Docker (optional; skip if you use Railway MySQL):
+3. Start MySQL with Docker (optional; skip if you use Railway MySQL):
 
 ```bash
 docker-compose up -d
@@ -114,6 +104,37 @@ MYSQL_SSL_DISABLED=true
 
 If your provider requires SSL, set `MYSQL_SSL_DISABLED=false` and provide the extra SSL parameters supported by `mysql-connector-python`.
 
+## Load `data/processed` from S3 (Railway)
+
+The backend checks `data/processed` at startup. If required files are missing, it downloads them from S3 before creating `QueryParser` and `SemanticSearcher`.
+
+Set these environment variables in Railway:
+
+```bash
+S3_BUCKET=your-bucket-name
+S3_PREFIX=data/processed
+AWS_REGION=us-east-1
+```
+
+Optional:
+
+```bash
+S3_PREFETCH_OPTIONAL=true
+```
+
+Required files expected in the S3 prefix:
+
+- `amenities.json`
+- `features.json`
+- `finance.json`
+- `distinct_cities.csv`
+- `stats.json`
+- `all_listings_cleaned.csv`
+
+Optional (recommended):
+
+- `index.faiss` (to avoid rebuilding index on cold start)
+
 ## Run the API
 
 From the project root:
@@ -122,9 +143,10 @@ From the project root:
 uvicorn main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Health check:
+Health checks:
 
 - `GET /health`
+- `GET /ready`
 
 Core endpoints:
 
@@ -132,11 +154,13 @@ Core endpoints:
 
 ```json
 {
-  "searchQuery": "Find me a 3 bedroom home in Irvine under $900000 with a pool"
+  "searchQuery": "Find me a 3 bedroom home in Irvine under $900000 with a pool",
+  "limit": 20,
+  "offset": 0
 }
 ```
 
-- `POST /api/filter` with a JSON filter object (UI-style structured filters)
+- `POST /api/filter` with a JSON filter object (or `{ "filters": {...}, "limit": 20, "offset": 0 }`)
 - `POST /api/detail` with body:
 
 ```json
@@ -146,6 +170,8 @@ Core endpoints:
 ```
 
 ## Run Tests
+
+Install test tooling locally if needed (`pip install pytest`), then:
 
 ```bash
 pytest -q
@@ -157,8 +183,16 @@ You can also run setup checks:
 python tests/test_setup.py
 ```
 
+## Deploy on AWS (ECS Fargate)
+
+See `infra/cdk/README.md` for RDS + Fargate CDK deploy. Local image smoke test:
+
+```bash
+docker build -t real-estate-api .
+```
+
 ## Notes
 
-- `main.py` currently creates a global MySQL connection pool and a global `SemanticSearcher` instance at startup.
+- Runtime dependencies include `langchain-core` and `langchain-text-splitters` for chunk splitting.
 - The semantic index file is expected at `data/processed/index.faiss`; it is created automatically if missing.
-- The API CORS config currently allows local frontend origins on port `3000`.
+- CORS origins are controlled by `CORS_ALLOWED_ORIGINS` (comma-separated).

@@ -44,7 +44,7 @@ class SchemaValidator:
     
     def validate_negated(self):
         # an amenity or feature can't be in both negated and wanted
-        for key in ["amenities", "features"]:
+        for key in ["amenities", "features", "finance"]:
             negated_key = f"negated_{key}"
             negated_set = set(self.filters.get(negated_key, []))
             for i in self.filters.get(key, []):
@@ -60,6 +60,7 @@ class SchemaValidator:
         
         self.validate_max_gt_min()
         self.validate_value_range()
+        self.validate_negated()
 
 
         return len(self.errors) == 0, self.errors

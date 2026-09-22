@@ -1,23 +1,20 @@
+from contextlib import asynccontextmanager
+from dataclasses import dataclass
+import json
+import os
+from pathlib import Path
+from typing import Any
+from urllib.parse import unquote, urlparse
+
+import boto3
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-import numpy as np
-from pydantic import BaseModel
-from typing import Any
-import os
-from urllib.parse import urlparse, unquote
-from huggingface_hub import hf_hub_download
-
-
-import sys
-from pathlib import Path
-
-from scripts.query_parser import QueryParser
-from scripts.schema_validator import SchemaValidator
-from scripts.prepare_property_detail import process_result
-from scripts.semantic_searcher import SemanticSearcher
-import pandas as pd
-import json
 from mysql.connector.pooling import MySQLConnectionPool
+import numpy as np
+from pydantic import BaseModel, Field
+
+from scripts.prepare_property_detail import process_result
+from scripts.query_searcher import QuerySearcher
 
 ROOT = Path(__file__).resolve().parent
 PROCESSED_DIR = ROOT / "data" / "processed"
@@ -31,6 +28,51 @@ REQUIRED_PROCESSED_FILES = (
 )
 OPTIONAL_PROCESSED_FILES = ("index.faiss",)
 
+DEFAULT_PAGE_LIMIT = 20
+MAX_PAGE_LIMIT = 50
+
+LISTING_SELECT_FIELDS = """
+id,
+L_Address as address,
+L_Zip as zipcode,
+L_City as city,
+L_State as state,
+L_Keyword2 as bedrooms,
+LM_Dec_3 as bathrooms,
+L_SystemPrice as price,
+LM_Int2_3 as living_area,
+L_Remarks as remark,
+L_Photos as photos,
+Flooring as flooring,
+ViewYN,
+PoolPrivateYN,
+AttachedGarageYN,
+FireplaceYN,
+HeatingYN,
+Appliances,
+CoolingYN,
+GarageYN,
+SpaYN,
+BathroomsHalf as half_bathrooms,
+AssociationAmenities,
+StructureType,
+ArchitecturalStyle,
+Cooling,
+Heating,
+View,
+FireplaceFeatures,
+InteriorFeatures,
+PoolFeatures,
+CommunityFeatures,
+SecurityFeatures,
+SpaFeatures
+""".strip()
+
+
+@dataclass
+class RuntimeState:
+    query_searcher: QuerySearcher
+
 
 def _parse_bool_env(name: str, default: bool) -> bool:
     raw = os.getenv(name)
@@ -39,8 +81,32 @@ def _parse_bool_env(name: str, default: bool) -> bool:
     return raw.strip().lower() in {"1", "true", "yes", "y", "on"}
 
 
+def _parse_allowed_origins() -> list[str]:
+    raw = os.getenv(
+        "CORS_ALLOWED_ORIGINS",
+        "http://localhost:3000,http://127.0.0.1:3000",
+    )
+    origins = [value.strip() for value in raw.split(",") if value.strip()]
+    return origins or ["http://localhost:3000"]
+
+
+def _error(
+    message: str,
+    *,
+    code: str = "bad_request",
+    details: list[str] | None = None,
+) -> dict[str, Any]:
+    return {
+        "error": {
+            "code": code,
+            "message": message,
+            "details": details or [],
+        }
+    }
+
+
 def _ensure_nltk_data() -> None:
-    """Download NLTK corpora/tokenizers if missing (needed on Railway fresh images)."""
+    """Download NLTK corpora/tokenizers if missing (needed on fresh environments)."""
     import nltk
 
     bundles: tuple[tuple[str, str], ...] = (
@@ -51,14 +117,17 @@ def _ensure_nltk_data() -> None:
     for resource_path, download_name in bundles:
         try:
             nltk.data.find(resource_path)
-        except LookupError:
+        except (LookupError, OSError):
             print(f"[startup] NLTK: downloading {download_name!r} ...")
-            nltk.download(download_name, quiet=True)
+            try:
+                nltk.download(download_name, quiet=True)
+            except Exception:
+                pass
 
-    # NLTK 3.8.2+ uses punkt_tab for word_tokenize.
+    # NLTK 3.8.2+ can need punkt_tab for word_tokenize.
     try:
         nltk.data.find("tokenizers/punkt_tab")
-    except LookupError:
+    except (LookupError, OSError):
         try:
             print("[startup] NLTK: downloading 'punkt_tab' ...")
             nltk.download("punkt_tab", quiet=True)
@@ -66,88 +135,60 @@ def _ensure_nltk_data() -> None:
             pass
 
 
-def _ensure_processed_data_from_hf() -> None:
+def _ensure_processed_data_from_s3() -> None:
     """
     Ensure required files exist in data/processed.
-    If any are missing, download them from Hugging Face.
+    If missing, download them from S3.
     """
     missing = [name for name in REQUIRED_PROCESSED_FILES if not (PROCESSED_DIR / name).exists()]
     if not missing:
         print(
             f"[startup] data/processed: all {len(REQUIRED_PROCESSED_FILES)} required files present "
-            f"under {PROCESSED_DIR}; skip Hugging Face download."
+            f"under {PROCESSED_DIR}; skip S3 download."
         )
         return
 
-    print(f"[startup] data/processed: missing {len(missing)} file(s): {missing}; will fetch from Hugging Face if configured.")
+    print(
+        f"[startup] data/processed: missing {len(missing)} file(s): {missing}; "
+        "will fetch from S3 if configured."
+    )
 
-    repo_id = os.getenv("HF_DATA_REPO_ID")
-    if not repo_id:
+    bucket = os.getenv("S3_BUCKET")
+    if not bucket:
         raise RuntimeError(
-            "Missing required processed data files and HF_DATA_REPO_ID is not set. "
+            "Missing required processed data files and S3_BUCKET is not set. "
             f"Missing files: {missing}"
         )
 
-    repo_type = os.getenv("HF_DATA_REPO_TYPE", "dataset")
-    revision = os.getenv("HF_DATA_REVISION")
-    token = os.getenv("HF_TOKEN") or os.getenv("HUGGINGFACE_TOKEN")
-    repo_subdir = os.getenv("HF_DATA_SUBDIR", "data/processed").strip("/\\")
+    prefix = os.getenv("S3_PREFIX", "data/processed").strip("/\\")
+    region = os.getenv("AWS_REGION") or os.getenv("AWS_DEFAULT_REGION")
+    s3_client = boto3.client("s3", region_name=region)
 
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
     for filename in missing:
-        remote_name = f"{repo_subdir}/{filename}" if repo_subdir else filename
-        print(f"[startup] Downloading {remote_name} from Hugging Face repo {repo_id} ...")
-        downloaded = hf_hub_download(
-            repo_id=repo_id,
-            filename=remote_name,
-            repo_type=repo_type,
-            revision=revision,
-            token=token,
-        )
-        (PROCESSED_DIR / filename).write_bytes(Path(downloaded).read_bytes())
+        object_key = f"{prefix}/{filename}" if prefix else filename
+        local_path = PROCESSED_DIR / filename
+        print(f"[startup] Downloading s3://{bucket}/{object_key} ...")
+        s3_client.download_file(bucket, object_key, str(local_path))
 
-    # Try to prefetch optional artifacts (e.g., FAISS index) to avoid heavy rebuild.
-    prefetch_optional = _parse_bool_env("HF_DATA_PREFETCH_OPTIONAL", True)
+    prefetch_optional = _parse_bool_env("S3_PREFETCH_OPTIONAL", True)
     if not prefetch_optional:
         return
+
     for filename in OPTIONAL_PROCESSED_FILES:
         local_path = PROCESSED_DIR / filename
         if local_path.exists():
             continue
-        remote_name = f"{repo_subdir}/{filename}" if repo_subdir else filename
+        object_key = f"{prefix}/{filename}" if prefix else filename
         try:
-            print(f"[startup] Prefetching optional file {remote_name} ...")
-            downloaded = hf_hub_download(
-                repo_id=repo_id,
-                filename=remote_name,
-                repo_type=repo_type,
-                revision=revision,
-                token=token,
-            )
-            local_path.write_bytes(Path(downloaded).read_bytes())
+            print(f"[startup] Prefetching optional file s3://{bucket}/{object_key} ...")
+            s3_client.download_file(bucket, object_key, str(local_path))
         except Exception:
-            # Keep startup resilient when optional artifacts are absent.
-            print(f"[startup] Optional file not downloaded: {remote_name}")
-
-
-_ensure_processed_data_from_hf()
-_ensure_nltk_data()
-
-parser = QueryParser()
-searcher = SemanticSearcher()
-cities_path = str(PROCESSED_DIR / "distinct_cities.csv")
-stats_path = str(PROCESSED_DIR / "stats.json")
+            print(f"[startup] Optional file not downloaded: s3://{bucket}/{object_key}")
 
 
 def _get_mysql_config() -> dict[str, Any]:
-    """
-    Build MySQL config from env vars.
-
-    Supported:
-    - Railway style: MYSQLHOST, MYSQLPORT, MYSQLUSER, MYSQLPASSWORD, MYSQLDATABASE
-    - URL style: MYSQL_URL / MYSQL_PUBLIC_URL / DATABASE_URL
-    """
     mysql_url = (
         os.getenv("MYSQL_URL")
         or os.getenv("MYSQL_PUBLIC_URL")
@@ -177,18 +218,11 @@ def _get_mysql_config() -> dict[str, Any]:
         if parsed.path and parsed.path != "/":
             config["database"] = parsed.path.lstrip("/")
 
-    # For managed DB providers, SSL can be required; keep it configurable.
-    if _parse_bool_env("MYSQL_SSL_DISABLED", True):
+    # MySQL 8 caching_sha2_password often requires TLS.
+    if _parse_bool_env("MYSQL_SSL_DISABLED", False):
         config["ssl_disabled"] = True
 
     return config
-
-
-pool = MySQLConnectionPool(
-    pool_name=os.getenv("MYSQL_POOL_NAME", "mypool"),
-    pool_size=int(os.getenv("MYSQL_POOL_SIZE", "5")),
-    **_get_mysql_config(),
-)
 
 
 def _coerce_mysql_params(params: Any) -> Any:
@@ -227,258 +261,61 @@ def _parse_photos_field(raw: Any) -> list[str] | None:
     return None
 
 
-def _normalize_listing_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    for row in rows:
-        if "photos" in row:
-            row["photos"] = _parse_photos_field(row.get("photos"))
-    return rows
+def _runtime_from_request(request: Request) -> RuntimeState | None:
+    return getattr(request.app.state, "runtime", None)
 
-def _get_where_clause(sql: str) -> str | None:
-    lower = sql.lower()
-    idx = lower.find(" where ")
-    if idx == -1:
-        return None
-    start = idx + len(" where ")
-    tail = sql[start:]
-    limit_at = lower[start:].find(" limit ")
-    if limit_at != -1:
-        tail = tail[:limit_at].rstrip()
-    return tail
 
-def _get_lid_for_semantic(conn,params, where_clause):
+def process_query(
+    runtime: RuntimeState,
+    query: str,
+    *,
+    limit: int = DEFAULT_PAGE_LIMIT,
+    offset: int = 0,
+) -> dict[str, Any]:
+    return runtime.query_searcher.search(query, limit=limit, offset=offset)
+
+
+def process_filter(
+    runtime: RuntimeState,
+    filters: dict[str, Any],
+    *,
+    limit: int = DEFAULT_PAGE_LIMIT,
+    offset: int = 0,
+) -> dict[str, Any]:
+    return runtime.query_searcher.search_filters(filters, limit=limit, offset=offset)
+
+
+def process_detail(runtime: RuntimeState, listing_id: int) -> dict[str, Any]:
+    conn = runtime.query_searcher.pool.get_connection()
     query = f"""
-            SELECT id
-            FROM rets_property WHERE {where_clause}"""
-    cursor = conn.cursor(dictionary = True)
-    cursor.execute(query, _coerce_mysql_params(params))
-    rows = cursor.fetchall()
-    cursor.close()
-    return [row["id"] for row in rows]
-
-def process_query(query: str):
-    q = query.strip()
-    if not q:
-        return "Can not be empty"
-
-    conn = pool.get_connection()
-    filter = parser.parse(query)
-    validator = SchemaValidator(filter, cities_path, stats_path)
-    valid, errors = validator.validate_query()
-    if not valid:
-        conn.close()
-        return {
-            "error": errors
-        }
-
-    sql, params = parser.to_sql()
-    params_to_show = params
-    where_clause = _get_where_clause(sql)
-    mode = "regex"
-
-    if not ({"amenities", "negated_amenities", "features", "negated_features", "finance"} & filter.keys()) and q != "browse":
-        if not ({"price_max", "price_min", "price","bedrooms", "bedrooms_min", "bedrooms_max", "bathrooms", 
-                "bathrooms_min", "bathrooms_max", "bathroom_half", "sqft_min", "sqft_max", "sqft", "city"} & filter.keys()):
-                results, ids, latency_ms = searcher.search_hybrid(q, top_k = 50)
-                ids = [id for id, _ in ids]
-                if len(ids) > 0:
-                    mode = "semantic"
-                    sql = f"""
-                            SELECT id,
-                                L_Address as address,
-                                L_Zip as zipcode,
-                                L_City as city,
-                                L_State as state,
-                                L_Keyword2 as bedrooms,
-                                LM_Dec_3 as bathrooms,
-                                L_SystemPrice as price,
-                                LM_Int2_3 as living_area,
-                                L_Remarks as remark,
-                                L_Photos as photos,
-                                Flooring as flooring,
-                                ViewYN,
-                                PoolPrivateYN,
-                                AttachedGarageYN,
-                                FireplaceYN,
-                                HeatingYN,
-                                Appliances,
-                                CoolingYN,
-                                GarageYN,
-                                SpaYN,
-                                BathroomsHalf as half_bathrooms,
-                                AssociationAmenities,
-                                StructureType,
-                                ArchitecturalStyle,
-                                Cooling,
-                                Heating,
-                                View,
-                                FireplaceFeatures,
-                                InteriorFeatures,
-                                PoolFeatures,
-                                CommunityFeatures,
-                                SecurityFeatures,
-                                SpaFeatures
-                            FROM rets_property WHERE id IN ({','.join(['%s'] * len(ids))}) LIMIT 50"""
-                    params = ids
-                    where_clause = ""
-                    params_to_show = []
-                else:
-                    conn.close()
-                    return {
-                        "error": "no matching found"
-                    }
-        else:
-            ids = _get_lid_for_semantic(conn, params, where_clause)
-            results, ids, latency_ms = searcher.search_hybrid_for_listings(q, ids, top_k = 50)
-            ids = [id for id, _ in ids]
-            if len(ids) > 0:
-                mode = "hybrid"
-                sql = f"""
-                        SELECT id,
-                            L_Address as address,
-                            L_Zip as zipcode,
-                            L_City as city,
-                            L_State as state,
-                            L_Keyword2 as bedrooms,
-                            LM_Dec_3 as bathrooms,
-                            L_SystemPrice as price,
-                            LM_Int2_3 as living_area,
-                            L_Remarks as remark,
-                            L_Photos as photos,
-                            Flooring as flooring,
-                            ViewYN,
-                            PoolPrivateYN,
-                            AttachedGarageYN,
-                            FireplaceYN,
-                            HeatingYN,
-                            Appliances,
-                            CoolingYN,
-                            GarageYN,
-                            SpaYN,
-                            BathroomsHalf as half_bathrooms,
-                            AssociationAmenities,
-                            StructureType,
-                            ArchitecturalStyle,
-                            Cooling,
-                            Heating,
-                            View,
-                            FireplaceFeatures,
-                            InteriorFeatures,
-                            PoolFeatures,
-                            CommunityFeatures,
-                            SecurityFeatures,
-                            SpaFeatures
-                        FROM rets_property WHERE id IN ({','.join(['%s'] * len(ids))}) LIMIT 50"""
-                params = ids
-            else:
-                conn.close()
-                return {
-                    "error": "no matching found"
-                }
-
-    cursor = conn.cursor(dictionary = True)
-    cursor.execute(sql, _coerce_mysql_params(params))
-    rows = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    _normalize_listing_rows(rows)
-    return {
-        "listings": rows,
-        "filter": filter,
-        "where_clause": where_clause,
-        "params": params_to_show,
-        "mode": mode
-    }
-
-def _coerce_ui_filters(raw: dict[str, Any]) -> dict[str, Any]:
-    out: dict[str, Any] = {k: v for k, v in raw.items() if v is not None}
-    for key in ("amenities", "features"):
-        if key not in out:
-            continue
-        val = out[key]
-        if isinstance(val, str):
-            s = val.strip()
-            out[key] = [s] if s else []
-        elif not isinstance(val, list):
-            out[key] = []
-    for key in ("negated_amenities", "negated_features"):
-        out.setdefault(key, [])
-    out.setdefault("amenities", [])
-    out.setdefault("features", [])
-    c = out.get("city")
-    if isinstance(c, str) and not c.strip():
-        out.pop("city", None)
-    elif isinstance(c, str):
-        out["city"] = c.strip()
-    return out
-
-
-def process_filter(filters: dict[str, Any]):
-    filters = _coerce_ui_filters(filters)
-    validator = SchemaValidator(filters, cities_path, stats_path)
-    valid, errors = validator.validate_query()
-    if not valid:
-        return {"error": errors}
-    sql, params = parser.to_sql(filters=filters)
-    conn = pool.get_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute(sql, _coerce_mysql_params(params))
-    rows = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    _normalize_listing_rows(rows)
-    return {"listings": rows}
-
-def process_detail(id: int):
-
-    conn = pool.get_connection()
-    query = """
-            SELECT id,
-                L_Address as address,
-                L_Zip as zipcode,
-                L_City as city,
-                L_State as state,
-                L_Keyword2 as bedrooms,
-                LM_Dec_3 as bathrooms,
-                L_SystemPrice as price,
-                LM_Int2_3 as living_area,
-                L_Remarks as remark,
-                L_Photos as photos,
-                Flooring as flooring,
-                ViewYN,
-                PoolPrivateYN,
-                AttachedGarageYN,
-                FireplaceYN,
-                HeatingYN,
-                Appliances,
-                CoolingYN,
-                GarageYN,
-                SpaYN,
-                BathroomsHalf as half_bathrooms,
-                AssociationAmenities,
-                StructureType,
-                ArchitecturalStyle,
-                Cooling,
-                Heating,
-                View,
-                FireplaceFeatures,
-                InteriorFeatures,
-                PoolFeatures,
-                CommunityFeatures,
-                SecurityFeatures,
-                SpaFeatures
+            SELECT {LISTING_SELECT_FIELDS}
             FROM rets_property WHERE id = %s"""
-    params = [id]
-    
-    cursor = conn.cursor(dictionary = True)
+    params = [listing_id]
+
+    cursor = conn.cursor(dictionary=True)
     cursor.execute(query, _coerce_mysql_params(params))
     row = cursor.fetchone()
-    result = process_result(
-        row, 
-        ["AssociationAmenities", "View", "PoolFeatures", "CommunityFeatures", "SecurityFeatures", "SpaFeatures",
-        "flooring", "Appliances", "Cooling", "Heating", "InteriorFeatures"]
-    )
     cursor.close()
     conn.close()
+    if row is None:
+        return _error("Listing not found.", code="not_found")
+
+    result = process_result(
+        row,
+        [
+            "AssociationAmenities",
+            "View",
+            "PoolFeatures",
+            "CommunityFeatures",
+            "SecurityFeatures",
+            "SpaFeatures",
+            "flooring",
+            "Appliances",
+            "Cooling",
+            "Heating",
+            "InteriorFeatures",
+        ],
+    )
     if "photos" in result:
         result["photos"] = _parse_photos_field(result.get("photos"))
     return {
@@ -488,39 +325,156 @@ def process_detail(id: int):
 
 class QueryBody(BaseModel):
     searchQuery: str
+    limit: int = Field(default=DEFAULT_PAGE_LIMIT, ge=1, le=MAX_PAGE_LIMIT)
+    offset: int = Field(default=0, ge=0)
+
 
 class DetailQuery(BaseModel):
     listingID: int
 
-app = FastAPI(title="real_estate_search API")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    app.state.runtime = None
+    app.state.startup_error = None
+    try:
+        _ensure_processed_data_from_s3()
+        _ensure_nltk_data()
+        pool = MySQLConnectionPool(
+            pool_name=os.getenv("MYSQL_POOL_NAME", "mypool"),
+            pool_size=int(os.getenv("MYSQL_POOL_SIZE", "5")),
+            **_get_mysql_config(),
+        )
+        app.state.runtime = RuntimeState(
+            query_searcher=QuerySearcher(
+                pool,
+                cities_path=str(PROCESSED_DIR / "distinct_cities.csv"),
+                stats_path=str(PROCESSED_DIR / "stats.json"),
+            ),
+        )
+    except Exception as exc:  # pragma: no cover - startup diagnostics
+        app.state.startup_error = str(exc)
+        print(f"[startup] failed: {exc}")
+    yield
+
+
+app = FastAPI(title="real_estate_search API", lifespan=lifespan)
+
+allowed_origins = _parse_allowed_origins()
+allow_credentials = _parse_bool_env("CORS_ALLOW_CREDENTIALS", True)
+if "*" in allowed_origins and allow_credentials:
+    # Wildcard with credentials breaks browser CORS behavior.
+    allow_credentials = False
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=allowed_origins,
+    allow_credentials=allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
 @app.post("/api/query")
-def run_query(body: QueryBody):
-    result = process_query(body.searchQuery)
-    return result
+def run_query(body: QueryBody, request: Request):
+    runtime = _runtime_from_request(request)
+    if runtime is None:
+        return _error(
+            "Service is not ready yet.",
+            code="service_unavailable",
+            details=[getattr(request.app.state, "startup_error", "startup in progress")],
+        )
+    return process_query(
+        runtime,
+        body.searchQuery,
+        limit=body.limit,
+        offset=body.offset,
+    )
+
 
 @app.post("/api/filter")
 async def run_filter(request: Request) -> Any:
+    runtime = _runtime_from_request(request)
+    if runtime is None:
+        return _error(
+            "Service is not ready yet.",
+            code="service_unavailable",
+            details=[getattr(request.app.state, "startup_error", "startup in progress")],
+        )
     body = await request.json()
     if not isinstance(body, dict):
-        return {"error": ["Request body must be a JSON object"]}
-    return process_filter(body)
+        return _error("Request body must be a JSON object.")
+
+    try:
+        limit = int(body.get("limit", DEFAULT_PAGE_LIMIT))
+        offset = int(body.get("offset", 0))
+    except (TypeError, ValueError):
+        return _error("limit and offset must be integers.", code="validation_error")
+
+    if "filters" in body:
+        filters = body["filters"]
+        if not isinstance(filters, dict):
+            return _error("filters must be a JSON object.", code="validation_error")
+    else:
+        filters = {
+            key: value
+            for key, value in body.items()
+            if key not in {"limit", "offset"}
+        }
+    return process_filter(runtime, filters, limit=limit, offset=offset)
+
 
 @app.post("/api/detail")
-async def run_detail(body: DetailQuery) -> Any:
-    id = body.listingID
-    return process_detail(id)
+async def run_detail(body: DetailQuery, request: Request) -> Any:
+    runtime = _runtime_from_request(request)
+    if runtime is None:
+        return _error(
+            "Service is not ready yet.",
+            code="service_unavailable",
+            details=[getattr(request.app.state, "startup_error", "startup in progress")],
+        )
+    return process_detail(runtime, body.listingID)
 
 
 @app.get("/health")
 def health() -> dict[str, str]:
+    return {"status": "ok"}
+
+
+@app.get("/ready")
+def ready(request: Request) -> dict[str, Any]:
+    runtime = _runtime_from_request(request)
+    startup_error = getattr(request.app.state, "startup_error", None)
+    if startup_error:
+        return _error(
+            "Service startup failed.",
+            code="startup_failed",
+            details=[startup_error],
+        )
+    if runtime is None:
+        return _error("Service is still starting.", code="service_unavailable")
+    missing = [
+        name for name in REQUIRED_PROCESSED_FILES if not (PROCESSED_DIR / name).exists()
+    ]
+    if missing:
+        return _error(
+            "Required data artifacts are missing.",
+            code="missing_artifacts",
+            details=missing,
+        )
+    try:
+        conn = runtime.query_searcher.pool.get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1")
+        cursor.fetchone()
+        cursor.close()
+        conn.close()
+    except Exception as exc:  # pragma: no cover - runtime diagnostics
+        return _error(
+            "Database connection is not ready.",
+            code="db_unavailable",
+            details=[str(exc)],
+        )
+    if runtime.query_searcher.semantic.index is None:
+        return _error("Search index is not ready.", code="search_unavailable")
     return {"status": "ok"}

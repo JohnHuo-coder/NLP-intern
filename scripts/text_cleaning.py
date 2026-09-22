@@ -1,32 +1,28 @@
 import re
-import nltk
-from collections import Counter
-from nltk.util import ngrams
 import html
 import unicodedata
-from nltk.corpus import stopwords
 import pandas as pd
 from pathlib import Path
-import sys
 
-_SCRIPTS_DIR = Path(__file__).resolve().parent
-if str(_SCRIPTS_DIR) not in sys.path:
-    sys.path.insert(0, str(_SCRIPTS_DIR))
+
+def _scale_money(num: str, scale: int) -> str:
+    return str(int(round(float(num) * scale)))
+
 
 class TextCleaner:
     def __init__(self):
         # usually stick together with number: 2bd, 2ba, 2rms, 2-bd, 2-ba
         self.room_abbrev_map = {
-            'br': 'bedroom', 'bd': 'bedroom', 'bdr': 'bedroom', 'bdrm': 'bedroom',
-            'ba': 'bathroom', 'bth': 'bathroom', 'bath': 'bathroom',
-            'mbr': 'master bedroom', 'mba': 'master bathroom', 
+            'br': 'bedroom', 'bd': 'bedroom', 'bdr': 'bedroom', 'bdrm': 'bedroom', 'bdrms': 'bedroom',
+            'ba': 'bathroom', 'bth': 'bathroom', 'bthrm': 'bathroom', 'bthrms': 'bathroom', 'bath': 'bathroom',
+            'mbr': 'master bedroom', 'mba': 'master bathroom',
             'rm': 'room', 'rms': 'rooms', 'flr': 'floor', 'lvl': 'level',
         }
 
         self.measurement_abbrev_map = {
-            'sqft': 'square feet', 
-            "sq ft": "square feet", 
-            "sq. ft": "square feet", 
+            'sqft': 'square feet',
+            "sq ft": "square feet",
+            "sq. ft": "square feet",
             "sq. ft.": "square feet",
             "sq.ft": "square feet",
             "sq.ft.": "square feet",
@@ -43,108 +39,34 @@ class TextCleaner:
             'pkg': 'parking space',
             'appl': 'appliance',
             'min': 'minute',
-            'yr': 'year', 
+            'yr': 'year',
             'adu': 'accessory dwelling unit'
         }
         self.no_s_abbrev = {'ac': 'air conditioning', 'a/c': 'air conditioning', 'fp': 'fireplace', 'wic': 'walk-in closet',
             'w/': 'with', 'w/o': 'without','yb': 'year built','renov': 'renovated', 'upd': 'updated',
             'incl': 'including', 'nr': 'near', 'reo': 'bank-owned', 'dom': 'days on market', 'approx': 'approximately',
-            'pvt': 'private', 'avail': 'available', 'hvac': 'heating and cooling', 'fin': 'finished', 'ch': 'central heat', 
-            'mls': 'multiple listing service', 'hoa': 'homeowners association', 'ss': 'stainless steel', 'hw': 'hardwood', 
+            'pvt': 'private', 'avail': 'available', 'hvac': 'heating and cooling', 'fin': 'finished', 'ch': 'central heat',
+            'mls': 'multiple listing service', 'hoa': 'homeowners association', 'ss': 'stainless steel', 'hw': 'hardwood',
             'w/d': 'washer dryer','wd': 'washer dryer', "bbq": "barbecue"
         }
-        self.stop_words = set(stopwords.words("english"))
+
     def _abbrev_pattern(self):
         room_units = sorted(self.room_abbrev_map.keys(), key=len, reverse=True)
-        room_pattern = r'\b(\d+(?:\.\d+)?\+?)?\s*-?\s*(' + '|'.join(map(re.escape, room_units)) + r')s?\b'
-        area_pattern = r'\b(\d+(?:\.\d+)?\+?)?\s*-?\s*(sq\s*\.?\s*ft\.?|sqft)\b'
+        # Digit and the hyphen/space before the unit are one optional group so
+        # "two baths" does not swallow the space and become "twobathroom".
+        room_pattern = (
+            r'\b(?:(\d+(?:\.\d+)?\+?)\s*-?\s*)?('
+            + '|'.join(map(re.escape, room_units))
+            + r')s?\b'
+        )
+        area_pattern = r'\b(?:(\d+(?:\.\d+)?\+?)\s*-?\s*)?(sq\s*\.?\s*ft\.?|sqft)\b'
         no_s_keys = sorted(self.no_s_abbrev.keys(), key=len, reverse=True)
         no_s_pattern = r'(?<!\w)(' + '|'.join(map(re.escape, no_s_keys)) + r')(?!\w)'
         normal_keys = sorted(self.normal_abbrev_map.keys(), key=len, reverse=True)
         normal_pattern = r'(?<!\w)(' + '|'.join(map(re.escape, normal_keys)) + r')s?(?!\w)'
-        
+
         return [room_pattern, area_pattern, no_s_pattern, normal_pattern]
 
-    def _extract_top_ngrams(self, col, top_n = 200):
-        all_text = ' '.join(col.dropna().str.lower())
-        tokens = [ t for t in nltk.word_tokenize(all_text) if re.fullmatch(r"[a-z]+", t.lower())]
-        bigrams = [(a, b) for (a, b) in ngrams(tokens, 2) if a not in self.stop_words and b not in self.stop_words]
-        freq = Counter(bigrams)
-        top_bigrams = [{"term": " ".join(bigram), "count": count} for bigram, count in freq.most_common(top_n)]
-        return top_bigrams
-    def _detect_abbreviations(self, col, top_abbr = 10):
-        patterns = self._abbrev_pattern()
-        counter = Counter()
-        for pattern in patterns:
-            matches = col.dropna().str.findall(pattern, flags = re.I)
-            for lst in matches:
-                for m in lst:
-                    if isinstance(m, tuple):
-                        m = m[-1]
-                    counter[m.lower()] += 1
-        return counter.most_common(top_abbr)
-    def _detect_html(self, col):
-        """
-        Detect HTML entities and HTML tags in the text column.
-        """
-        all_text = " ".join(col.dropna().astype(str))
-        # HTML entities
-        entities = re.findall(r"&[a-zA-Z0-9#]+;", all_text)
-        # HTML tags
-        tag_pattern = r"</?[^>]+>"
-        tags = re.findall(tag_pattern, all_text)
-        results = entities + tags
-        cnt = len(results)
-        return cnt, Counter(results)
-    def _detect_unicode(self, col):
-        counter = Counter(c for c in " ".join(col.dropna()) if ord(c) > 127)
-        cnt = len(counter)
-        return cnt, counter
-    # Patterns we detect for measurements (for _detect_measurements)
-    _measurement_patterns = [
-        (r'\d+(?:,\d{3})*(?:\.\d+)?\s*sq\.?\s*ft\.?', 'sq ft'),
-        (r'\d+(?:,\d{3})*(?:\.\d+)?\s*sqft', 'sqft'),
-        (r'\d+(?:,\d{3})*(?:\.\d+)?\s*square\s+feet', 'square feet'),
-        (r'\d+(?:,\d{3})*(?:\.\d+)?\s*acres?', 'acres'),
-        (r'\d+(?:,\d{3})*(?:\.\d+)?\s*sq\.?\s*m(?:eters?)?', 'sq meters'),
-        (r'(?<!\d)\.(\d)', 'leading_decimal'),
-        (r"(\d+)'", 'feet_apostrophe'),
-        (r'(\d+)"', 'inches_quote'),
-        (r'(\d+)-?ft\b', 'ft_abbrev'),
-    ]
-    def _detect_measurements(self, col):
-        """Detect measurement patterns in the text column. Returns (total_count, Counter of pattern types)."""
-        counter = Counter()
-        cnt = 0
-        for pattern, label in self._measurement_patterns:
-            matches = col.dropna().astype(str).str.findall(pattern, flags=re.I)
-            for lst in matches:
-                for _ in lst:
-                    counter[label] += 1
-                    cnt += 1
-        return cnt, counter
-    # Price patterns we detect (for _detect_price_mentions)
-    _price_patterns = [
-        (r'\$\s*(\d+(?:,\d{3})*(?:\.\d+)?)\s*k\b', '$_k'),
-        (r'\$\s*(\d+(?:,\d{3})*(?:\.\d+)?)\s*m\b', '$_m'),
-        (r'\b(\d+\.?\d*)\s*k\b', 'Nk'),
-        (r'\b(\d+\.?\d*)\s*m\b', 'Nm'),
-        (r'\$\s*(\d{1,3}(?:,\d{3})*(?:\.\d+)?)', '$N'),
-        (r'\b(\d{1,3}(?:,\d{3})+)\b', 'N_comma'),
-        (r'\b(\d+)\s*thousand\b', 'N thousand'),
-        (r'\b(\d+\.?\d*)\s*million\b', 'N million'),
-    ]
-    def _detect_price_mentions(self, col):
-        """Detect price-like patterns in the text column. Returns (total_count, Counter of pattern types)."""
-        counter = Counter()
-        cnt = 0
-        for pattern, label in self._price_patterns:
-            matches = col.dropna().astype(str).str.findall(pattern, flags=re.I)
-            for lst in matches:
-                for _ in lst:
-                    counter[label] += 1
-                    cnt += 1
-        return cnt, counter
     def clean_text(self, text):
         text = self.normalize_unicode(text)
         text = self.normalize_html(text)
@@ -152,10 +74,13 @@ class TextCleaner:
         text = self.normalize_measurements(text)
         text = self.expand_abbreviations(text)
         return text.strip()
+
     def normalize_html(self, text):
         text = html.unescape(text)
-        text = re.sub(r'</?[^>]*>', "", text)
+        # Tag names start with a letter so "<4 bedroom, >3 bath" is not stripped.
+        text = re.sub(r"</?[A-Za-z][^>]*>", "", text)
         return text
+
     def normalize_unicode(self, text):
         text = unicodedata.normalize("NFKC", text)
         replacements = {
@@ -172,6 +97,7 @@ class TextCleaner:
             text = text.replace(k, v)
 
         return text
+
     def normalize_measurements(self, text):
         # .5 → 0.5 (leading decimal)
         text = re.sub(r'(?<!\d)\.(\d)', r'0.\1', text)
@@ -181,19 +107,22 @@ class TextCleaner:
         # 10-ft / 10ft → 10 foot
         text = re.sub(r'(\d+)-?ft\b', r'\1 foot', text, flags=re.I)
         # Normalize comma in numbers next to units: 1,500 -> 1500
-        text = re.sub(r'\b(\d{1,3}(?:,\d{3})+)\s*(sq\.?\s*ft\.?|sqft|acres?)\b', lambda m: m.group(1).replace(",", "") + " " + m.group(2), text, flags=re.I)
-        # sq. ft. / sq ft / sqft -> square feet
+        text = re.sub(r'\b(\d{1,3}(?:,\d{3})+)\s*(sq\.?\s*-?\s*ft\.?|sqft|sf|acres?)\b', lambda m: m.group(1).replace(",", "") + " " + m.group(2), text, flags=re.I)
+        # sq. ft. / sq ft / sqft / sq-ft / sf -> square feet
         text = re.sub(r'\b(\d+(?:\.\d+)?)\s*sq\.?\s*ft\.?\b', r'\1 square feet', text, flags=re.I)
+        text = re.sub(r'\b(\d+(?:\.\d+)?)\s*sq-ft\.?\b', r'\1 square feet', text, flags=re.I)
         text = re.sub(r'\b(\d+(?:\.\d+)?)\s*sqft\b', r'\1 square feet', text, flags=re.I)
+        text = re.sub(r'\b(\d+(?:\.\d+)?)\s*sf\b', r'\1 square feet', text, flags=re.I)
         text = re.sub(r'\b(\d+(?:\.\d+)?)\s*square\s+feet\b', r'\1 square feet', text, flags=re.I)
         # acres: keep as "X acres"
         text = re.sub(r'\b(\d+(?:\.\d+)?)\s+acres?\b', r'\1 acres', text, flags=re.I)
         # sq meters -> square meters
         text = re.sub(r'\b(\d+(?:\.\d+)?)\s*sq\.?\s*m(?:eters?)?\b', r'\1 square meters', text, flags=re.I)
         return text
+
     def expand_abbreviations(self, text):
         room_pattern, area_pattern, no_s_pattern, normal_pattern = self._abbrev_pattern()
-        text = re.sub(room_pattern, lambda m: (f"{m.group(1)} {self.room_abbrev_map[m.group(2).lower()]}" 
+        text = re.sub(room_pattern, lambda m: (f"{m.group(1)} {self.room_abbrev_map[m.group(2).lower()]}"
                                                 if m.group(1)
                                                 else self.room_abbrev_map[m.group(2).lower()]), text, flags=re.I)
         text = re.sub(area_pattern, lambda m: (f"{m.group(1)} {self.measurement_abbrev_map[m.group(2).lower()]}"
@@ -202,58 +131,32 @@ class TextCleaner:
         text = re.sub(no_s_pattern, lambda m: self.no_s_abbrev[m.group(1).lower()], text, flags=re.I)
         text = re.sub(normal_pattern, lambda m: self.normal_abbrev_map[m.group(1).lower()], text, flags=re.I)
         return text
+
+    # TODO: dollar sign might be kept as a signal
     def normalize_prices(self, text):
         # Remove spaces between $ and number for consistent matching
         text = re.sub(r'\$\s+', '$', text)
         # Remove commas in numbers first so $1,234k and 1,234,567 work correctly
         text = re.sub(r'\b(\d{1,3}(?:,\d{3})+)\b', lambda m: m.group(0).replace(",", ""), text)
-        # $450k / $5.5k / $1.2m (allow decimals)
-        text = re.sub(r'\$(\d+\.?\d*)k\b', lambda m: '$' + str(int(float(m.group(1)) * 1000)), text, flags=re.I)
-        text = re.sub(r'\$(\d+\.?\d*)m\b', lambda m: '$' + str(int(float(m.group(1)) * 1000000)), text, flags=re.I)
+        # $450k / $5.5k / $1.2m (allow decimals). round() not int():
+        # float("2.07") * 1_000_000 is 2069999.999… and int() truncates to 2069999.
+        text = re.sub(r'\$(\d+\.?\d*)k\b', lambda m: '$' + _scale_money(m.group(1), 1000), text, flags=re.I)
+        text = re.sub(r'\$(\d+\.?\d*)m\b', lambda m: '$' + _scale_money(m.group(1), 1_000_000), text, flags=re.I)
         # 450k / 5.5k → 450000 / 5500, 1.2m → 1200000 (no $)
-        text = re.sub(r'\b(\d+\.?\d*)k\b', lambda m: str(int(float(m.group(1)) * 1000)), text, flags=re.I)
-        text = re.sub(r'\b(\d+\.?\d*)m\b', lambda m: str(int(float(m.group(1)) * 1000000)), text, flags=re.I)
+        text = re.sub(r'\b(\d+\.?\d*)k\b', lambda m: _scale_money(m.group(1), 1000), text, flags=re.I)
+        text = re.sub(r'\b(\d+\.?\d*)m\b', lambda m: _scale_money(m.group(1), 1_000_000), text, flags=re.I)
+        # 722 grand / $722 grand → 722000 (same scale as k)
+        text = re.sub(r'\$(\d+\.?\d*)\s*grand\b', lambda m: '$' + _scale_money(m.group(1), 1000), text, flags=re.I)
+        text = re.sub(r'\b(\d+\.?\d*)\s*grand\b', lambda m: _scale_money(m.group(1), 1000), text, flags=re.I)
         # N thousand / N million (word form)
         text = re.sub(r'\b(\d+)\s+thousand\b', lambda m: str(int(m.group(1)) * 1000), text, flags=re.I)
-        text = re.sub(r'\b(\d+\.?\d*)\s+million\b', lambda m: str(int(float(m.group(1)) * 1000000)), text, flags=re.I)
-        # TODO: three thousand, three million cases
+        text = re.sub(r'\b(\d+\.?\d*)\s+million\b', lambda m: _scale_money(m.group(1), 1_000_000), text, flags=re.I)
         return text
-    
+
     def clean_column(self, col):
         cleaned_col = col.apply(self.clean_text)
         return cleaned_col
-    
-    def sample_compare(self, col, k = 10, seed = None):
-        idx = col.sample(k, random_state = seed).index
-        cleaned = self.clean_column(col)
-        return (
-            pd.DataFrame({
-                "original": col.loc[idx],
-                "cleaned": cleaned.loc[idx]
-            }).reset_index(drop = True)
-        )
 
-    def profile_column(self, df, column_name, most_common_gram = 200, most_common_abbr = 10):
-        """Analyze what's actually in L_Remarks"""
-        html_cnt, html_results = self._detect_html(df[column_name])
-        unicode_cnt, unicode_results = self._detect_unicode(df[column_name])
-        price_cnt, price_counter = self._detect_price_mentions(df[column_name])
-        meas_cnt, meas_counter = self._detect_measurements(df[column_name])
-        return {
-            'null_rate': df[column_name].isnull().mean(),
-            'avg_length': df[column_name].str.len().mean(),
-            'avg_num_words': df[column_name].str.split().str.len().mean(),
-            'common_terms': self._extract_top_ngrams(df[column_name], most_common_gram),
-            'price_mentions': price_cnt,
-            'price_counter': price_counter,
-            'measurement_mentions': meas_cnt,
-            'measurement_counter': meas_counter,
-            'has_html': html_cnt,
-            'html_examples': html_results,
-            'has_unicode': unicode_cnt,
-            'unicode_examples': unicode_results,
-            'common_abbreviations': self._detect_abbreviations(df[column_name], most_common_abbr)
-        }
 
 if __name__ == "__main__":
     root = Path(__file__).resolve().parents[1]
