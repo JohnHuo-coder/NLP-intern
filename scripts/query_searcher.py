@@ -93,6 +93,13 @@ class _CachedRanked:
     params: list[Any]
 
 
+@dataclass
+class _CachedSql:
+    """SQL-only: leftover was empty. Skip GPT; pages use LIMIT/OFFSET."""
+
+    filters: dict[str, Any]
+
+
 def _build_retriever():
     from semantic_searcher_v2 import build_retriever
 
@@ -235,7 +242,8 @@ class QuerySearcher:
        inside those candidates. Empty leftover with a catalog hit stays SQL-only.
        Empty leftover and no catalog hit falls back to ranking the full user query.
     4. Hybrid/semantic miss ranks up to MAX_SEMANTIC_WINDOW ids and caches
-       query → id list in-process. Later pages slice that list (no LLM / FAISS).
+       query → id list. SQL-only miss caches query → filters (no id list).
+       Later pages skip leftover LLM; ranked pages slice ids, SQL uses LIMIT/OFFSET.
     """
 
     def __init__(
@@ -285,7 +293,7 @@ class QuerySearcher:
         key = _cache_key(q)
 
         cached = self._result_cache.get(key) if self._result_cache is not None else None
-        if cached is not None:
+        if isinstance(cached, _CachedRanked):
             return self._page_ranked_ids(
                 cached.filters,
                 cached.ranked_ids,
@@ -295,6 +303,8 @@ class QuerySearcher:
                 where_clause=cached.where_clause,
                 params=cached.params,
             )
+        if isinstance(cached, _CachedSql):
+            return self._sql_page(cached.filters, safe_limit, safe_offset)
 
         filters = self.parser.parse(q)
         validator = SchemaValidator(filters, self.cities_path, self.stats_path)
@@ -317,6 +327,8 @@ class QuerySearcher:
             filters = {**filters, "semantic_text": rank_text}
 
         if not rank_text:
+            if self._result_cache is not None:
+                self._result_cache.set(key, _CachedSql(filters=filters))
             return self._sql_page(filters, safe_limit, safe_offset)
 
         if has_catalog_terms(filters) or _has_structured(filters):

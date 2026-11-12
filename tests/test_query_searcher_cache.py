@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -24,19 +25,29 @@ class _FakeCursor:
 
     def execute(self, sql, params=None):
         sql_l = " ".join(str(sql).lower().split())
-        if sql_l.startswith("select id from"):
-            self._rows = [{"id": i} for i in self._store["candidate_ids"]]
-        elif sql_l.startswith("select count(*)"):
-            self._rows = [{"total": len(self._store["candidate_ids"])}]
+        ids = list(self._store["candidate_ids"])
+        if sql_l.startswith("select count(*)"):
+            self._rows = [{"total": len(ids)}]
         elif "id in" in sql_l:
-            ids = [int(i) for i in (params or [])]
+            wanted = [int(i) for i in (params or [])]
             self._rows = [
                 dict(self._store["rows_by_id"][i])
-                for i in ids
+                for i in wanted
                 if i in self._store["rows_by_id"]
             ]
+        elif sql_l.startswith("select id from") and " limit " not in f" {sql_l} ":
+            self._rows = [{"id": i} for i in ids]
         else:
-            self._rows = []
+            off_m = re.search(r"offset\s+(\d+)", sql_l)
+            lim_m = re.search(r"limit\s+(\d+)", sql_l)
+            off = int(off_m.group(1)) if off_m else 0
+            lim = int(lim_m.group(1)) if lim_m else len(ids)
+            page = ids[off : off + lim]
+            self._rows = [
+                dict(self._store["rows_by_id"][i])
+                for i in page
+                if i in self._store["rows_by_id"]
+            ]
 
     def fetchall(self):
         return list(self._rows)
@@ -184,3 +195,35 @@ def test_semantic_path_caches_id_list(tmp_path: Path):
     assert len(semantic.calls) == 1
     assert semantic.calls[0]["k"] == 3
     assert semantic.calls[0]["listing_ids"] is None
+
+
+def test_sql_only_skips_llm_on_later_pages(tmp_path: Path):
+    cities, stats = _paths(tmp_path)
+    leftover = MagicMock()
+    leftover.extract_if_unmatched.return_value = ""
+    semantic = _FakeSemantic()
+    searcher = QuerySearcher(
+        _FakePool([10, 20, 30, 40, 50]),
+        parser=_StubParser(
+            {"city": "Irvine", "bedrooms": 3, "amenities": ["gym"]}
+        ),
+        semantic=semantic,
+        leftover_llm=leftover,
+        cities_path=cities,
+        stats_path=stats,
+        max_semantic_window=100,
+        result_cache_ttl_s=3600,
+        result_cache_maxsize=8,
+    )
+    query = "3bd, 2ba, gym"
+    page1 = searcher.search(query, limit=2, offset=0)
+    assert page1["mode"] == "sql"
+    assert [row["id"] for row in page1["listings"]] == [10, 20]
+    leftover.extract_if_unmatched.assert_called_once()
+    assert semantic.calls == []
+
+    page2 = searcher.search(query, limit=2, offset=2)
+    assert page2["mode"] == "sql"
+    assert [row["id"] for row in page2["listings"]] == [30, 40]
+    leftover.extract_if_unmatched.assert_called_once()
+    assert semantic.calls == []
