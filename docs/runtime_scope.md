@@ -11,7 +11,7 @@ This file marks the minimum code/data that must stay in this repository for the 
 - `scripts/query_searcher.py`
 - `scripts/semantic_text_llm.py`
 - `scripts/schema_validator.py`
-- `scripts/semantic_searcher.py`
+- `scripts/semantic_searcher_v2.py`
 - `scripts/entity_extractor.py`
 - `scripts/text_cleaning.py`
 - `scripts/prepare_property_detail.py`
@@ -44,4 +44,4 @@ Optional but recommended:
 - `infra/cdk/` — RDS + Fargate deploy
 - `docs/`
 
-Local ETL dumps stay out of git (`data/`, `notebooks/`).
+Local ETL dumps stay out of git (`notebooks/`, large `data/` files). Small parser catalogs (`amenities.json`, `features.json`, `finance.json`, `distinct_cities.csv`, `stats.json`) are tracked so CI can run `QueryParser` tests.

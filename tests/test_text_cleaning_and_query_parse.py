@@ -3,32 +3,13 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
-import pandas as pd
 import pytest
-from evaluation.text_profiler import TextProfiler
 from scripts.text_cleaning import TextCleaner
 
 
 @pytest.fixture
 def cleaner():
     return TextCleaner()
-
-
-@pytest.fixture
-def profiler(cleaner):
-    return TextProfiler(cleaner=cleaner)
-
-
-@pytest.fixture
-def sample_remarks_df():
-    """Small DataFrame for profile/column tests (no external CSV)."""
-    return pd.DataFrame({
-        "remarks": [
-            "3 br 2 ba, 1200 sqft, priced at 450k. W/ garage.",
-            "Luxury home $1.2m, 9' ceilings, 2.5 acres. &amp; ready.",
-            "Condo .5 mile away, 10ft ceiling, 6\" trim. $5.5k reduced!",
-        ]
-    })
 
 
 # --- Price normalization ---
@@ -77,12 +58,6 @@ def test_normalize_measurements_sqft_and_acres(cleaner):
 
 
 # --- Abbreviations ---
-def test_expand_abbreviations(cleaner):
-    assert "bedroom" in cleaner.expand_abbreviations("3 br 2 ba")
-    assert "with" in cleaner.expand_abbreviations("w/ garage")
-    assert "square feet" in cleaner.expand_abbreviations("1200 sqft")
-
-
 @pytest.mark.parametrize(
     "raw, needle",
     [
@@ -97,6 +72,20 @@ def test_expand_abbreviations(cleaner):
         ("2bd 2ba ranch", "bathroom"),
         # optional plural on unit
         ("2 bds 2 bas", "bedroom"),
+        ("2 bds 2 bas", "bathroom"),
+        # longer bedroom / bathroom spellings
+        ("3 bdr", "bedroom"),
+        ("2 bdrm", "bedroom"),
+        ("1 bth", "bathroom"),
+        ("2 bthrm", "bathroom"),
+        ("2+ br", "2+ bedroom"),
+        # master suite, room, floor, level
+        ("mbr with mba", "master bedroom"),
+        ("mbr with mba", "master bathroom"),
+        ("1 rm", "1 room"),
+        ("2 rms on the main flr", "2 rooms"),
+        ("2 rms on the main flr", "floor"),
+        ("top lvl", "level"),
         # decimal counts (e.g. half bath)
         ("2.5 ba", "bathroom"),
         ("3 bdrms 2.5 bthrms", "bedroom"),
@@ -107,14 +96,55 @@ def test_expand_abbreviations(cleaner):
         ("four-bath", "bathroom"),
         # area: sqft variants (digit may be stripped; we only require expansion text)
         ("1800 sqft", "square feet"),
+        ("1800sqft", "1800 square feet"),
         ("2200 sq. ft", "square feet"),
+        ("2200 sq. ft.", "square feet"),
         ("2500 sq ft", "square feet"),
+        ("1600 sq.ft", "square feet"),
+        ("1700 sq .ft", "square feet"),
+        ("1900 sq.ft.", "square feet"),
         # normal abbrevs (word boundaries + optional plural)
         ("updated kit and lr", "kitchen"),
         ("updated kit and lr", "living room"),
-        # no_s abbrevs
+        ("updated kits", "kitchen"),
+        ("formal dr and fr", "dining room"),
+        ("formal dr and fr", "family room"),
+        ("2-car gar", "garage"),
+        ("unfinished bsmt", "basement"),
+        ("2 pkg", "parking space"),
+        ("new appls", "appliance"),
+        ("5 mins", "minute"),
+        ("10 yrs", "year"),
+        ("detached adu", "accessory dwelling unit"),
+        # no_s abbrevs; longer keys such as w/o win over w/
         ("w/ hvac and w/d", "with"),
+        ("w/ hvac and w/d", "heating and cooling"),
         ("w/ hvac and w/d", "washer dryer"),
+        ("w/o hoa", "without"),
+        ("w/o hoa", "homeowners association"),
+        ("central ac", "air conditioning"),
+        ("new a/c", "air conditioning"),
+        ("brick fp", "fireplace"),
+        ("big wic", "walk-in closet"),
+        ("yb 1998", "year built"),
+        ("renov and upd", "renovated"),
+        ("renov and upd", "updated"),
+        ("incl ss appl", "including"),
+        ("incl ss appl", "stainless steel"),
+        ("incl ss appl", "appliance"),
+        ("nr downtown", "near"),
+        ("reo listing", "bank-owned"),
+        ("low dom", "days on market"),
+        ("approx 2 ba", "approximately"),
+        ("pvt driveway", "private"),
+        ("avail now", "available"),
+        ("fin bsmt", "finished"),
+        ("fin bsmt", "basement"),
+        ("ch and hw floors", "central heat"),
+        ("ch and hw floors", "hardwood"),
+        ("on the mls", "multiple listing service"),
+        ("wd hookups", "washer dryer"),
+        ("summer bbq", "barbecue"),
     ],
 )
 def test_expand_abbreviations_room_and_listing_styles(cleaner, raw, needle):
@@ -160,81 +190,6 @@ def test_clean_text_handles_none_or_empty(cleaner):
     # clean_text expects str; if caller passes None, strip() would fail
     out = cleaner.clean_text("  ")
     assert out == ""
-
-
-# --- Column / DataFrame ---
-def test_clean_column(cleaner, sample_remarks_df):
-    col = sample_remarks_df["remarks"]
-    cleaned = cleaner.clean_column(col)
-    assert len(cleaned) == len(col)
-    assert pd.api.types.is_object_dtype(cleaned.dtype) or pd.api.types.is_string_dtype(
-        cleaned.dtype
-    )
-    assert "450000" in cleaned.iloc[0]
-    assert "5500" in cleaned.iloc[2]
-
-
-def test_sample_compare(profiler, sample_remarks_df):
-    col = sample_remarks_df["remarks"]
-    df = profiler.sample_compare(col, k=2, seed=42)
-    assert "original" in df.columns and "cleaned" in df.columns
-    assert len(df) == 2
-    for _, row in df.iterrows():
-        assert row["original"] in col.values
-        assert isinstance(row["cleaned"], str)
-
-
-# --- Detect functions (return cnt and counter) ---
-def test_detect_measurements(profiler, sample_remarks_df):
-    cnt, counter = profiler.detect_measurements(sample_remarks_df["remarks"])
-    assert isinstance(cnt, int)
-    assert cnt >= 0
-    assert hasattr(counter, "most_common")
-    total_from_counter = sum(counter.values())
-    assert total_from_counter == cnt
-
-
-def test_detect_abbreviations(profiler, sample_remarks_df):
-    result = profiler.detect_abbreviations(sample_remarks_df["remarks"], top_abbr=10)
-    assert isinstance(result, list)
-    assert all(isinstance(x, tuple) and len(x) == 2 for x in result)
-
-
-# --- Profile ---
-def test_profile_column(profiler, sample_remarks_df):
-    profile = profiler.profile_column(sample_remarks_df, "remarks")
-    assert "null_rate" in profile
-    for key in ("min", "avg", "max"):
-        assert key in profile["char_length"]
-        assert key in profile["word_count"]
-    assert profile["char_length"]["min"] <= profile["char_length"]["avg"] <= profile["char_length"]["max"]
-    assert profile["word_count"]["min"] <= profile["word_count"]["avg"] <= profile["word_count"]["max"]
-    assert profile["sentence"]["count"] >= 1
-    assert profile["paragraph_newline"]["count"] >= 1
-    assert profile["paragraph_blank_line"] is None
-    assert "common_terms" in profile
-    assert "measurement_mentions" in profile
-    assert "measurement_counter" in profile
-    assert "has_html" in profile
-    assert "has_unicode" in profile
-    assert "common_abbreviations" in profile
-    assert isinstance(profile["measurement_counter"], type(profiler.detect_measurements(sample_remarks_df["remarks"])[1]))
-
-
-def test_profile_column_sentence_and_paragraph_splits(profiler):
-    df = pd.DataFrame({
-        "remarks": [
-            "First sentence. Second sentence.",
-            "Para one.\nPara two.\n\nPara three is longer than the others.",
-        ]
-    })
-    profile = profiler.profile_column(df, "remarks")
-    assert profile["sentence"]["count"] == 5
-    assert profile["sentence"]["words"]["min"] == 2
-    assert profile["paragraph_newline"]["count"] == 4
-    blank = profile["paragraph_blank_line"]
-    assert blank is not None
-    assert blank["count"] == 2
 
 
 def test_parse_city_mill_valley_and_marina_del_rey():

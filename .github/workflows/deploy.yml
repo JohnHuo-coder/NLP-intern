@@ -1,0 +1,87 @@
+name: Deploy Fargate
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Deploy or destroy the Fargate API stack (RDS is not touched)
+        required: true
+        type: choice
+        options:
+          - deploy-fargate
+          - destroy-fargate
+      desired_count:
+        description: Fargate desired count (deploy only)
+        required: false
+        default: "1"
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: fargate-us-east-2
+  cancel-in-progress: false
+
+jobs:
+  cd:
+    runs-on: ubuntu-latest
+    environment: aws-us-east-2
+    defaults:
+      run:
+        working-directory: infra/cdk
+    env:
+      CDK_DEFAULT_ACCOUNT: ${{ vars.CDK_ACCOUNT }}
+      CDK_DEFAULT_REGION: ${{ vars.AWS_REGION }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: Install CDK deps
+        run: pip install -r requirements.txt
+      - name: CDK deploy Fargate
+        if: github.event.inputs.action == 'deploy-fargate'
+        run: |
+          npx --yes aws-cdk@2 deploy RealEstateFargateApiStack --exclusively --require-approval never --outputs-file cdk-outputs.json \
+            -c account="${CDK_DEFAULT_ACCOUNT}" \
+            -c region="${CDK_DEFAULT_REGION}" \
+            -c enableFargate=true \
+            -c s3Bucket="${{ vars.S3_BUCKET }}" \
+            -c s3Prefix="${{ vars.S3_PREFIX }}" \
+            -c openaiSecretArn="${{ vars.OPENAI_SECRET_ARN }}" \
+            -c publicAccess=true \
+            -c dbName=real_estate \
+            -c dbUsername=admin \
+            -c dbAccessCidr=0.0.0.0/0 \
+            -c fargateCpu=2048 \
+            -c fargateMemory=4096 \
+            -c fargateDesiredCount="${{ github.event.inputs.desired_count }}"
+      - name: Print ApiUrl
+        if: github.event.inputs.action == 'deploy-fargate'
+        run: |
+          python -c "import json; p=json.load(open('cdk-outputs.json')); print(p.get('RealEstateFargateApiStack', {}).get('ApiUrl', p))"
+      - name: CDK destroy Fargate
+        if: github.event.inputs.action == 'destroy-fargate'
+        run: |
+          npx --yes aws-cdk@2 destroy RealEstateFargateApiStack --exclusively --force \
+            -c account="${CDK_DEFAULT_ACCOUNT}" \
+            -c region="${CDK_DEFAULT_REGION}" \
+            -c enableFargate=true \
+            -c s3Bucket="${{ vars.S3_BUCKET }}" \
+            -c s3Prefix="${{ vars.S3_PREFIX }}" \
+            -c openaiSecretArn="${{ vars.OPENAI_SECRET_ARN }}" \
+            -c publicAccess=true \
+            -c dbName=real_estate \
+            -c dbUsername=admin \
+            -c dbAccessCidr=0.0.0.0/0 \
+            -c fargateCpu=2048 \
+            -c fargateMemory=4096 \
+            -c fargateDesiredCount=1

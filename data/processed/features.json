@@ -1,0 +1,946 @@
+{
+  "features": [
+    "abundant cabinetry",
+    "additional storage",
+    "adu",
+    "air conditioning",
+    "all bedrooms on the same floor",
+    "all bedrooms together",
+    "ample cabinet",
+    "ample cabinetry",
+    "ample counter",
+    "ample storage",
+    "atrium",
+    "atrium door",
+    "attic",
+    "attic fan",
+    "balcony",
+    "bamboo floor",
+    "bamboo flooring",
+    "bar",
+    "bar seating",
+    "baseboard heating",
+    "basement",
+    "beamed ceiling",
+    "bedroom on main floor",
+    "bedroom on main level",
+    "bedrooms downstairs",
+    "bedrooms on main floor",
+    "bedrooms on main level",
+    "bedrooms upstairs",
+    "block wall",
+    "breakfast area",
+    "breakfast bar",
+    "brick floor",
+    "brick flooring",
+    "brick wall",
+    "bright open space",
+    "built in range",
+    "cabinet space",
+    "carpet",
+    "carpet floor",
+    "carpet flooring",
+    "cathedral ceiling",
+    "ceiling fan",
+    "center island",
+    "central air",
+    "central heating",
+    "central vacuum",
+    "ceramic counter",
+    "chair rail",
+    "chef kitchen",
+    "closet door",
+    "closet space",
+    "coal water heater",
+    "coffered ceiling",
+    "concrete floor",
+    "concrete flooring",
+    "convection oven",
+    "cooktop",
+    "copper plumbing",
+    "counter space",
+    "counter top",
+    "country kitchen",
+    "cozy fireplace",
+    "crown molding",
+    "custom cabinetry",
+    "custom closet",
+    "custom lighting",
+    "custom tile",
+    "dishwasher",
+    "double door",
+    "double oven",
+    "double vanity",
+    "dressing area",
+    "dry bar",
+    "dryer",
+    "dual pane",
+    "dual sink",
+    "ductless",
+    "ductless AC",
+    "ductless cooling",
+    "ductless heating",
+    "ductless system",
+    "dumbwaiter",
+    "eat in kitchen",
+    "electric cooktop",
+    "electric heating",
+    "electric oven",
+    "electric range",
+    "electric water heater",
+    "electrical panel",
+    "elevator",
+    "energy efficient",
+    "energy star qualified appliance",
+    "energy star qualified water heater",
+    "energy-saving",
+    "engineered hardwood",
+    "entrance foyer",
+    "entry hall",
+    "entryway",
+    "evaporative cooling",
+    "exhaust fan",
+    "expansive window",
+    "extra space for guests",
+    "extra storage",
+    "extra unit",
+    "fireplace",
+    "first floor bedroom",
+    "floor furnace",
+    "flooring throughout",
+    "forced air",
+    "free standing range",
+    "freezer",
+    "french door",
+    "galley kitchen",
+    "garage door",
+    "garbage disposal",
+    "gas cooktop",
+    "gas fireplace",
+    "gas oven",
+    "gas range",
+    "gas stove",
+    "gas water heater",
+    "generous closet",
+    "generous storage",
+    "glass door",
+    "glass shower",
+    "gourmet kitchen",
+    "granite counter",
+    "granite countertop",
+    "guest room",
+    "guest suite",
+    "guests room",
+    "hardwood floor",
+    "hardwood flooring",
+    "heat pump",
+    "heating",
+    "heating and cooling",
+    "high ceiling",
+    "high efficiency",
+    "high efficiency water heater",
+    "home for elderly parents",
+    "hood",
+    "hot water",
+    "hot water circulator",
+    "house for my parents",
+    "house with lot of natural light",
+    "humidity control",
+    "hvac system",
+    "ice maker",
+    "in law suite",
+    "in-law suite",
+    "indoor garden space",
+    "indoor grill",
+    "instant hot water",
+    "intercom",
+    "island",
+    "jack and jill bath",
+    "jacuzzi tub",
+    "kerosene heater",
+    "kitchen cabinet",
+    "kitchen island",
+    "laminate counter",
+    "laminate floor",
+    "laminate flooring",
+    "large closet",
+    "large island",
+    "large window",
+    "laundry",
+    "light fixture",
+    "living room with attached deck",
+    "living room with deck",
+    "loft",
+    "luxury vinyl",
+    "main floor bedroom",
+    "marble countertop",
+    "master bedroom on first floor",
+    "master bedrooms on first floor",
+    "mature landscaping",
+    "microwave",
+    "mini split",
+    "multiple primary suite",
+    "multiple staircase",
+    "natural gas",
+    "new appliance",
+    "new tile",
+    "oak flooring",
+    "oil heating",
+    "open floorplan",
+    "oven",
+    "pane window",
+    "pantry",
+    "pellet stove",
+    "phone system",
+    "picture window",
+    "plank flooring",
+    "plantation shutter",
+    "porcelain tile",
+    "portable dishwasher",
+    "premium appliance",
+    "primary bedroom on main floor",
+    "primary bedrooms on main floor",
+    "primary suite",
+    "propane cooktop",
+    "propane heating",
+    "propane oven",
+    "propane range",
+    "propane water heater",
+    "pull down attic stair",
+    "quartz counter",
+    "quartz countertop",
+    "radiant heating",
+    "range",
+    "range hood",
+    "recessed light",
+    "recessed lighting",
+    "refinished hardwood",
+    "refrigerator",
+    "room for guest",
+    "rooms for guests",
+    "self cleaning oven",
+    "separate area",
+    "separate formal dining room",
+    "separate living space",
+    "shaker cabinet",
+    "shower",
+    "sink",
+    "six burner stove",
+    "sleek countertop",
+    "sliding door",
+    "sliding glass",
+    "smart home",
+    "soaking tub",
+    "soaring ceiling",
+    "solar energy",
+    "solar heating",
+    "solar hot water",
+    "solar panel",
+    "solid surface counter",
+    "space heater",
+    "stainless appliance",
+    "stainless steel",
+    "stair climber",
+    "steel appliance",
+    "steel sink",
+    "stone counter",
+    "stone fireplace",
+    "stone floor",
+    "stone flooring",
+    "storage",
+    "sump pump",
+    "sunken living room",
+    "suspended ceiling",
+    "tankless water",
+    "tankless water heater",
+    "tile backsplash",
+    "tile counter",
+    "tile floor",
+    "tile flooring",
+    "tile shower",
+    "track lighting",
+    "trash chute",
+    "trash compactor",
+    "tray ceiling",
+    "tub",
+    "two story ceiling",
+    "upgraded kitchen",
+    "utility room",
+    "vanity",
+    "vaulted ceiling",
+    "vented exhaust fan",
+    "vinyl floor",
+    "vinyl flooring",
+    "vinyl plank",
+    "walk in closet",
+    "walk in pantry",
+    "wall furnace",
+    "wall window unit",
+    "warming drawer",
+    "washer",
+    "water filtration",
+    "water heater",
+    "water purifier",
+    "water softener",
+    "wet bar",
+    "white cabinetry",
+    "white quartz",
+    "white shaker",
+    "whole house fan",
+    "wine cellar",
+    "wine fridge",
+    "wood burning",
+    "wood cabinetry",
+    "wood floor",
+    "wood flooring",
+    "wood laminate",
+    "wood paneling",
+    "wood product wall",
+    "wood stove",
+    "workshop",
+    "zoned cooling",
+    "zoned heating",
+    "zoned heating and cooling"
+  ],
+  "set_from_db": {
+    "interior": [
+      "balcony",
+      "atrium door",
+      "wood product wall",
+      "laminate counter",
+      "bright open space",
+      "primary bedroom on main floor",
+      "instant hot water",
+      "guests room",
+      "bar",
+      "utility room",
+      "pantry",
+      "country kitchen",
+      "master bedroom on first floor",
+      "block wall",
+      "breakfast bar",
+      "living room with deck",
+      "in-law suite",
+      "guest suite",
+      "bedrooms upstairs",
+      "wood paneling",
+      "walk in closet",
+      "separate living space",
+      "entry hall",
+      "suspended ceiling",
+      "room for guest",
+      "main floor bedroom",
+      "extra unit",
+      "brick wall",
+      "french door",
+      "elevator",
+      "entryway",
+      "open floorplan",
+      "dressing area",
+      "track lighting",
+      "living room with attached deck",
+      "pull down attic stair",
+      "wine cellar",
+      "recessed lighting",
+      "loft",
+      "wet bar",
+      "storage",
+      "bedroom on main floor",
+      "walk in pantry",
+      "phone system",
+      "solid surface counter",
+      "rooms for guests",
+      "indoor garden space",
+      "stone counter",
+      "multiple primary suite",
+      "house for my parents",
+      "quartz counter",
+      "intercom",
+      "beamed ceiling",
+      "separate formal dining room",
+      "eat in kitchen",
+      "bedroom on main level",
+      "dumbwaiter",
+      "sunken living room",
+      "galley kitchen",
+      "tray ceiling",
+      "high ceiling",
+      "house with lot of natural light",
+      "bedrooms downstairs",
+      "extra space for guests",
+      "two story ceiling",
+      "breakfast area",
+      "jack and jill bath",
+      "atrium",
+      "in law suite",
+      "ceramic counter",
+      "smart home",
+      "home for elderly parents",
+      "entrance foyer",
+      "primary suite",
+      "master bedrooms on first floor",
+      "separate area",
+      "attic",
+      "adu",
+      "granite counter",
+      "stair climber",
+      "bedrooms on main level",
+      "central vacuum",
+      "dry bar",
+      "multiple staircase",
+      "all bedrooms on the same floor",
+      "all bedrooms together",
+      "primary bedrooms on main floor",
+      "tile counter",
+      "coffered ceiling",
+      "first floor bedroom",
+      "crown molding",
+      "chair rail",
+      "ceiling fan",
+      "workshop",
+      "trash chute",
+      "cathedral ceiling",
+      "bedrooms on main floor",
+      "guest room"
+    ],
+    "floor": [
+      "bamboo floor",
+      "bamboo flooring",
+      "tile floor",
+      "concrete floor",
+      "concrete flooring",
+      "laminate flooring",
+      "stone floor",
+      "vinyl floor",
+      "vinyl flooring",
+      "carpet floor",
+      "stone flooring",
+      "brick floor",
+      "wood floor",
+      "brick flooring",
+      "wood flooring",
+      "carpet flooring",
+      "laminate floor",
+      "tile flooring"
+    ],
+    "appl": [
+      "hot water circulator",
+      "dishwasher",
+      "electric water heater",
+      "energy star qualified appliance",
+      "energy star qualified water heater",
+      "washer",
+      "built in range",
+      "free standing range",
+      "water heater",
+      "propane cooktop",
+      "high efficiency water heater",
+      "warming drawer",
+      "propane oven",
+      "sump pump",
+      "gas cooktop",
+      "propane range",
+      "ice maker",
+      "exhaust fan",
+      "dryer",
+      "range hood",
+      "gas oven",
+      "coal water heater",
+      "cooktop",
+      "propane water heater",
+      "garbage disposal",
+      "portable dishwasher",
+      "solar hot water",
+      "trash compactor",
+      "freezer",
+      "refrigerator",
+      "electric range",
+      "range",
+      "microwave",
+      "self cleaning oven",
+      "gas water heater",
+      "convection oven",
+      "electric cooktop",
+      "electric oven",
+      "vented exhaust fan",
+      "water softener",
+      "oven",
+      "tankless water heater",
+      "water purifier",
+      "indoor grill",
+      "double oven",
+      "gas range",
+      "six burner stove"
+    ],
+    "cooling": [
+      "zoned cooling",
+      "high efficiency",
+      "evaporative cooling",
+      "ductless cooling",
+      "mini split",
+      "wall window unit",
+      "energy-saving",
+      "zoned heating and cooling",
+      "whole house fan",
+      "central air",
+      "ductless AC",
+      "energy efficient",
+      "heat pump",
+      "ductless",
+      "attic fan",
+      "humidity control",
+      "ductless system"
+    ],
+    "heating": [
+      "oil heating",
+      "wood stove",
+      "radiant heating",
+      "ductless heating",
+      "high efficiency",
+      "space heater",
+      "mini split",
+      "fireplace",
+      "zoned heating",
+      "ductless AC",
+      "energy efficient",
+      "heat pump",
+      "kerosene heater",
+      "solar heating",
+      "humidity control",
+      "floor furnace",
+      "electric heating",
+      "central heating",
+      "baseboard heating",
+      "energy-saving",
+      "zoned heating and cooling",
+      "solar panel",
+      "pellet stove",
+      "forced air",
+      "solar energy",
+      "natural gas",
+      "propane heating",
+      "wall furnace",
+      "ductless",
+      "ductless system"
+    ]
+  },
+  "interior2raw": {
+    "suspended ceiling": [
+      "suspended ceilings"
+    ],
+    "brick wall": [
+      "brick walls"
+    ],
+    "country kitchen": [
+      "country kitchen"
+    ],
+    "walk in closet": [
+      "walk in closets"
+    ],
+    "all bedrooms on the same floor": [
+      "all bedrooms up",
+      "all bedrooms down"
+    ],
+    "bedrooms upstairs": [
+      "all bedrooms up"
+    ],
+    "all bedrooms together": [
+      "all bedrooms up",
+      "all bedrooms down"
+    ],
+    "elevator": [
+      "elevator"
+    ],
+    "crown molding": [
+      "crown molding"
+    ],
+    "quartz counter": [
+      "quartz counters"
+    ],
+    "dry bar": [
+      "dry bar"
+    ],
+    "central vacuum": [
+      "central vacuum"
+    ],
+    "dumbwaiter": [
+      "dumbwaiter"
+    ],
+    "primary bedroom on main floor": [
+      "main level primary"
+    ],
+    "master bedroom on first floor": [
+      "main level primary"
+    ],
+    "primary bedrooms on main floor": [
+      "main level primary"
+    ],
+    "master bedrooms on first floor": [
+      "main level primary"
+    ],
+    "first floor bedroom": [
+      "main level primary",
+      "bedroom on main level"
+    ],
+    "main floor bedroom": [
+      "main level primary"
+    ],
+    "stone counter": [
+      "stone counters"
+    ],
+    "atrium": [
+      "atrium"
+    ],
+    "house with lot of natural light": [
+      "atrium"
+    ],
+    "bright open space": [
+      "atrium"
+    ],
+    "indoor garden space": [
+      "atrium"
+    ],
+    "jack and jill bath": [
+      "jack and jill bath"
+    ],
+    "ceramic counter": [
+      "ceramic counters"
+    ],
+    "recessed lighting": [
+      "recessed lighting"
+    ],
+    "eat in kitchen": [
+      "eat in kitchen"
+    ],
+    "open floorplan": [
+      "open floorplan"
+    ],
+    "laminate counter": [
+      "laminate counters"
+    ],
+    "in law suite": [
+      "in law floorplan"
+    ],
+    "in-law suite": [
+      "in law floorplan"
+    ],
+    "house for my parents": [
+      "in law floorplan"
+    ],
+    "home for elderly parents": [
+      "in law floorplan"
+    ],
+    "separate living space": [
+      "in law floorplan"
+    ],
+    "separate area": [
+      "in law floorplan"
+    ],
+    "adu": [
+      "in law floorplan"
+    ],
+    "extra unit": [
+      "in law floorplan"
+    ],
+    "guest suite": [
+      "in law floorplan"
+    ],
+    "extra space for guests": [
+      "in law floorplan"
+    ],
+    "room for guest": [
+      "in law floorplan"
+    ],
+    "rooms for guests": [
+      "in law floorplan"
+    ],
+    "guest room": [
+      "in law floorplan"
+    ],
+    "guests room": [
+      "in law floorplan"
+    ],
+    "living room with deck": [
+      "living room deck attached"
+    ],
+    "living room with attached deck": [
+      "living room deck attached"
+    ],
+    "bar": [
+      "bar"
+    ],
+    "wet bar": [
+      "wet bar"
+    ],
+    "cathedral ceiling": [
+      "cathedral ceilings"
+    ],
+    "track lighting": [
+      "track lighting"
+    ],
+    "instant hot water": [
+      "instant hot water"
+    ],
+    "trash chute": [
+      "trash chute"
+    ],
+    "granite counter": [
+      "granite counters"
+    ],
+    "phone system": [
+      "phone system"
+    ],
+    "wood product wall": [
+      "wood product walls"
+    ],
+    "wood paneling": [
+      "wood product walls"
+    ],
+    "attic": [
+      "attic"
+    ],
+    "utility room": [
+      "utility room"
+    ],
+    "high ceiling": [
+      "high ceilings"
+    ],
+    "balcony": [
+      "balcony"
+    ],
+    "beamed ceiling": [
+      "beamed ceilings"
+    ],
+    "tray ceiling": [
+      "tray ceilings"
+    ],
+    "entrance foyer": [
+      "entrance foyer"
+    ],
+    "entryway": [
+      "entrance foyer"
+    ],
+    "entry hall": [
+      "entrance foyer"
+    ],
+    "dressing area": [
+      "dressing area"
+    ],
+    "stair climber": [
+      "stair climber"
+    ],
+    "pantry": [
+      "pantry"
+    ],
+    "bedroom on main level": [
+      "bedroom on main level"
+    ],
+    "bedrooms on main level": [
+      "bedroom on main level"
+    ],
+    "bedroom on main floor": [
+      "bedroom on main level"
+    ],
+    "bedrooms on main floor": [
+      "bedroom on main level"
+    ],
+    "multiple primary suite": [
+      "multiple primary suites"
+    ],
+    "breakfast area": [
+      "breakfast area"
+    ],
+    "tile counter": [
+      "tile counters"
+    ],
+    "coffered ceiling": [
+      "coffered ceilings"
+    ],
+    "breakfast bar": [
+      "breakfast bar"
+    ],
+    "walk in pantry": [
+      "walk in pantry"
+    ],
+    "multiple staircase": [
+      "multiple staircases"
+    ],
+    "loft": [
+      "loft"
+    ],
+    "sunken living room": [
+      "sunken living room"
+    ],
+    "bedrooms downstairs": [
+      "all bedrooms down"
+    ],
+    "primary suite": [
+      "primary suite"
+    ],
+    "smart home": [
+      "smart home"
+    ],
+    "intercom": [
+      "intercom"
+    ],
+    "two story ceiling": [
+      "two story ceilings"
+    ],
+    "french door": [
+      "french doors atrium doors"
+    ],
+    "atrium door": [
+      "french doors atrium doors"
+    ],
+    "solid surface counter": [
+      "solid surface counters"
+    ],
+    "block wall": [
+      "block walls"
+    ],
+    "storage": [
+      "storage"
+    ],
+    "ceiling fan": [
+      "ceiling fans"
+    ],
+    "galley kitchen": [
+      "galley kitchen"
+    ],
+    "wine cellar": [
+      "wine cellar"
+    ],
+    "pull down attic stair": [
+      "pull down attic stairs"
+    ],
+    "workshop": [
+      "workshop"
+    ],
+    "separate formal dining room": [
+      "separate formal dining room"
+    ],
+    "chair rail": [
+      "chair rail"
+    ]
+  },
+  "floor2raw": {
+    "tile floor": "tile",
+    "tile flooring": "tile",
+    "carpet floor": "carpet",
+    "carpet flooring": "carpet",
+    "stone floor": "stone",
+    "stone flooring": "stone",
+    "concrete floor": "concrete",
+    "concrete flooring": "concrete",
+    "laminate floor": "laminate",
+    "laminate flooring": "laminate",
+    "vinyl floor": "vinyl",
+    "vinyl flooring": "vinyl",
+    "wood floor": "wood",
+    "wood flooring": "wood",
+    "bamboo floor": "bamboo",
+    "bamboo flooring": "bamboo",
+    "brick floor": "brick",
+    "brick flooring": "brick"
+  },
+  "appl2raw": {
+    "gas oven": "gas oven",
+    "propane oven": "propane oven",
+    "gas cooktop": "gas cooktop",
+    "freezer": "freezer",
+    "coal water heater": "coal water heater",
+    "tankless water heater": "tankless water heater",
+    "hot water circulator": "hot water circulator",
+    "propane water heater": "propane water heater",
+    "solar hot water": "solar hot water",
+    "double oven": "double oven",
+    "range hood": "range hood",
+    "self cleaning oven": "self cleaning oven",
+    "trash compactor": "trash compactor",
+    "portable dishwasher": "portable dishwasher",
+    "electric water heater": "electric water heater",
+    "dishwasher": "dishwasher",
+    "built in range": "built in range",
+    "ice maker": "ice maker",
+    "warming drawer": "warming drawer",
+    "microwave": "microwave",
+    "water purifier": "water purifier",
+    "electric cooktop": "electric cooktop",
+    "energy star qualified water heater": "energy star qualified water heater",
+    "gas range": "gas range",
+    "cooktop": "cooktop",
+    "dryer": "dryer",
+    "oven": "oven",
+    "gas water heater": "gas water heater",
+    "convection oven": "convection oven",
+    "free standing range": "free standing range",
+    "sump pump": "sump pump",
+    "water heater": "water heater",
+    "refrigerator": "refrigerator",
+    "six burner stove": "six burner stove",
+    "electric oven": "electric oven",
+    "propane range": "propane range",
+    "energy star qualified appliance": "energy star qualified appliances",
+    "washer": "washer",
+    "electric range": "electric range",
+    "water softener": "water softener",
+    "high efficiency water heater": "high efficiency water heater",
+    "garbage disposal": "disposal",
+    "vented exhaust fan": "vented exhaust fan",
+    "range": "range",
+    "indoor grill": "indoor grill",
+    "propane cooktop": "propane cooktop",
+    "exhaust fan": "exhaust fan"
+  },
+  "cool2raw": {
+    "attic fan": "attic fan",
+    "evaporative cooling": "evaporative cooling",
+    "heat pump": "heat pump",
+    "ductless AC": "ductless",
+    "ductless": "ductless",
+    "ductless cooling": "ductless",
+    "ductless system": "ductless",
+    "mini split": "ductless",
+    "energy efficient": "high efficiency",
+    "high efficiency": "high efficiency",
+    "energy-saving": "high efficiency",
+    "central air": "central air",
+    "humidity control": "humidity control",
+    "wall window unit": "wall window units",
+    "zoned cooling": "zoned",
+    "zoned heating and cooling": "zoned",
+    "whole house fan": "whole house fan"
+  },
+  "heat2raw": {
+    "wood stove": "wood stove",
+    "heat pump": "heat pump",
+    "floor furnace": "floor furnace",
+    "wall furnace": "wall furnace",
+    "kerosene heater": "kerosene",
+    "solar heating": "solar",
+    "solar energy": "solar",
+    "solar panel": "solar",
+    "fireplace": "fireplaces",
+    "energy efficient": "high efficiency",
+    "high efficiency": "high efficiency",
+    "energy-saving": "high efficiency",
+    "propane heating": "propane",
+    "ductless AC": "ductless",
+    "ductless": "ductless",
+    "ductless heating": "ductless",
+    "ductless system": "ductless",
+    "mini split": "ductless",
+    "forced air": "forced air",
+    "natural gas": "natural gas",
+    "radiant heating": "radiant",
+    "zoned heating": "zoned",
+    "zoned heating and cooling": "zoned",
+    "oil heating": "oil",
+    "pellet stove": "pellet stove",
+    "baseboard heating": "baseboard",
+    "space heater": "space heater",
+    "electric heating": "electric",
+    "central heating": "central",
+    "humidity control": "humidity control"
+  }
+}

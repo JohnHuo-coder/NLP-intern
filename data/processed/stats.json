@@ -1,0 +1,12 @@
+{
+  "bedrooms_min": 1.0,
+  "bedrooms_max": 7.0,
+  "bathrooms_min": 1.0,
+  "bathrooms_max": 8.0,
+  "price_min": 175000.0,
+  "price_max": 10995000.0,
+  "sqft_min": 208.0,
+  "sqft_max": 19995.0,
+  "bathrooms_half_min": 0.0,
+  "bathrooms_half_max": 2.0
+}

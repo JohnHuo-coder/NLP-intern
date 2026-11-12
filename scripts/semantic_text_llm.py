@@ -1,8 +1,8 @@
 """LLM leftover extractor for remarks search.
 
 Rule-based ``QueryParser`` still owns numbers, city, and named amenity / interior
-feature / finance terms. Call this only when that matcher found none of those
-catalog terms. Then keep at most:
+feature / finance terms. This extractor still runs when those catalog terms were
+found, because the same query can also describe atmosphere or setting. Keep at most:
 
   (A) amenity/feature paraphrases the term matcher will miss
       (e.g. lots of natural light)
@@ -11,8 +11,9 @@ catalog terms. Then keep at most:
 Filler (no rush, just browsing), explicit catalog *names*, and negations stay out.
 Keep paraphrases even when they mean a catalog amenity the regex missed
 (securely leave my car, room to store clothes, a place to wash clothes).
-If neither class is present, ``semantic_text`` is "". The searcher then
-falls back to ranking with the full user query.
+If neither class is present, ``semantic_text`` is "". With catalog hits, that
+empty string stays empty. With no catalog hit, the searcher falls back to
+ranking with the full user query.
 """
 
 from __future__ import annotations
@@ -45,7 +46,8 @@ You extract a short semantic_text for real-estate remark search.
 
 A rule-based matcher already covers named catalog amenities, interior features,
 and finance terms (pool, gym, garage, hardwood, fireplace, FHA, VA, cash, ...).
-This call runs only when that matcher found none of those named terms.
+Those named terms may already be in the query. Still extract leftover A/B text
+that sits beside them, and drop the catalog names themselves.
 Your job is to keep the leftover A/B ask so remarks search can still use it.
 
 Your only job is semantic_text. Default is "".
@@ -58,7 +60,8 @@ SEMANTIC TEXT — keep a fragment only if it is (A) or (B)
 (A) Implicit amenity / house-feature paraphrase
     The buyer describes a facility or interior quality without using a catalog name.
     Keep the buyer's wording even if you know it MEANS a catalog amenity.
-    The matcher already missed it; leftover is the only remarks signal.
+    Named catalog terms are already handled elsewhere. Leftover is the remarks
+    signal for wording that was not taken as a catalog name.
     Keep: "lots of natural light", "open floor plan", "updated throughout",
           "chef's kitchen", "indoor-outdoor living", "sun-filled rooms",
           "securely leave my car", "enough area to keep clothes out of sight",
@@ -92,7 +95,7 @@ How to write it:
   Good: "chef's kitchen, updated throughout"
 - Only strip glue that belonged to a dropped span
   ("3 bedroom house with lots of natural light" → "lots of natural light").
-- If nothing qualifies, return "". Downstream search will then use the full query.
+- If nothing qualifies, return "". Empty means there is no leftover remarks signal.
 
 ============================================================
 EXAMPLES
@@ -102,6 +105,12 @@ User: "3 bedroom 2 bathroom house in Chicago under $500000 with a quiet street"
 
 User: "2+ bedroom Naperville, pool and gym, no carpet"
 {"semantic_text": ""}
+
+User: "pool and gym, quiet and cozy near the beach"
+{"semantic_text": "quiet and cozy near the beach"}
+
+User: "hardwood floors and a fireplace, family-friendly neighborhood with a tree-lined street"
+{"semantic_text": "family-friendly neighborhood with a tree-lined street"}
 
 User: "around 3 bedrooms, roughly $600000, Evanston, walkable to cafes"
 {"semantic_text": "walkable to cafes"}
@@ -192,13 +201,17 @@ class SemanticTextLLM:
         self.normalizer = TextCleaner()
 
     def extract_if_unmatched(self, query: str, filters: dict | None = None) -> str:
-        """Skip the LLM when catalog terms were already extracted; else extract A/B."""
-        if has_catalog_terms(filters):
-            return ""
+        """Extract A/B leftover even when catalog terms were already extracted.
+
+        ``filters`` is accepted for callers that already parsed the query.
+        Catalog names stay out of the prompt output; an empty string means
+        the query had no leftover remarks signal.
+        """
+        _ = filters
         return self.extract(query)
 
     def extract(self, query: str) -> str:
-        """Always call the LLM. Prefer ``extract_if_unmatched`` on the live path."""
+        """Call the LLM for A/B leftover text. Empty string if neither is present."""
         q = (query or "").strip()
         if not q:
             return ""

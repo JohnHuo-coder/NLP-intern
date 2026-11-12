@@ -94,6 +94,58 @@ cdk destroy RealEstateRdsMvpStack
 
 ## 7) Cost notes
 
-- RDS: `db.t3.small`, 30GB, single-AZ, short backups, no NAT.
+- RDS: `db.t3.micro`, 30GB, single-AZ, short backups, no NAT.
 - Fargate: always-on task (2 vCPU / 4 GB) + ALB hours + public IPv4 — often similar or higher than RDS for a demo.
 - Stop/destroy stacks when not demoing.
+
+## 8) GitHub Actions CI + manual CD
+
+CI (`.github/workflows/ci.yml`) runs on push/PR to `main`:
+
+- `pytest tests/test_text_cleaning_and_query_parse.py tests/test_semantic_text_llm.py`
+- `cdk synth` of the RDS + Fargate templates (no deploy)
+
+CD (`.github/workflows/deploy.yml`) is **manual only**: GitHub → Actions → **Deploy Fargate** → **Run workflow** → `deploy-fargate` or `destroy-fargate`. Merge to `main` does **not** deploy (Fargate is expensive when idle).
+
+The deploy job uses `--exclusively` on `RealEstateFargateApiStack`. It does **not** update RDS, so console changes (private access, security group) stay put.
+
+### One-time AWS: GitHub OIDC
+
+From `infra/cdk` (venv on, AWS creds for account `212541130670`):
+
+```powershell
+cdk deploy GitHubActionsOidcStack `
+  -c account=212541130670 `
+  -c region=us-east-2 `
+  -c enableGithubOidc=true `
+  -c githubOwner=JohnHuo-coder `
+  -c githubRepo=NLP-intern
+```
+
+Copy output `RoleArn`. Trust the role in the existing CDK bootstrap:
+
+```powershell
+cdk bootstrap aws://212541130670/us-east-2 `
+  --trust <RoleArn> `
+  --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess
+```
+
+`--trust` lets this GitHub role assume the bootstrap `cdk-hnb659fds-*` roles. The CloudFormation execution policy is what **CloudFormation** may create, not a permission on the GitHub role itself.
+
+If the account already has `token.actions.githubusercontent.com` as an OIDC provider, add `-c githubOidcExistingProvider=true`.
+
+### GitHub Environment `aws-us-east-2`
+
+Create environment **aws-us-east-2** (optional required reviewers). Variables:
+
+- `CDK_ACCOUNT` = `212541130670`
+- `AWS_REGION` = `us-east-2`
+- `S3_BUCKET` = `real-estate-search-212541130670-us-east-2-an`
+- `S3_PREFIX` = empty (objects are at the bucket root)
+- `OPENAI_SECRET_ARN` = `arn:aws:secretsmanager:us-east-2:212541130670:secret:openai-api-key-SJFp3Y`
+
+Secret:
+
+- `AWS_ROLE_ARN` = `RoleArn` from `GitHubActionsOidcStack`
+
+Do not put the OpenAI key or AWS access keys in GitHub. After deploy, the workflow prints `ApiUrl` (a new ALB DNS if the stack was recreated).

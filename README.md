@@ -171,21 +171,16 @@ Core endpoints:
 
 ## Run Tests
 
-Install test tooling locally if needed (`pip install pytest`), then:
-
 ```bash
-pytest -q
+pip install -r requirements-test.txt
+pytest -q tests/test_text_cleaning_and_query_parse.py tests/test_semantic_text_llm.py
 ```
 
-You can also run setup checks:
-
-```bash
-python tests/test_setup.py
-```
+`tests/test_setup.py` talks to local Docker MySQL and is skipped by default (`pytest.ini`). CI uses the same two modules. GitHub Actions on `main` also `cdk synth`s; Fargate deploy/destroy is a **manual** workflow (see `infra/cdk/README.md` section 8).
 
 ## Deploy on AWS (ECS Fargate)
 
-See `infra/cdk/README.md` for RDS + Fargate CDK deploy. Local image smoke test:
+See `infra/cdk/README.md` for RDS + Fargate CDK deploy and GitHub Actions CD. Local image smoke test:
 
 ```bash
 docker build -t real-estate-api .

@@ -26,6 +26,8 @@ build/
 dist/
 *.egg-info/
 .eggs/
+infra/cdk/cdk.out/
+infra/cdk/cdk-outputs.json
 
 # ML models
 *.pt
@@ -35,8 +37,15 @@ dist/
 *.safetensors
 checkpoints/
 
-# dataset
-data/
+# dataset (keep small runtime catalogs used by parser tests + CI)
+data/*
+!data/processed/
+data/processed/*
+!data/processed/amenities.json
+!data/processed/features.json
+!data/processed/finance.json
+!data/processed/distinct_cities.csv
+!data/processed/stats.json
 
 # cache
 .cache/

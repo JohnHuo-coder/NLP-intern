@@ -1,0 +1,324 @@
+{
+  "finance": [
+    "1031 exchange",
+    "1031exchange",
+    "all cash",
+    "assumable",
+    "assumable loan",
+    "assumable mortgage",
+    "bank owned",
+    "bridge loan",
+    "cal vet loan",
+    "california veteran loan",
+    "calvet",
+    "carry back",
+    "cash",
+    "cash buyers only",
+    "cash only",
+    "cash sale",
+    "cash to existing loan",
+    "cash to new loan",
+    "contract for deed",
+    "conventional financing",
+    "conventional loan",
+    "down payment assistance",
+    "estate sale",
+    "exchange 1031",
+    "exchange1031",
+    "fannie mae",
+    "federal housing administration loan",
+    "fha",
+    "fha approved",
+    "fha eligible",
+    "fha financing",
+    "fha loan",
+    "financing available",
+    "foreclosed",
+    "foreclosure",
+    "freddie mac",
+    "government loan",
+    "hard money",
+    "investor friendly",
+    "jumbo loan",
+    "land contract",
+    "lease back",
+    "lease option",
+    "lease purchase",
+    "lease purchase option",
+    "lease to own",
+    "mortgage available",
+    "normal loan",
+    "owner carry",
+    "owner carryback",
+    "owner financing",
+    "owner may carry",
+    "owner will carry",
+    "private financing",
+    "probate sale",
+    "regular mortgage",
+    "rent back",
+    "rent to own",
+    "reo",
+    "reo property",
+    "seller carry",
+    "seller carryback",
+    "seller financing",
+    "seller leaseback",
+    "seller may carry",
+    "seller will carry",
+    "short sale",
+    "subject to existing financing",
+    "third party financing",
+    "traditional loan",
+    "united state department of agriculture loan",
+    "usda eligible",
+    "usda financing",
+    "usda loan",
+    "va",
+    "va approved",
+    "va financing",
+    "va loan",
+    "veteran affair loan"
+  ],
+  "set_from_db": [
+    "exchange1031",
+    "owner financing",
+    "government loan",
+    "rent to own",
+    "va financing",
+    "cash",
+    "normal loan",
+    "seller may carry",
+    "seller carryback",
+    "owner may carry",
+    "seller carry",
+    "california veteran loan",
+    "fha loan",
+    "va loan",
+    "exchange 1031",
+    "fha",
+    "1031 exchange",
+    "fha financing",
+    "1031exchange",
+    "united state department of agriculture loan",
+    "regular mortgage",
+    "lease purchase",
+    "owner will carry",
+    "veteran affair loan",
+    "owner carry",
+    "traditional loan",
+    "lease to own",
+    "usda loan",
+    "cash to new loan",
+    "cash to existing loan",
+    "conventional loan",
+    "private financing",
+    "freddie mac",
+    "cal vet loan",
+    "seller will carry",
+    "fha eligible",
+    "carry back",
+    "usda financing",
+    "owner carryback",
+    "seller financing",
+    "calvet",
+    "usda eligible",
+    "va",
+    "rent back",
+    "lease option",
+    "federal housing administration loan",
+    "seller leaseback",
+    "lease back",
+    "fha approved",
+    "fannie mae",
+    "va approved"
+  ],
+  "finance2raw": {
+    "government loan": [
+      "government loan"
+    ],
+    "usda loan": [
+      "usda loan"
+    ],
+    "usda financing": [
+      "usda loan"
+    ],
+    "usda eligible": [
+      "usda loan"
+    ],
+    "united state department of agriculture loan": [
+      "usda loan"
+    ],
+    "cash": [
+      "cash"
+    ],
+    "fha": [
+      "fha203k",
+      "f h a",
+      "fha203b"
+    ],
+    "fha loan": [
+      "fha203k",
+      "f h a",
+      "fha203b"
+    ],
+    "fha approved": [
+      "fha203k",
+      "f h a",
+      "fha203b"
+    ],
+    "fha eligible": [
+      "fha203k",
+      "f h a",
+      "fha203b"
+    ],
+    "fha financing": [
+      "fha203k",
+      "f h a",
+      "fha203b"
+    ],
+    "federal housing administration loan": [
+      "fha203k",
+      "f h a",
+      "fha203b"
+    ],
+    "fannie mae": [
+      "fannie mae"
+    ],
+    "owner carry": [
+      "owner may carry",
+      "owner will carry"
+    ],
+    "owner will carry": [
+      "owner may carry",
+      "owner will carry"
+    ],
+    "owner may carry": [
+      "owner may carry",
+      "owner will carry"
+    ],
+    "seller carry": [
+      "owner may carry",
+      "owner will carry"
+    ],
+    "seller will carry": [
+      "owner may carry",
+      "owner will carry"
+    ],
+    "seller may carry": [
+      "owner may carry",
+      "owner will carry"
+    ],
+    "seller financing": [
+      "owner may carry",
+      "owner will carry"
+    ],
+    "owner financing": [
+      "owner may carry",
+      "owner will carry"
+    ],
+    "carry back": [
+      "owner may carry",
+      "owner will carry"
+    ],
+    "seller carryback": [
+      "owner may carry",
+      "owner will carry"
+    ],
+    "owner carryback": [
+      "owner may carry",
+      "owner will carry"
+    ],
+    "normal loan": [
+      "conventional"
+    ],
+    "regular mortgage": [
+      "conventional"
+    ],
+    "traditional loan": [
+      "conventional"
+    ],
+    "conventional loan": [
+      "conventional"
+    ],
+    "private financing": [
+      "private financing available"
+    ],
+    "lease to own": [
+      "lease option"
+    ],
+    "rent to own": [
+      "lease option"
+    ],
+    "lease option": [
+      "lease option"
+    ],
+    "lease purchase": [
+      "lease option"
+    ],
+    "va": [
+      "va loan",
+      "va no no loan",
+      "va no loan"
+    ],
+    "va loan": [
+      "va loan",
+      "va no no loan",
+      "va no loan"
+    ],
+    "va approved": [
+      "va loan",
+      "va no no loan",
+      "va no loan"
+    ],
+    "va financing": [
+      "va loan",
+      "va no no loan",
+      "va no loan"
+    ],
+    "veteran affair loan": [
+      "va loan",
+      "va no no loan",
+      "va no loan"
+    ],
+    "cash to new loan": [
+      "cash to new loan"
+    ],
+    "cash to existing loan": [
+      "cash to existing loan"
+    ],
+    "freddie mac": [
+      "freddie mac"
+    ],
+    "lease back": [
+      "lease back"
+    ],
+    "rent back": [
+      "lease back"
+    ],
+    "seller leaseback": [
+      "lease back"
+    ],
+    "exchange 1031": [
+      "exchange1031"
+    ],
+    "1031 exchange": [
+      "exchange1031"
+    ],
+    "exchange1031": [
+      "exchange1031"
+    ],
+    "1031exchange": [
+      "exchange1031"
+    ],
+    "calvet": [
+      "cal vet loan"
+    ],
+    "california veteran loan": [
+      "cal vet loan"
+    ],
+    "cal vet loan": [
+      "cal vet loan"
+    ]
+  }
+}

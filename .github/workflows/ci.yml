@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install test deps
+        run: pip install -r requirements-test.txt
+      - name: Pytest
+        run: >
+          pytest -q
+          tests/test_text_cleaning_and_query_parse.py
+          tests/test_semantic_text_llm.py
+
+  synth:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra/cdk
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install CDK deps
+        run: pip install -r requirements.txt
+      - name: CDK synth
+        env:
+          CDK_DEFAULT_ACCOUNT: "212541130670"
+          CDK_DEFAULT_REGION: us-east-2
+        run: >
+          npx --yes aws-cdk@2 synth
+          -c account=212541130670
+          -c region=us-east-2
+          -c enableFargate=true
+          -c s3Bucket=real-estate-search-212541130670-us-east-2-an
+          -c s3Prefix=
+          -c openaiSecretArn=arn:aws:secretsmanager:us-east-2:212541130670:secret:openai-api-key-SJFp3Y
+          -c publicAccess=true
+          -c dbName=real_estate
+          -c dbUsername=admin
+          -c dbAccessCidr=0.0.0.0/0
+          -c fargateCpu=2048
+          -c fargateMemory=4096
+          -c fargateDesiredCount=1

@@ -5,6 +5,7 @@ from pathlib import Path
 import aws_cdk as cdk
 
 from infra_cdk.fargate_stack import FargateApiStack
+from infra_cdk.github_oidc_stack import GitHubActionsOidcStack
 from infra_cdk.rds_stack import RdsMvpStack
 
 
@@ -36,6 +37,9 @@ enable_fargate = (
 )
 s3_bucket = context_or_env(app, "s3Bucket", "S3_BUCKET", "")
 s3_prefix = context_or_env(app, "s3Prefix", "S3_PREFIX", "data/processed")
+openai_secret_arn = context_or_env(
+    app, "openaiSecretArn", "OPENAI_SECRET_ARN", ""
+)
 cors_allowed_origins = context_or_env(
     app, "corsAllowedOrigins", "CORS_ALLOWED_ORIGINS", "*"
 )
@@ -43,6 +47,21 @@ cpu = int(context_or_env(app, "fargateCpu", "FARGATE_CPU", "2048"))
 memory = int(context_or_env(app, "fargateMemory", "FARGATE_MEMORY", "4096"))
 desired_count = int(
     context_or_env(app, "fargateDesiredCount", "FARGATE_DESIRED_COUNT", "1")
+)
+github_oidc_stack_name = context_or_env(
+    app, "githubOidcStackName", "GITHUB_OIDC_STACK_NAME", "GitHubActionsOidcStack"
+)
+github_owner = context_or_env(app, "githubOwner", "GITHUB_OWNER", "JohnHuo-coder")
+github_repo = context_or_env(app, "githubRepo", "GITHUB_REPO", "NLP-intern")
+enable_github_oidc = (
+    context_or_env(app, "enableGithubOidc", "ENABLE_GITHUB_OIDC", "false").lower()
+    == "true"
+)
+github_oidc_existing_provider = (
+    context_or_env(
+        app, "githubOidcExistingProvider", "GITHUB_OIDC_EXISTING_PROVIDER", "false"
+    ).lower()
+    == "true"
 )
 
 if not account:
@@ -69,6 +88,11 @@ if enable_fargate:
             "Fargate is enabled but S3 bucket is missing. "
             "Pass -c s3Bucket=<name> or set S3_BUCKET / ENABLE_FARGATE=false."
         )
+    if not openai_secret_arn:
+        raise ValueError(
+            "Fargate is enabled but OpenAI secret ARN is missing. "
+            "Pass -c openaiSecretArn=<arn> or set OPENAI_SECRET_ARN."
+        )
     FargateApiStack(
         app,
         fargate_stack_name,
@@ -80,11 +104,22 @@ if enable_fargate:
         db_name=db_name,
         s3_bucket_name=s3_bucket,
         s3_prefix=s3_prefix,
+        openai_secret_arn=openai_secret_arn,
         docker_context=repo_root,
         cpu=cpu,
         memory_limit_mib=memory,
         desired_count=desired_count,
         cors_allowed_origins=cors_allowed_origins,
+    )
+
+if enable_github_oidc:
+    GitHubActionsOidcStack(
+        app,
+        github_oidc_stack_name,
+        env=env,
+        github_owner=github_owner,
+        github_repo=github_repo,
+        existing_provider=github_oidc_existing_provider,
     )
 
 app.synth()

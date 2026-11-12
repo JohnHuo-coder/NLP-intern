@@ -1,0 +1,4 @@
+# Lightweight CI / local unit tests. Not the Fargate runtime image.
+pytest>=7.0,<10
+pandas>=2.0,<3
+openai>=1.40,<2

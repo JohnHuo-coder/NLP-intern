@@ -35,6 +35,7 @@ class FargateApiStack(Stack):
         db_name: str,
         s3_bucket_name: str,
         s3_prefix: str = "data/processed",
+        openai_secret_arn: str,
         docker_context: Path,
         cpu: int = 2048,
         memory_limit_mib: int = 4096,
@@ -46,8 +47,13 @@ class FargateApiStack(Stack):
 
         if not s3_bucket_name:
             raise ValueError("s3_bucket_name is required for FargateApiStack.")
+        if not openai_secret_arn:
+            raise ValueError("openai_secret_arn is required for FargateApiStack.")
 
         bucket = s3.Bucket.from_bucket_name(self, "ArtifactsBucket", s3_bucket_name)
+        openai_secret = secretsmanager.Secret.from_secret_complete_arn(
+            self, "OpenAiSecret", openai_secret_arn
+        )
 
         cluster = ecs.Cluster(self, "ApiCluster", vpc=vpc)
 
@@ -62,6 +68,7 @@ class FargateApiStack(Stack):
             peer=task_sg,
             connection=ec2.Port.tcp(3306),
             description="MySQL from Fargate API tasks",
+            remote_rule=True,
         )
 
         # Public subnets + public IP: no NAT gateway needed for ECR/S3/Secrets.
@@ -109,6 +116,9 @@ class FargateApiStack(Stack):
                     "MYSQLPASSWORD": ecs.Secret.from_secrets_manager(
                         db_secret, field="password"
                     ),
+                    "OPENAI_API_KEY": ecs.Secret.from_secrets_manager(
+                        openai_secret, field="OPENAI_API_KEY"
+                    ),
                 },
             ),
             health_check_grace_period=Duration.minutes(10),
@@ -134,6 +144,7 @@ class FargateApiStack(Stack):
 
         db_secret.grant_read(service.task_definition.execution_role)
         db_secret.grant_read(service.task_definition.task_role)
+        openai_secret.grant_read(service.task_definition.execution_role)
         bucket.grant_read(service.task_definition.task_role)
 
         # Explicit S3 list on prefix helps some SDK listing calls.

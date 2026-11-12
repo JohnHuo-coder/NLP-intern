@@ -9,6 +9,7 @@ param(
   [switch]$DeployFargate,
   [string]$S3Bucket = "",
   [string]$S3Prefix = "data/processed",
+  [string]$OpenAiSecretArn = "",
   [string]$CorsAllowedOrigins = "*",
   [int]$FargateCpu = 2048,
   [int]$FargateMemory = 4096,
@@ -25,6 +26,9 @@ if (-not $account) {
 
 if ($DeployFargate -and -not $S3Bucket) {
   throw "DeployFargate requires -S3Bucket <bucket-name> (processed artifacts)."
+}
+if ($DeployFargate -and -not $OpenAiSecretArn) {
+  throw "DeployFargate requires -OpenAiSecretArn <secrets-manager-arn>."
 }
 
 Write-Host "==> Entering infra/cdk..."
@@ -61,6 +65,7 @@ $contextArgs = @(
   "-c", "enableFargate=$enableFargate",
   "-c", "s3Bucket=$S3Bucket",
   "-c", "s3Prefix=$S3Prefix",
+  "-c", "openaiSecretArn=$OpenAiSecretArn",
   "-c", "corsAllowedOrigins=$CorsAllowedOrigins",
   "-c", "fargateCpu=$FargateCpu",
   "-c", "fargateMemory=$FargateMemory",

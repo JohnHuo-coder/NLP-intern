@@ -16,7 +16,7 @@ if str(_SCRIPTS_DIR) not in sys.path:
 from query_parser import QueryParser
 from query_sql import LISTING_SELECT
 from schema_validator import CITY_PATH, STATS_PATH, SchemaValidator
-from semantic_searcher import SemanticSearcher
+from semantic_searcher_v2 import Retriever, build_retriever
 from semantic_text_llm import SemanticTextLLM, has_catalog_terms, ranking_query
 
 DEFAULT_PAGE_LIMIT = 20
@@ -171,9 +171,11 @@ class QuerySearcher:
     """NL query → filters → listings.
 
     1. Rule-based parser (numbers, city, catalog amenity / feature / finance).
-    2. If no catalog hits, leftover LLM for paraphrases / holistic setting text.
-    3. Catalog SQL is hard filters. Leftover text ranks remarks (optionally inside SQL candidates).
-       Empty leftover (and no catalog hit) falls back to ranking the full user query.
+    2. Leftover LLM runs even when catalog terms were extracted, for paraphrases
+       and holistic setting text. Browse skips it.
+    3. Catalog and structured SQL are hard filters. Leftover text ranks remarks
+       inside those candidates. Empty leftover with a catalog hit stays SQL-only.
+       Empty leftover and no catalog hit falls back to ranking the full user query.
     """
 
     def __init__(
@@ -181,7 +183,7 @@ class QuerySearcher:
         pool,
         *,
         parser: QueryParser | None = None,
-        semantic: SemanticSearcher | None = None,
+        semantic: Retriever | None = None,
         leftover_llm: SemanticTextLLM | None = None,
         cities_path: str = CITY_PATH,
         stats_path: str = STATS_PATH,
@@ -191,7 +193,7 @@ class QuerySearcher:
     ):
         self.pool = pool
         self.parser = parser or QueryParser()
-        self.semantic = semantic or SemanticSearcher()
+        self.semantic = semantic or build_retriever()
         self.leftover_llm = leftover_llm if leftover_llm is not None else (
             SemanticTextLLM() if enable_llm else None
         )
@@ -234,10 +236,10 @@ class QuerySearcher:
         elif rank_text:
             filters = {**filters, "semantic_text": rank_text}
 
-        if has_catalog_terms(filters) or not rank_text:
+        if not rank_text:
             return self._sql_page(filters, safe_limit, safe_offset)
 
-        if _has_structured(filters):
+        if has_catalog_terms(filters) or _has_structured(filters):
             return self._hybrid_page(filters, rank_text, safe_limit, safe_offset)
         return self._semantic_page(filters, rank_text, safe_limit, safe_offset)
 
@@ -313,8 +315,8 @@ class QuerySearcher:
         offset: int,
     ) -> dict[str, Any]:
         top_k = min(self.max_semantic_window, offset + limit)
-        _, ranked_ids, _ = self.semantic.search_hybrid(semantic_text, top_k=top_k)
-        ranked_ids = [lid for lid, _ in ranked_ids]
+        hits = self.semantic.search(semantic_text, k=top_k)
+        ranked_ids = [int(lid) for lid, _, _ in hits]
         return self._page_ranked_ids(
             filters,
             ranked_ids,
@@ -350,12 +352,12 @@ class QuerySearcher:
             conn.close()
 
         top_k = min(self.max_semantic_window, offset + limit)
-        _, ranked_ids, _ = self.semantic.search_hybrid_for_listings(
+        hits = self.semantic.search(
             semantic_text,
-            candidate_ids,
-            top_k=top_k,
+            k=top_k,
+            listing_ids=candidate_ids,
         )
-        ranked_ids = [lid for lid, _ in ranked_ids]
+        ranked_ids = [int(lid) for lid, _, _ in hits]
         return self._page_ranked_ids(
             filters,
             ranked_ids,

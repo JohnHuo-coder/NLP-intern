@@ -69,11 +69,11 @@ class RdsMvpStack(Stack):
             self,
             "RealEstateMysql",
             engine=rds.DatabaseInstanceEngine.mysql(
-                version=rds.MysqlEngineVersion.VER_8_0_39
+                version=rds.MysqlEngineVersion.of("8.0", "8.0.46")
             ),
             instance_type=ec2.InstanceType.of(
                 ec2.InstanceClass.BURSTABLE3,
-                ec2.InstanceSize.SMALL,
+                ec2.InstanceSize.MICRO,
             ),
             vpc=self.vpc,
             vpc_subnets=ec2.SubnetSelection(subnet_type=subnet_type),
