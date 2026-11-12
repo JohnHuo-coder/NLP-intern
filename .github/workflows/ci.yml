@@ -21,6 +21,7 @@ jobs:
           pytest -q
           tests/test_text_cleaning_and_query_parse.py
           tests/test_semantic_text_llm.py
+          tests/test_query_searcher_cache.py
 
   synth:
     runs-on: ubuntu-latest

@@ -160,6 +160,8 @@ Core endpoints:
 }
 ```
 
+Hybrid/semantic search ranks at most 100 listings per query and caches that id list in-process so later pages do not re-run leftover LLM or FAISS. `pagination.total` is capped at 100.
+
 - `POST /api/filter` with a JSON filter object (or `{ "filters": {...}, "limit": 20, "offset": 0 }`)
 - `POST /api/detail` with body:
 
@@ -173,10 +175,10 @@ Core endpoints:
 
 ```bash
 pip install -r requirements-test.txt
-pytest -q tests/test_text_cleaning_and_query_parse.py tests/test_semantic_text_llm.py
+pytest -q tests/test_text_cleaning_and_query_parse.py tests/test_semantic_text_llm.py tests/test_query_searcher_cache.py
 ```
 
-`tests/test_setup.py` talks to local Docker MySQL and is skipped by default (`pytest.ini`). CI uses the same two modules. GitHub Actions on `main` also `cdk synth`s; Fargate deploy/destroy is a **manual** workflow (see `infra/cdk/README.md` section 8).
+`tests/test_setup.py` talks to local Docker MySQL and is skipped by default (`pytest.ini`). CI uses the same three modules. GitHub Actions on `main` also `cdk synth`s; Fargate deploy/destroy is a **manual** workflow (see `infra/cdk/README.md` section 8).
 
 ## Deploy on AWS (ECS Fargate)
 

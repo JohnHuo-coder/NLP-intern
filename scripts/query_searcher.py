@@ -4,6 +4,10 @@ from __future__ import annotations
 
 import json
 import sys
+import threading
+import time
+from collections import OrderedDict
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -16,12 +20,14 @@ if str(_SCRIPTS_DIR) not in sys.path:
 from query_parser import QueryParser
 from query_sql import LISTING_SELECT
 from schema_validator import CITY_PATH, STATS_PATH, SchemaValidator
-from semantic_searcher_v2 import Retriever, build_retriever
 from semantic_text_llm import SemanticTextLLM, has_catalog_terms, ranking_query
 
 DEFAULT_PAGE_LIMIT = 20
 MAX_PAGE_LIMIT = 50
-MAX_SEMANTIC_WINDOW = 500
+# Ranked results (and SQL pages) are capped here: users refine instead of paging further.
+MAX_SEMANTIC_WINDOW = 100
+RESULT_CACHE_TTL_S = 30 * 60
+RESULT_CACHE_MAXSIZE = 2048
 
 _STRUCTURED_KEYS = (
     "price_max",
@@ -39,6 +45,58 @@ _STRUCTURED_KEYS = (
     "sqft",
     "city",
 )
+
+
+def _cache_key(query: str) -> str:
+    return " ".join(query.casefold().split())
+
+
+class _TtlLruCache:
+    """Process-local TTL LRU. One Fargate task shares this across users."""
+
+    def __init__(self, maxsize: int, ttl_s: float):
+        self.maxsize = max(0, int(maxsize))
+        self.ttl_s = float(ttl_s)
+        self._lock = threading.Lock()
+        self._data: OrderedDict[str, tuple[float, Any]] = OrderedDict()
+
+    def get(self, key: str) -> Any | None:
+        now = time.monotonic()
+        with self._lock:
+            item = self._data.get(key)
+            if item is None:
+                return None
+            expires, value = item
+            if expires <= now:
+                del self._data[key]
+                return None
+            self._data.move_to_end(key)
+            return value
+
+    def set(self, key: str, value: Any) -> None:
+        if self.maxsize <= 0:
+            return
+        now = time.monotonic()
+        with self._lock:
+            self._data[key] = (now + self.ttl_s, value)
+            self._data.move_to_end(key)
+            while len(self._data) > self.maxsize:
+                self._data.popitem(last=False)
+
+
+@dataclass
+class _CachedRanked:
+    ranked_ids: list[int]
+    filters: dict[str, Any]
+    mode: str
+    where_clause: str
+    params: list[Any]
+
+
+def _build_retriever():
+    from semantic_searcher_v2 import build_retriever
+
+    return build_retriever()
 
 
 def _error(
@@ -176,6 +234,8 @@ class QuerySearcher:
     3. Catalog and structured SQL are hard filters. Leftover text ranks remarks
        inside those candidates. Empty leftover with a catalog hit stays SQL-only.
        Empty leftover and no catalog hit falls back to ranking the full user query.
+    4. Hybrid/semantic miss ranks up to MAX_SEMANTIC_WINDOW ids and caches
+       query → id list in-process. Later pages slice that list (no LLM / FAISS).
     """
 
     def __init__(
@@ -183,17 +243,19 @@ class QuerySearcher:
         pool,
         *,
         parser: QueryParser | None = None,
-        semantic: Retriever | None = None,
+        semantic: Any | None = None,
         leftover_llm: SemanticTextLLM | None = None,
         cities_path: str = CITY_PATH,
         stats_path: str = STATS_PATH,
         table: str = "rets_property",
         max_semantic_window: int = MAX_SEMANTIC_WINDOW,
         enable_llm: bool = True,
+        result_cache_ttl_s: float = RESULT_CACHE_TTL_S,
+        result_cache_maxsize: int = RESULT_CACHE_MAXSIZE,
     ):
         self.pool = pool
         self.parser = parser or QueryParser()
-        self.semantic = semantic or build_retriever()
+        self.semantic = semantic if semantic is not None else _build_retriever()
         self.leftover_llm = leftover_llm if leftover_llm is not None else (
             SemanticTextLLM() if enable_llm else None
         )
@@ -201,6 +263,11 @@ class QuerySearcher:
         self.stats_path = stats_path
         self.table = table
         self.max_semantic_window = max_semantic_window
+        self._result_cache = (
+            _TtlLruCache(result_cache_maxsize, result_cache_ttl_s)
+            if result_cache_maxsize > 0
+            else None
+        )
 
     def search(
         self,
@@ -215,6 +282,19 @@ class QuerySearcher:
 
         safe_limit = min(MAX_PAGE_LIMIT, max(1, int(limit)))
         safe_offset = max(0, int(offset))
+        key = _cache_key(q)
+
+        cached = self._result_cache.get(key) if self._result_cache is not None else None
+        if cached is not None:
+            return self._page_ranked_ids(
+                cached.filters,
+                cached.ranked_ids,
+                safe_limit,
+                safe_offset,
+                mode=cached.mode,
+                where_clause=cached.where_clause,
+                params=cached.params,
+            )
 
         filters = self.parser.parse(q)
         validator = SchemaValidator(filters, self.cities_path, self.stats_path)
@@ -240,8 +320,22 @@ class QuerySearcher:
             return self._sql_page(filters, safe_limit, safe_offset)
 
         if has_catalog_terms(filters) or _has_structured(filters):
-            return self._hybrid_page(filters, rank_text, safe_limit, safe_offset)
-        return self._semantic_page(filters, rank_text, safe_limit, safe_offset)
+            ranked = self._hybrid_rank(filters, rank_text)
+        else:
+            ranked = self._semantic_rank(filters, rank_text)
+        if isinstance(ranked, dict):
+            return ranked
+        if self._result_cache is not None:
+            self._result_cache.set(key, ranked)
+        return self._page_ranked_ids(
+            ranked.filters,
+            ranked.ranked_ids,
+            safe_limit,
+            safe_offset,
+            mode=ranked.mode,
+            where_clause=ranked.where_clause,
+            params=ranked.params,
+        )
 
     def search_filters(
         self,
@@ -275,10 +369,13 @@ class QuerySearcher:
             return ""
 
     def _sql_page(self, filters: dict, limit: int, offset: int) -> dict[str, Any]:
+        if offset >= self.max_semantic_window:
+            return _error("No matching listing found.", code="not_found")
+        page_limit = min(limit, self.max_semantic_window - offset)
         sql, params = self.parser.to_sql(
             filters=filters,
             table=self.table,
-            limit=limit,
+            limit=page_limit,
             offset=offset,
             order_by="id DESC",
         )
@@ -293,7 +390,7 @@ class QuerySearcher:
             rows = cursor.fetchall()
             cursor.close()
             _normalize_listing_rows(rows)
-            total = self._count(conn, where, params)
+            total = min(self._count(conn, where, params), self.max_semantic_window)
         finally:
             conn.close()
         return _ok(
@@ -307,33 +404,22 @@ class QuerySearcher:
             total=total,
         )
 
-    def _semantic_page(
-        self,
-        filters: dict,
-        semantic_text: str,
-        limit: int,
-        offset: int,
-    ) -> dict[str, Any]:
-        top_k = min(self.max_semantic_window, offset + limit)
-        hits = self.semantic.search(semantic_text, k=top_k)
+    def _semantic_rank(self, filters: dict, semantic_text: str) -> _CachedRanked:
+        hits = self.semantic.search(semantic_text, k=self.max_semantic_window)
         ranked_ids = [int(lid) for lid, _, _ in hits]
-        return self._page_ranked_ids(
-            filters,
-            ranked_ids,
-            limit,
-            offset,
+        return _CachedRanked(
+            ranked_ids=ranked_ids,
+            filters=filters,
             mode="semantic",
             where_clause="",
             params=[],
         )
 
-    def _hybrid_page(
+    def _hybrid_rank(
         self,
         filters: dict,
         semantic_text: str,
-        limit: int,
-        offset: int,
-    ) -> dict[str, Any]:
+    ) -> _CachedRanked | dict[str, Any]:
         candidate_sql, candidate_params = self.parser.to_sql(
             filters=filters,
             table=self.table,
@@ -351,21 +437,21 @@ class QuerySearcher:
         finally:
             conn.close()
 
-        top_k = min(self.max_semantic_window, offset + limit)
-        hits = self.semantic.search(
-            semantic_text,
-            k=top_k,
-            listing_ids=candidate_ids,
-        )
-        ranked_ids = [int(lid) for lid, _, _ in hits]
-        return self._page_ranked_ids(
-            filters,
-            ranked_ids,
-            limit,
-            offset,
+        if not candidate_ids:
+            ranked_ids: list[int] = []
+        else:
+            hits = self.semantic.search(
+                semantic_text,
+                k=self.max_semantic_window,
+                listing_ids=candidate_ids,
+            )
+            ranked_ids = [int(lid) for lid, _, _ in hits]
+        return _CachedRanked(
+            ranked_ids=ranked_ids,
+            filters=filters,
             mode="hybrid",
             where_clause=where,
-            params=candidate_params,
+            params=list(candidate_params),
         )
 
     def _page_ranked_ids(
